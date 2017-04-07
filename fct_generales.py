@@ -10,7 +10,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-06T11:03:34+02:00
+# @Last modified time: 2017-04-07T08:27:20+02:00
 
 
 def somme_tableau(a):
@@ -80,6 +80,20 @@ def trier_collection(aCollection, itri, isens):
     for i in range(0, len(tmp_col)):
         aCollection.append(tmp_col[i])
     tmp_col = None
+
+
+def ecrire_titre(titre, nom_feuille, lig, col, nbcol):
+    """
+    Ecrit le titre d'un tableau.
+
+    @param titre: titre du tableau
+    @param nom_feuille: nom de la feuille de calcul
+    @param lig: numero de la ligne ou ecrire le titre du tableau
+    @param col: numero de la colonne ou ecrire le titre du tableau
+    @param nbcol: nombre de colonnes du tableau (pour centrer le titre
+                  sur toutes les colonnes)
+    """
+    Worksheets[nom_feuille].Cells[lig, col] = titre
 
 
 def maximum(a, b):
