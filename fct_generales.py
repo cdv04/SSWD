@@ -10,7 +10,14 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-07T08:27:20+02:00
+# @Last modified time: 2017-04-07T11:19:55+02:00
+
+import sys
+
+from MsgBox import MsgBox
+from Worksheet import Worksheet
+
+global Worksheets
 
 
 def somme_tableau(a):
@@ -82,6 +89,34 @@ def trier_collection(aCollection, itri, isens):
     tmp_col = None
 
 
+def encadrer_colonne(nom_feuille, l1, c1, l2, c2):
+    """
+    Encadre des colonnes dans une feuille de calcul.
+
+    @param nom_feuille: nom de la feuille de calcul
+    @param l1: numero de la ligne ou commencer l'encadrement
+    @param c1: numero de la colonne ou commencer l'encadrement
+    @param l2: numero de la ligne ou finir l'encadrement
+    @param c2: numero de la colonne ou finir l'encadrement
+    """
+    # _with0 = Range(Cells(l1, c1), Cells(l2, c2)).Borders(xlEdgeLeft)
+    # _with0.LineStyle = xlContinuous
+    # _with0.Weight = xlMedium
+    # _with1 = Range(Cells(l1, c1), Cells(l2, c2)).Borders(xlEdgeTop)
+    # _with1.LineStyle = xlContinuous
+    # _with1.Weight = xlMedium
+    # _with2 = Range(Cells(l1, c1), Cells(l2, c2)).Borders(xlEdgeBottom)
+    # _with2.LineStyle = xlContinuous
+    # _with2.Weight = xlMedium
+    # _with3 = Range(Cells(l1, c1), Cells(l2, c2)).Borders(xlEdgeRight)
+    # _with3.LineStyle = xlContinuous
+    # _with3.Weight = xlMedium
+    """
+    Fonction inutiles du au fait qu'elle format les cellules Excel.
+    Mise en commentaire pour eviter les erreurs lors de son appel.
+    """
+
+
 def ecrire_titre(titre, nom_feuille, lig, col, nbcol):
     """
     Ecrit le titre d'un tableau.
@@ -94,6 +129,87 @@ def ecrire_titre(titre, nom_feuille, lig, col, nbcol):
                   sur toutes les colonnes)
     """
     Worksheets[nom_feuille].Cells[lig, col] = titre
+    """Formatage du text."""
+    # _with0 = Range(Worksheets(nom_feuille).Cells(lig, col),
+    #                Worksheets(nom_feuille).Cells(lig, col + nbcol - 1))
+    # _with0.HorizontalAlignment = xlCenterAcrossSelection
+
+
+def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
+    """
+    Ecrit la collection data_co dans une feuille de calcul.
+
+    @param data_co: Nom de la collection
+    @param lig: Numero de la premiere ligne du tableau ou est ecrit la
+                collection cette premiere ligne correspond aux titres
+                des colonnes du tableau
+    @param col: Numero de la premiere colonne du tableau a ecrire
+    @param nom_colonne: nom des colonnes de la data_co
+    @param nom_feuille: nom de la feuille ou est affichee la collection
+
+    Toutes les colonnes ne sont pas necessairement affichees
+    """
+    nbdata = len(data_co)
+    """1. Titre des colonnes"""
+    for i in range(0, len(nom_colonne)):
+        Worksheets[nom_feuille].Cells[lig, col + i - 1] = nom_colonne[i]
+    """2. Donnees"""
+    for i in range(0, nbdata):
+        Worksheets[nom_feuille].Cells[lig + i, col] = data_co[i].espece
+        Worksheets[nom_feuille].Cells[lig + i, col + 1] = data_co[i].taxo
+        if iproc == 2:
+            # Worksheets[nom_feuille].Cells[lig + i, col + 2] = data_co[i].test
+            if invlog is True:
+                Worksheets[nom_feuille].Cells[
+                    lig + i, col + 5] = 10 ** data_co[i].act
+            else:
+                Worksheets[nom_feuille].Cells[
+                    lig + i, col + 5] = data_co[i].act
+            Worksheets[nom_feuille].Cells[lig + i, col + 6] = data_co[i].pcum_a
+        if invlog is True:
+            Worksheets[nom_feuille].Cells[
+                lig + i, col + 2] = 10 ** (data_co[i].data)
+        else:
+            Worksheets[nom_feuille].Cells[lig + i, col + 2] = data_co[i].data
+        Worksheets[nom_feuille].Cells[lig + i, col + 3] = data_co[i].pond
+        Worksheets[nom_feuille].Cells[lig + i, col + 4] = data_co[i].pcum
+
+
+def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
+          nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
+          nom_feuille_Ftriang, nom_feuille_qtriang, nom_feuille_err_ve,
+          nom_feuille_err_inv, nom_feuille_indice):
+    """
+    Verifie que le nom des feuilles resultats n'existe pas.
+
+    supprime les feuilles intermediaires et cree les feuilles
+    nom_feuille_res et nom_feuille_pond
+    """
+    # prem = True
+    global Worksheets
+    for ws in Worksheets:
+        if (ws.Name == nom_feuille_res):
+            rep = MsgBox('Attention...', 'Result\'s worksheet already exists!\
+                          If you continue, this one will be destroyed.\
+                          Would you like to go on?\n\
+                          If you want to keep this previous results,\
+                          rename the SSWD_result worksheet.', 4)
+            # prem = False
+            if rep == 7 or not rep:
+                sys.exit(0)
+            else:
+                del Worksheets[ws.Name]
+        else:
+            if (ws.Name == nom_feuille_pond or ws.Name == nom_feuille_stat or
+                ws.Name == nom_feuille_qemp or ws.Name == nom_feuille_qnorm or
+                ws.Name == nom_feuille_sort or
+                ws.Name == nom_feuille_Ftriang or
+                ws.Name == nom_feuille_qtriang or
+                ws.Name == nom_feuille_err_ve or ws.Name == nom_feuille_err_inv
+                    or ws.Name == nom_feuille_indice):
+                del Worksheets[ws.Name]
+    Worksheets[nom_feuille_res] = Worksheet()
+    Worksheets[nom_feuille_pond] = Worksheet()
 
 
 def maximum(a, b):
@@ -160,3 +276,257 @@ def calcul_lig_graph(lig_deb, lig_p, lig_qbe, lig_qbi, lig_qbs):
     lig_qbe = lig_deb + 2
     lig_qbi = lig_deb + 5
     lig_qbs = lig_deb + 6
+
+
+def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
+                      lig_s, col_s, dist, nbvar, iproc, a):
+    """
+    Affichage options choisies par l'utilisateur dans nom_feuille_res.
+
+    @param isp: option de traitement de l'information espece
+    @param Pcat: vecteur de poids accordes a chaque categorie taxonomique
+    @param b: nombre de runs du bootstrap
+    @param lig: premiere ligne d'affichage options
+    @param col: premiere colonne d'affichage options
+    @param lig_s: premiere ligne d'affichage sigles
+    @param col_s: premiere colonne d'affichage sigles
+    """
+    nbcol = 1
+    Worksheets[nom_feuille].Cells[lig, col] = 'Options'
+    # Option espece
+    Worksheets[nom_feuille].Cells[lig + 1, col] = 'Species='
+    Worksheets[nom_feuille].Cells[lig + 1, col + 1] = sp_opt(isp)
+    # Option pcat
+    Worksheets[nom_feuille].Cells[lig + 2, col] = 'Taxonomy'
+    if liste_taxo is not None:
+        Worksheets[nom_feuille].Cells[lig + 2, col + 1] = liste_taxo
+        Worksheets[nom_feuille].Cells[lig + 2, col + 2] = val_pcat
+    else:
+        Worksheets[nom_feuille].Cells[lig + 2, col + 1] = 'No Weight'
+    """nbruns B"""
+    Worksheets[nom_feuille].Cells[lig + 3, col] = 'Nb bootstrap samples'
+    # Range(Worksheets(nom_feuille).Cells(lig + 3, col),
+    #       Worksheets(nom_feuille).Cells(lig + 3, col + nbcol)).Select()
+    # Selection.Merge()
+    Worksheets[nom_feuille].Cells[lig + 3, col + nbcol + 1] = B
+    """nbvar"""
+    Worksheets[nom_feuille].Cells[lig + 4, col] = 'Nb data'
+    Worksheets[nom_feuille].Cells[lig + 4, col + nbcol + 1] = nbvar
+    """parametre de Hazen : a"""
+    Worksheets[nom_feuille].Cells[lig + 5, col] = 'Hazen parameter a'
+    Worksheets[nom_feuille].Cells[lig + 5, col + nbcol + 1] = a
+    """Sigles=acronyms"""
+    Worksheets[nom_feuille].Cells[
+        lig_s, col_s] = 'SSWD=Species Sensitivity Weighted Distribution'
+    if iproc == 2:
+        i = 1
+        Worksheets[nom_feuille].Cells[lig_s + i, col_s] = 'ACT=Acute to\
+ Chronic Transformation'
+    else:
+        i = 0
+    Worksheets[nom_feuille].Cells[lig_s + i +
+                                  1, col_s] = 'HC=Hazardous Concentration'
+    Worksheets[nom_feuille].Cells[lig_s + i + 2, col_s] = 'Sp=Species'
+    Worksheets[nom_feuille].Cells[lig_s + i + 3,
+                                  col_s] = 'TW=Taxonomic or Trophical Weights'
+    i = i + 4
+    if dist[2] is True or dist[3] is True:
+        Worksheets[nom_feuille].Cells[lig_s + i,
+                                      col_s] = 'R_=Multiple R-square on \
+the empirical quantiles'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 1, col_s] = 'KSpvalue=pvalue of the Kolmogorov-Smirnov \
+goodness of fit test (with Dallal-Wilkinson approximation)'
+        i = i + 2
+    if dist[2] is True:
+        Worksheets[nom_feuille].Cells[
+            lig_s + i, col_s] = 'GWM=Geometric Weighted Mean of the log-normal \
+            distribution'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 1, col_s] = 'GWSD=Geometric Weighted Standard Deviation\
+ of the log-normal distribution'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 2, col_s] = 'wm.lg=Weighted Mean of the log-normal \
+ distribution of the data (log10)'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 3, col_s] = 'wsd.lg=Weighted Standard Deviation of the\
+ log-normal distribution of the data (log10)'
+        i = i + 4
+    if dist[3] is True:
+        Worksheets[nom_feuille].Cells[
+            lig_s + i, col_s] = 'GWMin=Geometric Min parameter of the Weighted \
+log-triangular distribution'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 1, col_s] = 'GWMax=Geometric Max parameter of the \
+Weighted log-triangular distribution'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 2, col_s] = 'GWMode=Geometric Mode parameter of the \
+Weighted log-triangular distribution'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 3, col_s] = 'wmin.lg=Min parameter of the Weighted \
+log-triangular distribution (log10)'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 4, col_s] = 'wmax.lg=Max parameter of the Weighted \
+log-triangular distribution (log10)'
+        Worksheets[nom_feuille].Cells[
+            lig_s + i + 5, col_s] = 'wmode.lg=Mode parameter of the Weighted \
+log-triangular distribution (log10)'
+
+
+def calcul_col_res(col_deb, col_fin, col_data1, col_data2, col_tax, col_data,
+                   col_pcum, col_data_le, col_pcum_le, c_hc, nbcol_vide,
+                   pourcent, dist, ind_tax, ind_data, ind_pcum, nom_colonne,
+                   col_data_act, col_data_act_le, ind_data_act, col_pcum_a,
+                   ind_pcum_a):
+    """
+    Calcul des indices de colonnes pour l'affichage des resultats.
+
+    @param col_deb: premiere colonne affichage resultats numeriques HC
+    @param col_fin: derniere colonne affichage resultats numeriques HC
+    @param col_data1: premiere colonne d'affichage de data_co_feuil
+                      triee selon la taxonomie
+    @param col_data2: premiere colonne d'affichage de data_co_feuil
+                      triee selon les concentrations croissantes
+    @param col_tax: colonne d'affichage information taxonomique
+    @param col_data: colonne d'affichage concentration
+    @param col_pcum: colonne d'affichage probabilite cumulees
+                     empiriques ponderees
+    @param col_data_le: colonne d'affichage concentration pour graphe
+                        distribution empirique
+    @param col_pcum_le: colonne d'affichage probabilite pour graphe
+                        distribution empirique
+    @param c_hc: premiere colonne d'affichage resultats
+    @param nbcol_vide: nombre de colonne vide entre resultats
+    @param pourcent: liste des pourcentages de HCx% affiches
+    @param dist: vecteur de booleens definissant les lois de
+                 distribution affichees
+    @param ind_tax: indice de la colonne d'information taxonomique dans
+                    data_co_feuil
+    @param ind_data: indice de la colonne concentration dans
+                     data_co_feuil
+    @param ind_pcmu: indice de la colonne probabilite cumulee ponderee
+                     empirique dans data_co_feuil
+    """
+    # l'affichage des parametres mu et sig et/ou min, max, mode
+    if dist[3] is True:
+        nbcol = 4
+    elif dist[2] is True:
+        nbcol = 3
+    else:
+        nbcol = 0
+    col_data1 = c_hc + len(pourcent) + nbcol_vide + nbcol + 1
+    col_data2 = col_data1 + len(nom_colonne) + nbcol_vide
+    col_deb = c_hc + 1
+    col_fin = c_hc + len(pourcent)
+    col_tax = col_data1 + ind_tax - 1
+    col_data = col_data1 + ind_data - 1
+    col_pcum = col_data1 + ind_pcum - 1
+    col_pcum_a = col_data1 + ind_pcum_a - 1
+    col_data_act = col_data1 + ind_data_act - 1
+    col_data_le = col_data2 + ind_data - 1
+    col_pcum_le = col_data2 + ind_pcum - 1
+    col_data_act_le = col_data2 + ind_data_act - 1
+
+
+def calcul_ref_pond(col_deb, col_data, col_pcum, col_pond, l1, lig_deb,
+                    lig_fin, ind_data, ind_pond, ind_pcum, nbdata,
+                    ind_data_act, col_data_act):
+    """
+    Calcul les indices lignes et colonnes dans nom_feuille_pond.
+
+    @param col_deb: premiere colonne de donnees
+    @param col_data: colonne des donnees data
+    @param col_pond: colonne des ponderations
+    @param col_pcum: colonne des probabilites cumulees ponderees
+                     empiriques
+    @param l1: premiere ligne de donnees
+    @param lig_deb: premiere ligne de donnees numeriques
+    @param lig_fin: derniere ligne de donnees numeriques
+    @param ind_data: indice de la colonne data dans data_co_feuil
+    @param ind_pond: indice de la colonne ponderation dans
+                     data_co_feuil
+    @param ind_pcum: indice de la colonne probabilite cumulee dans
+                     data_co_feuil
+    """
+    lig_deb = l1 + 1
+    lig_fin = lig_deb + nbdata - 1
+    col_data = col_deb + ind_data - 1
+    col_pond = col_deb + ind_pond - 1
+    col_pcum = col_deb + ind_pcum - 1
+    col_data_act = col_deb + ind_data_act - 1
+
+
+def efface_feuil_inter(nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
+                       nom_feuille_qnorm, nom_feuille_qtriang,
+                       nom_feuille_sort, nom_feuille_Ftriang,
+                       nom_feuille_err_ve, nom_feuille_err_inv,
+                       nom_feuille_indice):
+    """Efface les feuilles de calcul intermediaires si voulu."""
+    for ws in Worksheets:
+        if (ws.Name == nom_feuille_pond or ws.Name == nom_feuille_stat or
+            ws.Name == nom_feuille_qemp or ws.Name == nom_feuille_qnorm or
+            ws.Name == nom_feuille_sort or ws.Name == nom_feuille_Ftriang or
+            ws.Name == nom_feuille_qtriang or
+            ws.Name == nom_feuille_err_ve or
+            ws.Name == nom_feuille_err_inv or
+                ws.Name == nom_feuille_indice):
+            del Worksheets[ws.Name]
+
+
+def trier_tableau(a):
+    """Trie un tableau de chaines de caracteres par ordre alphabetique"""
+    tmp = list()
+    for i in range(0, len(a)):
+        tmp.append(a[i])
+    num = 0
+    for i in range(0, len(tmp)):
+        mini = 'Z'
+        for j in range(0, len(tmp)):
+            if (mini.upper > tmp[j].upper):
+                mini = tmp[j]
+                num = j
+        del tmp[num]
+        a[i] = mini
+    tmp = None
+
+
+def rechercher_categorie(a, diff):
+    """
+    Recherche les valeurs différentes dans un tableau de strings.
+
+    @param a: tableau de strings
+    @param diff: est le vecteur des chaines différentes
+
+    !!! Le tableau A doit être trié dans l'ordre alphabétique !!!
+    """
+    nb = 0
+    diff.append(0)
+    for i in range(0, len(a)):
+        if a(i) != a(i + 1):
+            diff.insert(nb, a[i])
+            diff.append(a[i + 1])
+            nb += 1
+    if nb == 0:
+        diff = list(a[0])
+
+
+def isnumeric(code):
+    """
+    Indique si un code ascii correspond à un nombre ou non.
+
+     (on autorise la virgule et le point)
+     """
+    _ret = None
+    if (code < 48 or code > 57):
+        if (code != 44 and code != 46):
+            _ret = False
+        else:
+            _ret = True
+    else:
+        _ret = True
+    return _ret
+
+
+def sp_opt(isp):
+    """Added beacause unavailabe to get from IHM actually."""
+    return ("weighted" if isp == 1 else ("unweighted" if isp == 2 else "mean"))
