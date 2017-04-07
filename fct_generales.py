@@ -10,7 +10,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-07T11:19:55+02:00
+# @Last modified time: 2017-04-07T16:03:44+02:00
 
 import sys
 
@@ -474,7 +474,7 @@ def efface_feuil_inter(nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
 
 
 def trier_tableau(a):
-    """Trie un tableau de chaines de caracteres par ordre alphabetique"""
+    """Trie un tableau de strings par ordre alphabetique."""
     tmp = list()
     for i in range(0, len(a)):
         tmp.append(a[i])
@@ -492,12 +492,12 @@ def trier_tableau(a):
 
 def rechercher_categorie(a, diff):
     """
-    Recherche les valeurs différentes dans un tableau de strings.
+    Recherche les valeurs differentes dans un tableau de strings.
 
     @param a: tableau de strings
-    @param diff: est le vecteur des chaines différentes
+    @param diff: est le vecteur des chaines differentes
 
-    !!! Le tableau A doit être trié dans l'ordre alphabétique !!!
+    !!! Le tableau A doit etre trie dans l'ordre alphabetique !!!
     """
     nb = 0
     diff.append(0)
@@ -512,10 +512,10 @@ def rechercher_categorie(a, diff):
 
 def isnumeric(code):
     """
-    Indique si un code ascii correspond à un nombre ou non.
+    Indique si un code ascii correspond a un nombre ou non.
 
-     (on autorise la virgule et le point)
-     """
+    (on autorise la virgule et le point)
+    """
     _ret = None
     if (code < 48 or code > 57):
         if (code != 44 and code != 46):
@@ -525,6 +525,108 @@ def isnumeric(code):
     else:
         _ret = True
     return _ret
+
+
+def isentier(code):
+    """Indique si un code ascii correspond a un entier."""
+    if (code < 48 or code > 57):
+        _ret = False
+    else:
+        _ret = True
+    return _ret
+
+
+def cellule_gras(l1, c1, l2, c2):
+    """Met le contenu d'une cellule feuille de calcul en gras."""
+    # Range[Cells(l1, c1), Cells(l2, c2)].Font.Bold = True
+
+
+def csd(val_dbl):
+    """Remplace une virgule en un point pour les forumles."""
+    # csd = Replace(CStr(val_dbl), ",", ".")
+    _ret = ''
+    for i in range(0, len(str(val_dbl))):
+        car_ascii = int(str(val_dbl)[i])
+        if (car_ascii == 44):
+            car_ascii = 46
+        _ret += str(car_ascii)
+    return _ret
+
+
+def compt_inf(ech, ind):
+    """Nombre de valeur d'un ech >= a un nombre ind."""
+    _ret = 0
+    for i in range(0, len(ech)):
+        if ech[i] <= ind:
+            _ret += 1
+    return _ret
+
+
+def trier_tableau_num(a):
+    """Trie un tableau de nombres."""
+    tmp = list()
+    for i in range(0, len(a)):
+        tmp.append(a[i])
+    maxi = maximum_tab(a)
+    num = 0
+    for i in range(0, len(a)):
+        mini = maxi
+        for j in range(1, len(tmp)):
+            if (mini > tmp[j]):
+                mini = tmp[j]
+                num = j
+        del tmp[num]
+        a[i] = mini
+    tmp = None
+
+
+def rech_l1c1(_str, lig, col, deb_str):
+    """
+    Recherche indice colonne +/- ligne dans une reférence du type L1C1.
+
+    Indépendamment de la langue utilisateur
+    """
+    lig = 0
+    col = 0
+    lg = len(_str)
+    tmp = _str[deb_str:lg]
+    lig = int(tmp)
+    n = len(str(lig)) + deb_str + 1
+    if n > lg:
+        col = lig
+        lig = 1
+    else:
+        tmp = _str[n:lg]
+        col = int(tmp)
+
+
+def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
+                          nbvar, data):
+    """
+    Permet de trier les tirages aléatoires de nom_feuille_stat
+    sauvegarder triés dans une nouvelle dans nom_feuille_sort
+    """
+    # Worksheets.Add()
+    # ActiveSheet.Name = nom_feuille_sort
+    # for i in vbForRange(1, nbvar):
+    #     Worksheets[nom_feuille_sort].Cells[l1 - 1, c3 + i - 1] = 'RANK ' + i
+    #     Worksheets[nom_feuille_sort].Cells[
+    #         l1, c3 + i - 1].FormulaR1C1 = '=SMALL(' + nom_feuille_stat + '!'
+    #         + data + ',' + i + ')'
+    # Range(Worksheets(nom_feuille_sort).Cells(l1, c3), Worksheets(
+    #     nom_feuille_sort).Cells(l1, c3 + nbvar)).Select()
+    # Selection.AutoFill(Destination=Range(Worksheets(nom_feuille_sort).Cells(
+    #     l1, c3), Worksheets(nom_feuille_sort).Cells(l2, c3 + nbvar)),
+    #     Type=xlFillDefault)
+    # Worksheets(nom_feuille_sort).Cells(1, 1).Select()
+
+
+def ischainevide(texte, message, nomboite, erreur):
+    """Test si la chain de texte est vide, error si tel est le cas."""
+    if texte == '':
+        MsgBox(nomboite, message, 0)
+        # erreur = True
+        return
 
 
 def sp_opt(isp):
