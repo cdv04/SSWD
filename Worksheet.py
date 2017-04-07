@@ -10,7 +10,7 @@ This class contains the full worksheets (like a Excel file).
 # @Project: SSWD
 # @Filename: Worksheet.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-07T09:30:45+02:00
+# @Last modified time: 2017-04-07T11:45:26+02:00
 
 
 class Worksheet:
