@@ -1,16 +1,18 @@
 """File use to run the program without ACT module (from excel?)."""
 
+# !/usr/bin/env python
+
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-04-05T09:54:15+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
 # @Filename: specific_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-05T10:15:13+02:00
+# @Last modified time: 2017-04-10T14:57:55+02:00
 
 
-def ajoute_series_act(nom_feuille, nseries, ligne_data,
-                      col_tax, col_data, col_pcum):
+def ajoute_series_act(nom_feuille, nseries, ligne_data, col_tax, col_data,
+                      col_pcum):
     """Empty function use to run tracer_graphique without ACT module."""
     pass
 

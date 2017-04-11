@@ -4,16 +4,15 @@ Class file.
 This file is here to create the typing for Collection.
 """
 
+# !/usr/bin/env python
+
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-04-05T09:03:15+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
 # @Filename: Collection.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-06T09:31:55+02:00
-
-
-# !/usr/bin/env python
+# @Last modified time: 2017-04-10T14:56:54+02:00
 
 
 class Collection():
