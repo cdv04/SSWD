@@ -4,13 +4,15 @@ Les fonctions les plus utilisees.
 A inclure dans la quasi totatilite des autres.
 """
 
+# !/usr/bin/env python
+
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-04-06T09:22:23+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-07T16:03:44+02:00
+# @Last modified time: 2017-04-10T14:56:57+02:00
 
 import sys
 
@@ -160,15 +162,15 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
         if iproc == 2:
             # Worksheets[nom_feuille].Cells[lig + i, col + 2] = data_co[i].test
             if invlog is True:
-                Worksheets[nom_feuille].Cells[
-                    lig + i, col + 5] = 10 ** data_co[i].act
+                Worksheets[nom_feuille].Cells[lig + i, col + 5] = 10**data_co[
+                    i].act
             else:
-                Worksheets[nom_feuille].Cells[
-                    lig + i, col + 5] = data_co[i].act
+                Worksheets[nom_feuille].Cells[lig + i, col + 5] = data_co[
+                    i].act
             Worksheets[nom_feuille].Cells[lig + i, col + 6] = data_co[i].pcum_a
         if invlog is True:
-            Worksheets[nom_feuille].Cells[
-                lig + i, col + 2] = 10 ** (data_co[i].data)
+            Worksheets[nom_feuille].Cells[lig + i, col + 2] = 10**(
+                data_co[i].data)
         else:
             Worksheets[nom_feuille].Cells[lig + i, col + 2] = data_co[i].data
         Worksheets[nom_feuille].Cells[lig + i, col + 3] = data_co[i].pond
@@ -201,12 +203,14 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
                 del Worksheets[ws.Name]
         else:
             if (ws.Name == nom_feuille_pond or ws.Name == nom_feuille_stat or
-                ws.Name == nom_feuille_qemp or ws.Name == nom_feuille_qnorm or
-                ws.Name == nom_feuille_sort or
-                ws.Name == nom_feuille_Ftriang or
-                ws.Name == nom_feuille_qtriang or
-                ws.Name == nom_feuille_err_ve or ws.Name == nom_feuille_err_inv
-                    or ws.Name == nom_feuille_indice):
+                    ws.Name == nom_feuille_qemp or
+                    ws.Name == nom_feuille_qnorm or
+                    ws.Name == nom_feuille_sort or
+                    ws.Name == nom_feuille_Ftriang or
+                    ws.Name == nom_feuille_qtriang or
+                    ws.Name == nom_feuille_err_ve or
+                    ws.Name == nom_feuille_err_inv or
+                    ws.Name == nom_feuille_indice):
                 del Worksheets[ws.Name]
     Worksheets[nom_feuille_res] = Worksheet()
     Worksheets[nom_feuille_pond] = Worksheet()
@@ -214,12 +218,12 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
 
 def maximum(a, b):
     """Renvoie le maximum de 2 valeurs."""
-    return(a if a > b else b)
+    return (a if a > b else b)
 
 
 def minimum(a, b):
     """Renvoie le minimum de 2 valeurs."""
-    return(a if a < b else b)
+    return (a if a < b else b)
 
 
 def minimum_tab(a):
@@ -228,7 +232,7 @@ def minimum_tab(a):
     for i in range(1, len(a)):
         if (a[i] < _ret):
             _ret = a[i]
-    return(_ret)
+    return (_ret)
 
 
 def maximum_tab(a):
@@ -237,7 +241,7 @@ def maximum_tab(a):
     for i in range(1, len(a)):
         if (a[i] > _ret):
             _ret = a[i]
-    return(_ret)
+    return (_ret)
 
 
 def minimum_tab_dif0(a):
@@ -322,10 +326,11 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
         i = 1
         Worksheets[nom_feuille].Cells[lig_s + i, col_s] = 'ACT=Acute to\
  Chronic Transformation'
+
     else:
         i = 0
-    Worksheets[nom_feuille].Cells[lig_s + i +
-                                  1, col_s] = 'HC=Hazardous Concentration'
+    Worksheets[nom_feuille].Cells[lig_s + i + 1,
+                                  col_s] = 'HC=Hazardous Concentration'
     Worksheets[nom_feuille].Cells[lig_s + i + 2, col_s] = 'Sp=Species'
     Worksheets[nom_feuille].Cells[lig_s + i + 3,
                                   col_s] = 'TW=Taxonomic or Trophical Weights'
@@ -334,40 +339,55 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
         Worksheets[nom_feuille].Cells[lig_s + i,
                                       col_s] = 'R_=Multiple R-square on \
 the empirical quantiles'
+
         Worksheets[nom_feuille].Cells[
-            lig_s + i + 1, col_s] = 'KSpvalue=pvalue of the Kolmogorov-Smirnov \
+            lig_s + i + 1,
+            col_s] = 'KSpvalue=pvalue of the Kolmogorov-Smirnov \
 goodness of fit test (with Dallal-Wilkinson approximation)'
+
         i = i + 2
     if dist[2] is True:
         Worksheets[nom_feuille].Cells[
-            lig_s + i, col_s] = 'GWM=Geometric Weighted Mean of the log-normal \
+            lig_s + i,
+            col_s] = 'GWM=Geometric Weighted Mean of the log-normal \
             distribution'
+
         Worksheets[nom_feuille].Cells[
-            lig_s + i + 1, col_s] = 'GWSD=Geometric Weighted Standard Deviation\
+            lig_s + i + 1,
+            col_s] = 'GWSD=Geometric Weighted Standard Deviation\
  of the log-normal distribution'
+
         Worksheets[nom_feuille].Cells[
             lig_s + i + 2, col_s] = 'wm.lg=Weighted Mean of the log-normal \
  distribution of the data (log10)'
+
         Worksheets[nom_feuille].Cells[
             lig_s + i + 3, col_s] = 'wsd.lg=Weighted Standard Deviation of the\
  log-normal distribution of the data (log10)'
+
         i = i + 4
     if dist[3] is True:
         Worksheets[nom_feuille].Cells[
-            lig_s + i, col_s] = 'GWMin=Geometric Min parameter of the Weighted \
+            lig_s + i,
+            col_s] = 'GWMin=Geometric Min parameter of the Weighted \
 log-triangular distribution'
+
         Worksheets[nom_feuille].Cells[
             lig_s + i + 1, col_s] = 'GWMax=Geometric Max parameter of the \
 Weighted log-triangular distribution'
+
         Worksheets[nom_feuille].Cells[
             lig_s + i + 2, col_s] = 'GWMode=Geometric Mode parameter of the \
 Weighted log-triangular distribution'
+
         Worksheets[nom_feuille].Cells[
             lig_s + i + 3, col_s] = 'wmin.lg=Min parameter of the Weighted \
 log-triangular distribution (log10)'
+
         Worksheets[nom_feuille].Cells[
             lig_s + i + 4, col_s] = 'wmax.lg=Max parameter of the Weighted \
 log-triangular distribution (log10)'
+
         Worksheets[nom_feuille].Cells[
             lig_s + i + 5, col_s] = 'wmode.lg=Mode parameter of the Weighted \
 log-triangular distribution (log10)'
@@ -464,11 +484,12 @@ def efface_feuil_inter(nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
     """Efface les feuilles de calcul intermediaires si voulu."""
     for ws in Worksheets:
         if (ws.Name == nom_feuille_pond or ws.Name == nom_feuille_stat or
-            ws.Name == nom_feuille_qemp or ws.Name == nom_feuille_qnorm or
-            ws.Name == nom_feuille_sort or ws.Name == nom_feuille_Ftriang or
-            ws.Name == nom_feuille_qtriang or
-            ws.Name == nom_feuille_err_ve or
-            ws.Name == nom_feuille_err_inv or
+                ws.Name == nom_feuille_qemp or ws.Name == nom_feuille_qnorm or
+                ws.Name == nom_feuille_sort or
+                ws.Name == nom_feuille_Ftriang or
+                ws.Name == nom_feuille_qtriang or
+                ws.Name == nom_feuille_err_ve or
+                ws.Name == nom_feuille_err_inv or
                 ws.Name == nom_feuille_indice):
             del Worksheets[ws.Name]
 
@@ -625,7 +646,7 @@ def ischainevide(texte, message, nomboite, erreur):
     """Test si la chain de texte est vide, error si tel est le cas."""
     if texte == '':
         MsgBox(nomboite, message, 0)
-        # erreur = True
+        erreur = True
         return
 
 

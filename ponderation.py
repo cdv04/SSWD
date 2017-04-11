@@ -1,12 +1,14 @@
 """Ponderation."""
 
+# !/usr/bin/env python
+
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-04-05T10:08:45+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
 # @Filename: ponderation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-06T11:05:29+02:00
+# @Last modified time: 2017-04-10T14:57:43+02:00
 
 from fct_generales import minimum, somme_tableau, trier_collection
 
@@ -139,7 +141,7 @@ def moyenne(aCollection):
             if tmp == aCollection[j].espece:
                 aCollection[i].data += aCollection[j].data
                 aCollection[i].num = aCollection[i].num + 1
-                del(aCollection[j])
+                del (aCollection[j])
                 i = i - 1
                 break
         i = i + 1
@@ -173,7 +175,7 @@ def compte_espece(aCollection, p, nb_espece):
     nb_espece = len(aCollection) - compt
     for i in range(0, len(aCollection)):
         p[i] = aCollection[i].num
-    return(nb_espece)
+    return (nb_espece)
 
 
 def calcul_prob_cumul(aCollection, a):
@@ -253,7 +255,7 @@ def calcul_nbvar(n_optim, data_co, pcat, nb_taxo, nbvar):
     250 est la limite du nombre de donnees que l'on peut tirer compte tenu de
     la limite du nombre de colonnes de excel (version 97) qui est 256
     """
-    return(nbvar)
+    return (nbvar)
 
 
 def calcul_nb_taxo(data_co, nb_taxo):
@@ -262,4 +264,4 @@ def calcul_nb_taxo(data_co, nb_taxo):
     for i in range(0, len(data_co)):
         if (data_co[i].taxo != data_co[i + 1].taxo):
             nb_taxo = nb_taxo + 1
-    return(nb_taxo)
+    return (nb_taxo)
