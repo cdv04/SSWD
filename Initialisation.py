@@ -12,7 +12,7 @@ Problablement inutilisable au niveau de l'IHM.
 # @Project: SSWD
 # @Filename: Initialisation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-10T15:39:25+02:00
+# @Last modified time: 2017-04-12T08:54:53+02:00
 
 import math
 
