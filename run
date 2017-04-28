@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""
+File to execute SSWD.
+
+Parse commande line and csv file.
+"""
+
+# @Author: Zackary BEAUGELIN <gysco>
+# @Date:   2017-04-27T09:39:06+02:00
+# @Email:  zackary.beaugelin@epitech.eu
+# @Project: SSWD
+# @Filename: run.py
+# @Last modified by:   gysco
+# @Last modified time: 2017-04-27T16:09:34+02:00
+
+import argparse
+import sys
+
+import pandas
+
+from Fct_ihm import charger_parametres
+
+
+def isp_type(x):
+    """Check isp type."""
+    x = str(x)
+    if x not in ["w", "u", "m"]:
+        raise argparse.ArgumentTypeError(
+            "%s has to be: m(ean)/w(eighted)/u(nweighted) for poderation" %
+            (x, ))
+    return ()
+
+
+def restricted_float(x):
+    """Check float hazen."""
+    x = float(x)
+    if x < 0.0 or x > 1.0:
+        raise argparse.ArgumentTypeError("%r not in range [0.0, 1.0]" % (x, ))
+    return x
+
+
+def parse_file(filename, colnames=["SpeciesComp", "PhylumSup", "ED"]):
+    """Parse file using pandas module."""
+    if not filename:
+        raise argparse.ArgumentTypeError("Filename (-f) is None.")
+    data = pandas.read_csv(filename, header=0)
+    if len(data.columns) == 1:
+        data = pandas.read_csv(filename, sep=";", header=0)
+    espece = filename + "!"
+    test = filename + "!"
+    for n in data.SpeciesComp.tolist():
+        espece += str(n) + ";"
+        test += str(n) + ";"
+    taxo = filename + "!"
+    for n in data.PhylumSup.tolist():
+        taxo += str(n) + ";"
+    concentration = filename + "!"
+    for n in data.ED.tolist():
+        concentration += str(n) + ";"
+    # print("espece:", espece)
+    # print("taxon:", taxo)
+    # print("concentration", concentration)
+    # print(test)
+    # sys.exit()
+    return (espece, taxo, concentration, test)
+
+
+def main():
+    """Main."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--save", help="Save intermediate operations", action="store_true")
+    parser.add_argument(
+        "--emp", help="Enable empirical law", action="store_true")
+    parser.add_argument(
+        "--normal", help="Enable normal law", action="store_true")
+    parser.add_argument(
+        "--triang", help="Enable triangular law", action="store_true")
+    parser.add_argument("--iproc", help="iproc value", default=1, type=int)
+    parser.add_argument(
+        "--hazen", help="Hazen parameter a", default=.5, type=restricted_float)
+    parser.add_argument("-f", "--file", help="filename")
+    parser.add_argument("--pcat", help="pcat values or colonne", type=str)
+    parser.add_argument(
+        "--bootstrap", help="bootstrap n times", default=1000, type=int)
+    parser.add_argument("--nbvar", help="enable nbvar", action="store_true")
+    parser.add_argument(
+        "--adjustq", help="adjust q for triangular law", action="store_true")
+    parser.add_argument(
+        "--isp", help="poderation type", default=1, type=isp_type)
+    parser.add_argument("--lbl_liste", help="weight of each taxonomic group")
+    args = parser.parse_args()
+    espece, taxo, concentration, test = parse_file(args.file)
+    return (charger_parametres(
+        args.iproc, espece, taxo, concentration, test, args.pcat, (
+            args.pcat == ""), not (args.pcat == ""), args.emp, args.normal,
+        args.triang, args.bootstrap, args.hazen, args.nbvar, args.save,
+        args.lbl_liste, args.triang and args.adjustq, args.isp))
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -8,9 +8,9 @@
 # @Project: SSWD
 # @Filename: ponderation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-10T14:57:43+02:00
+# @Last modified time: 2017-04-24T14:00:40+02:00
 
-from fct_generales import minimum, somme_tableau, trier_collection
+from fct_generales import trier_collection
 
 
 def calcul_ponderation(data_co, pcat, isp, a, nb_taxo):
@@ -51,7 +51,7 @@ def calcul_ponderation(data_co, pcat, isp, a, nb_taxo):
         moyenne(data_co)
     p = list()
     nb_espece = compte_espece(data_co, p, 0)
-    somme_pcat = somme_tableau(pcat)
+    somme_pcat = sum(pcat)
     if (somme_pcat == 0):
         if (isp > 1):
             for i in range(0, len(data_co)):
@@ -115,7 +115,7 @@ def calcul_ponderation(data_co, pcat, isp, a, nb_taxo):
                 nb = 0
                 j = j + 1
         """Normalisation"""
-        somme_p = somme_tableau(p)
+        somme_p = sum(p)
         for i in range(0, len(p)):
             p[i] /= somme_p
     for i in range(0, len(data_co)):
@@ -215,7 +215,7 @@ def calcul_nbvar(n_optim, data_co, pcat, nb_taxo, nbvar):
     taxonomique et des ponderations voulues ou bien renvoie le nombre
     de donnees si pas d'optimisation demandee
     """
-    somme_pcat = somme_tableau(pcat)
+    somme_pcat = sum(pcat)
     """Optimisation demandee et possible"""
     if n_optim is True and somme_pcat != 0:
         nbvar = 0
@@ -239,18 +239,18 @@ def calcul_nbvar(n_optim, data_co, pcat, nb_taxo, nbvar):
         for i in range(0, len(nb_data)):
             gr[i] = nb_data[i] / pcat[i]
         """Calcul de nbvar"""
-        nbvar = minimum(gr)
-        # x = minimum(gr)
+        nbvar = min(gr)
+        # x = min(gr)
         # for i in range(0, len(nb_data)):
         #   gr[i] = x * pcat[i]
         # Calcul de nbvar
         # For i in range(0, len(nb_data))
-        #  nbvar += int(gr[i] / minimum(minimum_tab_dif0(gr), 1))
+        #  nbvar += int(gr[i] / min(minimum_tab_dif0(gr), 1))
         """Pas d'optimisation : nbvar=nbdata"""
     else:
         nbvar = len(data_co)
     x = nbvar
-    nbvar = minimum(x, 250)
+    nbvar = min(x, 250)
     """
     250 est la limite du nombre de donnees que l'on peut tirer compte tenu de
     la limite du nombre de colonnes de excel (version 97) qui est 256
@@ -258,9 +258,9 @@ def calcul_nbvar(n_optim, data_co, pcat, nb_taxo, nbvar):
     return (nbvar)
 
 
-def calcul_nb_taxo(data_co, nb_taxo):
+def calcul_nb_taxo(data_co):
     """Calcul du nombre de categories taxonomiques differentes."""
-    nb_taxo = 1
+    nb_taxo = 0
     for i in range(0, len(data_co)):
         if (data_co[i].taxo != data_co[i + 1].taxo):
             nb_taxo = nb_taxo + 1

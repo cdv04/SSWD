@@ -12,7 +12,7 @@ This class contains the full worksheets (like a Excel file).
 # @Project: SSWD
 # @Filename: Worksheet.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-10T15:00:50+02:00
+# @Last modified time: 2017-04-27T14:45:34+02:00
 
 import numpy as np
 
@@ -20,7 +20,7 @@ import numpy as np
 class Worksheet:
     """Worksheet class."""
 
-    def __init__(self, cells=np.matrix('O;O'), name=""):
+    def __init__(self, cells=np.matrix("0 0;0 0"), name=""):
         """Initialization for cells."""
         self.Cells = cells
         self.Name = name

@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: specific_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-10T14:57:55+02:00
+# @Last modified time: 2017-04-24T14:00:44+02:00
 
 
 def ajoute_series_act(nom_feuille, nseries, ligne_data, col_tax, col_data,

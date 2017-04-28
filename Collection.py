@@ -12,7 +12,7 @@ This file is here to create the typing for Collection.
 # @Project: SSWD
 # @Filename: Collection.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-10T14:56:54+02:00
+# @Last modified time: 2017-04-28T09:51:02+02:00
 
 
 class Collection():
@@ -24,10 +24,19 @@ class Collection():
     0 -> Integer
     """
 
-    espece = ""
-    taxo = ""
-    test = ""
-    data = 0.0
-    num = 0
-    pond = 0.0
-    pcum = 0.0
+    def __repr__(self):
+        """Return str of class."""
+        return (self.espece + "\t" + self.taxo + "\t" + str(self.data))
+
+    def __init__(self, test="C", pond=1., num=1, pcum=1.):
+        """Init method."""
+        self.espece = ""
+        self.taxo = ""
+        self.test = test
+        self.data = 0.0
+        self.num = num
+        self.pond = pond
+        self.pcum = pcum
+        self.std = 0.0
+        self.act = 0.0
+        self.pcum_a = 0.0

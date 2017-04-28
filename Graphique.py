@@ -10,7 +10,7 @@ A remettre completement en forme grace a numpy
 # @Project: SSWD
 # @Filename: Graphique.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-12T10:33:49+02:00
+# @Last modified time: 2017-04-24T14:09:01+02:00
 
 from fct_generales import sp_opt
 
@@ -31,13 +31,13 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     lig_qbs    -> ligne qualites borne superieure de l'intervalle de confiance
     col_deb    -> colonne debut des donnees numeriques
      col_fin    -> colonne fin des donnees numeriques
-     col_tax  -> colonne des indicateurs de categories taxonomiques pour representation
-       points differencies
+     col_tax  -> colonne des indicateurs de categories taxonomiques
+                 pour representation points differencies
     col_data  -> colonne des donnees de concentration
     col_pcum  -> colonne des probabilites cumulees empiriques
     ligne_data -> numero de la premiere ligne du tableau des donnees data
-    col_data_le colonne des donnees data pour representation d'une ligne continue entre
-      les points empiriques
+    col_data_le colonne des donnees data pour representation d'une ligne
+    continue entre les points empiriques
     col_pcum_le colonne des donnees de probabilite cumulee ponderee empirique
     pour representation ligne continue  si loi = empirique
     loi -> type de di_stribution (1=empirique, 2=normal, 3=triang)
@@ -181,8 +181,9 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     if (_select0 == 2):
         # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 9, 7.5, 80, 25).Select()
         #   Selection.Characters.text = "R_ = " & FormatNumber(R2, 4)
-        _str = 'R_ = ' + Format(R2, '#0.0000') + '\n' + 'KSpvalue = ' + Format(
-            Pvalue, '#0.000')
+        _str = 'R_ = ' + '{}'.format(
+            ':.4f',
+            R2, ) + '\n' + 'KSpvalue = ' + '{}'.format(':.3f', Pvalue)
         # Selection.Characters.text = _str
         # Selection.AutoScaleFont = False
         long_chaine = len(_str)
@@ -192,8 +193,8 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
         # _with9.Size = 8
         # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 330, 7.5,
         # 80, 25).Select()
-        _str = ' wm.lg = ' + Format(
-            mup, '#0.00') + '\n' + ' wsd.lg = ' + Format(sigmap, '#0.00')
+        _str = ' wm.lg = ' + '{}'.format(
+            ':.2f', mup) + '\n' + ' wsd.lg = ' + '{}'.format(':.2f', sigmap)
         # Selection.Characters.text = _str
         # Selection.AutoScaleFont = False
         long_chaine = len(_str)
@@ -204,8 +205,9 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     elif (_select0 == 3):
         # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 9, 7.5, 80, 25).Select()
         # _str = "R_ = " & Format(R2, "#0.0000")
-        _str = 'R_ = ' + Format(R2, '#0.0000') + '\n' + 'KSpvalue = ' + Format(
-            Pvalue, '#0.000')
+        _str = 'R_ = ' + '{}'.format(
+            ':.4f',
+            R2, ) + '\n' + 'KSpvalue = ' + '{}'.format(':.3f', Pvalue)
         # Selection.Characters.text = _str
         # Selection.AutoScaleFont = False
         long_chaine = len(_str)
@@ -215,9 +217,10 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
         # _with11.Size = 8
         # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 330, 7.5,
         # 80, 35).Select()
-        _str = ' wmin.lg = ' + Format(
-            _min, '#0.00') + '\n' + ' wmax.lg = ' + Format(
-                _max, '#0.00') + '\n' + ' wmode.lg = ' + Format(mode, '#0.00')
+        _str = ' wmin.lg = ' + '{}'.format(
+            ':.2f', _min) + '\n' + ' wmax.lg = ' + '{}'.format(
+                ':.2f', _max) + '\n' + ' wmode.lg = ' + '{}'.format(
+                    ':.2f', mode)
         # Selection.Characters.text = _str
         # Selection.AutoScaleFont = False
         long_chaine = len(_str)

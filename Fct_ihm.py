@@ -1,8 +1,4 @@
-"""
-Controle de l'IHM.
-
-Probablement inutilisable.
-"""
+"""Controle de l'IHM."""
 
 # !/usr/bin/env python
 
@@ -12,17 +8,22 @@ Probablement inutilisable.
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-11T15:53:48+02:00
+# @Last modified time: 2017-04-28T09:55:33+02:00
+
+import sys
+
+import numpy as np
 
 from fct_generales import (ischainevide, rech_l1c1, rechercher_categorie,
                            trier_collection, trier_tableau)
 from Initialisation import init_collection
+from Lancement_sswd import lance
 from MsgBox import MsgBox
 from ponderation import calcul_nb_taxo
-from specific_sswd import filtre_collection_act, init_collection_act
+from specific_sswd import filtre_collection_act  # init_collection_act
 
 
-def recherche_nom_feuille(plage, erreur, nom_feuille, data_plage):
+def recherche_nom_feuille(plage):
     """Recherche nom_feuille contenu dans RefEdit et data_plage."""
     erreur = False
     separateur = '!'
@@ -40,42 +41,42 @@ def recherche_nom_feuille(plage, erreur, nom_feuille, data_plage):
         erreur = True
         return
     else:
-        nom_feuille = plage[1:ipos - 1]
-        long_tot = len(plage)
-        data_plage = plage[ipos + 1:long_tot]
+        nom_feuille = plage[1:ipos]
+        data_plage = plage[ipos + 1:]
+    return (nom_feuille, data_plage, erreur)
 
 
-def trf_plage_cellule(nom_feuille, plage, l1, c1, l2, c2, erreur):
+def trf_plage_cellule(nom_feuille, plage):
     """Recherche les lignes et colonnes d'une plage de cellules."""
     # erreur = False
     global Worksheets
-    if Application.ReferenceStyle == xlR1C1:  # TODO modifie en python IHM
-        """
-        Recherche separateur ":" specifiant la selection d'une plage
-        """
-        ipos_sep = plage.find(':')
-        """Cas d'une selection de colonne et non de plage"""
-        if ipos_sep == 0:
-            # Recherche indice colonne
-            rech_l1c1(plage, l1, c1, 2)
-            c2 = c1
-            l2 = l1
-            while Worksheets[nom_feuille].Cells[l2, c1]:
-                l2 = l2 + 1
-            l2 = l2 - 1
-            """Cas d'une selection d'une plage"""
-        else:
-            """
-            Recherche indice ligne/ colonne de la premiere cellule de
-            la plage
-            """
-            rech_l1c1(plage, l1, c1, 2)
-            """
-            Recherche indice ligne/ colonne de la premiere cellule de
-            la plage
-            """
-            rech_l1c1(plage, l2, c2, ipos_sep + 2)
+    # if Application.ReferenceStyle == xlR1C1:  # TODO modifie en python IHM
+    """
+    Recherche separateur ":" specifiant la selection d'une plage
+    """
+    ipos_sep = plage.find(':')
+    """Cas d'une selection de colonne et non de plage"""
+    if ipos_sep == 0:
+        # Recherche indice colonne
+        l1, c1 = rech_l1c1(plage, 2)
+        c2 = c1
+        l2 = l1
+        while Worksheets[nom_feuille].Cells[l2, c1]:
+            l2 = l2 + 1
+        l2 = l2 - 1
+        """Cas d'une selection d'une plage"""
     else:
+        """
+        Recherche indice ligne/ colonne de la premiere cellule de
+        la plage
+        """
+        l1, c1 = rech_l1c1(plage, 2)
+        """
+        Recherche indice ligne/ colonne de la premiere cellule de
+        la plage
+        """
+        l2, c2 = rech_l1c1(plage, ipos_sep + 2)
+    """else:
         # TODO pythoneries
         # plage = Worksheets[nom_feuille].Range(plage).AddressLocal(
         #     ReferenceStyle=xlA1)
@@ -86,7 +87,8 @@ def trf_plage_cellule(nom_feuille, plage, l1, c1, l2, c2, erreur):
         # while Worksheets[nom_feuille].Range(plage).Cells(i, 1):
         #     i = i + 1
         # l2 = Worksheets[nom_feuille].Range(plage).Cells(i - 1, 1).Row
-        # c2 = Worksheets[nom_feuille].Range(plage).Cells(i - 1, 1).Column
+        # c2 = Worksheets[nom_feuille].Range(plage).Cells(i - 1, 1).Column"""
+    return (l1, c1, l2, c2, False)
 
 
 def lire_pcat(val_pcat, pcat, dim_pcat, erreur):
@@ -115,31 +117,32 @@ def lire_pcat(val_pcat, pcat, dim_pcat, erreur):
         pcat[i] = float(val_pcat[debut:ipos - debut])
         debut = ipos + 1
         ipos = ipos + 1
+    return (erreur)
 
 
 def afficher_taxo(data_taxo, liste_taxo, erreur):
     """Bouton pcat enter weight values est actionne."""
     """Recherche du nom de la feuille"""
-    recherche_nom_feuille(data_taxo, erreur, nom_feuille,
-                          plage)  # TODO return nom_feuille, plage
-    if erreur is True:
+    nom_feuille, plage, erreur = recherche_nom_feuille(data_taxo)
+    if erreur:
         return
     """Recherche plage de cellules"""
-    trf_plage_cellule(nom_feuille, plage, l1, c1, l2, c2, erreur)
-    if erreur is True:
+    l1, c1, l2, c2, erreur = trf_plage_cellule(nom_feuille, plage)
+    if erreur:
         return
     """
     Les nom taxo sont charges dans un tableau et tries par ordre
     alphabetique
     """
     # Worksheets[nom_feuille].Activate()
-    tmp = Worksheets[nom_feuille].Range(Cells[l1, c1], Cells[l2, c2]).Value
+    # tmp = Worksheets[nom_feuille].Range(Cells[l1, c1], Cells[l2, c2])
+    tmp = np.copy(Worksheets[nom_feuille].Cells[l1:l2, c1:c2])
     taxo = list()
     for i in range(0, len(taxo)):
         taxo.append(tmp[i + 1, 1])
     trier_tableau(taxo)
     """Extraction des differentes categories taxo"""
-    rechercher_categorie(taxo, taxo_dif)  # TODO return taxo_dif
+    taxo_dif = rechercher_categorie(taxo)  # TODO return taxo_dif
     """Si une seule categorie taxo, pas de ponderation possible"""
     if len(taxo_dif) < 3:
         erreur = True
@@ -155,101 +158,77 @@ you cannot enter weight!', 0)
             liste_taxo += taxo_dif[i] + ';'
 
 
-def charger_parametres(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B,
-                       a, n_optim, conserv_inter, nb_taxo, val_pcat, ltaxo,
-                       liste_taxo, triang_ajust, iproc, nom_ve, nom_inv,
-                       nom_testA, nom_al, nom_testC, r_espece, r_taxo,
-                       r_concentration, r_test, txt_p, opt_bt_nul, opt_bt_val,
-                       ch_e, ch_n, ch_t, txt_val_b, txt_val_a, ch_nb, ch_sauve,
-                       lbl_liste, opt_bt_q, cbx_e, nb_vea, nb_inva, erreur):
+def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
+                       opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t, txt_val_b,
+                       txt_val_a, ch_nb, ch_sauve, lbl_liste, opt_bt_q, cbx_e):
     """
     Charge les parametres receuillis par la boite de dialogue.
 
     Execute SSWD
     """
-    if iproc == 1:
-        nomboite = 'SSWD'
-    else:
-        nomboite = 'ACT'
+    data_co = list()
+    nomboite = ('SSWD' if iproc == 1 else 'ACT')
     """Chargement de la collection"""
-    data = r_espece.Value
-    ischainevide(data, 'Select the range or the column of the \
-species or genus names!', nomboite, erreur)
-    if erreur:
-        return
-    recherche_nom_feuille(data, erreur, nom_feuille, plage_espece)
-    if erreur:
-        return
-    trf_plage_cellule(nom_feuille, plage_espece, l1_espece, c1_espece,
-                      l2_espece, c2_espece, erreur)
-    if erreur:
-        return
-    data = r_taxo.Value
-    ischainevide(data, 'Select the range or the column of the trophic \
-levels or taxonomic groups!', nomboite, erreur)
-    if erreur:
-        return
-    recherche_nom_feuille(data, erreur, nom_feuille, plage_taxo)
-    if erreur:
-        return
-        trf_plage_cellule(nom_feuille, plage_taxo, l1_taxo, c1_taxo, l2_taxo,
-                          c2_taxo, erreur)
-    if erreur:
-        return
-    data = r_concentration.Value
-    ischainevide(data, 'Select the range or the column of concentration data!',
-                 nomboite, erreur)
-    if erreur:
-        return
-    recherche_nom_feuille(data, erreur, nom_feuille, plage_data)
-    if erreur:
-        return
-        trf_plage_cellule(nom_feuille, plage_data, l1_data, c1_data, l2_data,
-                          c2_data, erreur)
-    if erreur:
-        return
+    r_x = [r_espece, r_taxo, r_concentration]
+    plage_x = [None, None, None]
+    # l1 = [0, 0, 0]
+    # c1 = [0, 0, 0]
+    # l2 = [0, 0, 0]
+    # c2 = [0, 0, 0]
+    str_x = [
+        "the species or genus names!",
+        "the trophic levels or taxonomic groups!", "concentration data!"
+    ]
+    for i in range(0, len(r_x)):
+        data = r_x[i]
+        assert (
+            ischainevide(data, 'Select the range or the column of ' + str_x[i],
+                         nomboite) is False)
+        nom_feuille, plage_x[i], erreur = recherche_nom_feuille(data)
+        assert (erreur is False)
+        # l1[i], c1[i], l2[i], c2[i], erreur = trf_plage_cellule(
+        #     nom_feuille, plage_x[i])
+        # assert (erreur is False)
     if (iproc == 1):
         """Collection SSWD"""
-        init_collection(nom_feuille, l1_espece + 1, l1_taxo + 1, l1_data + 1,
-                        c1_espece, c1_taxo, c1_data, data_co)
+        # data_co = plage_x.copy()
+        init_collection(data_co, plage_x[0].split(";"), plage_x[1].split(";"),
+                        plage_x[2].split(";"))
+        print(data_co)
+        sys.exit()
+        # init_collection(nom_feuille, l1[0] + 1, l1[1] + 1, l1[2] + 1, c1[0],
+        #                 c1[1], c1[2], data_co)
     else:
         """Collection ACT"""
-        data = r_test.Value
-        recherche_nom_feuille(data, erreur, nom_feuille, plage_test)
-        if erreur:
-            return
-        trf_plage_cellule(nom_feuille, plage_test, l1_test, c1_test, l2_test,
-                          c2_test, erreur)
-        if erreur:
-            return
-        init_collection_act(nom_feuille, l1_espece + 1, l1_taxo + 1,
-                            l1_data + 1, l1_test, c1_espece, c1_taxo, c1_data,
-                            c1_test, data_co, nom_ve, nom_inv, nom_al,
-                            nom_testC, nom_testA)
-        filtre_collection_act(data_co, nom_ve, nom_inv, nom_testA, nom_al,
-                              nb_vea, nb_inva, erreur)
+        data = r_test
+        erreur, plage_test, nom_feuille = recherche_nom_feuille(data)
+        assert (erreur is False)
+        # l1_test, c1_test, l2_test, c2_test, erreur = trf_plage_cellule(
+        #     nom_feuille, plage_test)
+        # assert (erreur is False)
+        # init_collection_act(nom_feuille, l1[0] + 1, l1[1] + 1, l1[2] + 1,
+        #                     l1_test, c1[0], c1[1], c1[2], c1_test, data_co,
+        #                     "", "", "", "", "")
+        data_co = plage_test.copy()
+        filtre_collection_act(data_co, "", "", "", "", 1, 1, erreur)
         # change_nom_taxo(data_co)
     """Titre des colonnes de data_co"""
-    nom_colonne[1] = Worksheets[nom_feuille].Cells[l1_espece, c1_espece]
-    nom_colonne[2] = Worksheets[nom_feuille].Cells[l1_taxo, c1_taxo]
-    nom_colonne[3] = Worksheets[nom_feuille].Cells[l1_data, c1_data]
-    nom_colonne[4] = 'Weight'
-    nom_colonne[5] = 'Weighted Emp. Cumul. Prob.'
-    if (iproc == 2):
-        nom_colonne[6] = 'ACT data'
-        nom_colonne[7] = 'Weighted Emp. Cumul. Prob. Acute'
+    nom_colonne = list()
+    nom_colonne.append("PhylumSup")
+    # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[0], c1[0]])
+    # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[1], c1[1]])
+    # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[2], c1[2]])
+    nom_colonne.append('Weight')
+    nom_colonne.append('Weighted Emp. Cumul. Prob.')
+    check_nom_colonne(iproc, nom_colonne)
     """Type de pondération espece"""
-    if (iproc == 1):
-        isp = cbx_e.ListIndex
-        isp = isp + 1
-    else:
-        isp = 1
+    isp = (cbx_e + 1 if (iproc == 1) else 1)
     """Pcat : pondération taxonomie"""
     trier_collection(data_co, 2, 1)
-    calcul_nb_taxo(data_co, nb_taxo)
+    nb_taxo = calcul_nb_taxo(data_co)
     pcat = list()
-    val_pcat = txt_p.text
-    if opt_bt_nul.Value is True:
+    val_pcat = txt_p
+    if opt_bt_nul is True:
         for i in range(1, nb_taxo):
             pcat.append(0)
     else:
@@ -258,16 +237,14 @@ levels or taxonomic groups!', nomboite, erreur)
                    0)
             erreur = True
             return
-        lire_pcat(val_pcat, pcat, nb_taxo, erreur)
-        if erreur:
-            return
+        assert (lire_pcat(val_pcat, pcat, nb_taxo) is False)
     """parametre de Hazen a"""
-    if txt_val_a.text == '':
+    if txt_val_a is None:
         MsgBox('SSWD', 'You must chose a value for the Hazen parameter \
 between 0 and 1, strictly less than 1', 0)
         erreur = True
         return
-    a = float(txt_val_a.text)
+    a = float(txt_val_a)
     if a >= 1:
         MsgBox('SSWD'
                'The Hazen parameter must be included between \
@@ -275,27 +252,37 @@ between 0 and 1, strictly less than 1', 0)
         erreur = True
         return
     """Loi statistique 1:empirique, 2:normal, 3:triangulaire"""
-    dist[1] = ch_e.Value
-    dist[2] = ch_n.Value
-    dist[3] = ch_t.Value
+    dist = list()
+    dist.append(ch_e)
+    dist.append(ch_n)
+    dist.append(ch_t)
     """B"""
-    if txt_val_b.text == '':
+    if txt_val_b == '':
         MsgBox('SSWD',
                'You must chose a value for the number of bootstrap samples', 0)
         erreur = True
         return
-    B = int(txt_val_b.text)
+    B = int(txt_val_b)
     """nbvar : nombre de données tirées"""
-    n_optim = ch_nb.Value
+    n_optim = ch_nb
     """Sauvegarde des feuilles de resultats intermediaires"""
-    conserv_inter = ch_sauve.Value
+    conserv_inter = ch_sauve
     """Recupération de la liste taxo"""
-    if opt_bt_val.Value is True:
-        liste_taxo = lbl_liste.text
+    if opt_bt_val is True:
+        liste_taxo = lbl_liste
         pos = liste_taxo.find('\n')
         ltaxo = liste_taxo[:pos + 1]
     """
     Option d'ajustement pour loi triangulaire,
     si True ajustement sur quantiles, sinon sur probabilités cumulées
     """
-    triang_ajust = opt_bt_q.Value
+    triang_ajust = opt_bt_q
+    lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
+          conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust)
+
+
+def check_nom_colonne(iproc, nom_colonne):
+    """Verifie le iproc et ajoute des nom de colonnes si besoin."""
+    if (iproc == 2):
+        nom_colonne.append('ACT data')
+        nom_colonne.append('Weighted Emp. Cumul. Prob. Acute')

@@ -12,26 +12,15 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-10T14:56:57+02:00
+# @Last modified time: 2017-04-28T09:04:45+02:00
 
+import operator
 import sys
 
 from MsgBox import MsgBox
 from Worksheet import Worksheet
 
 global Worksheets
-
-
-def somme_tableau(a):
-    """
-    Fonction de calcul de la somme des termes d'un vecteur.
-
-    @param a: tableau de reels
-    """
-    _ret = 0
-    for i in range(0, len(a)):
-        _ret += a[i]
-    return _ret
 
 
 def trier_collection(aCollection, itri, isens):
@@ -44,51 +33,58 @@ def trier_collection(aCollection, itri, isens):
     @param itri: numero de l'item sur lequel on effectue le tri
     @param isens: sens du tri (0=decroissant,1=croissant)
     """
-    tmp_col = list()
-    j = 1
-    while aCollection.Count > 0:
-        if (itri <= 3):
-            mini = 'z'
-            maxi = 'A'
-            """ne pas modifier sinon ça ne marche plus"""
-        else:
-            mini = 10**300
-            maxi = -10**300
-        for i in range(0, len(aCollection)):
-            if (itri == 1):
-                tmp = aCollection[i].espece
-            elif (itri == 2):
-                tmp = aCollection[i].taxo
-            elif (itri == 3):
-                tmp = aCollection[i].test
-            elif (itri == 4):
-                tmp = aCollection[i].data
-            elif (itri == 5):
-                tmp = aCollection[i].num
-            elif (itri == 6):
-                tmp = aCollection[i].pond
-            elif (itri == 7):
-                tmp = aCollection[i].pcum
-            elif (itri == 8):
-                tmp = aCollection[i].std
-            elif (itri == 9):
-                tmp = aCollection[i].act
-            elif (itri == 10):
-                tmp = aCollection[i].pcum_a
-            if (isens == 1):
-                if (tmp <= mini):
-                    mini = tmp
-                    num = i
-            else:
-                if (tmp >= maxi):
-                    maxi = tmp
-                    num = i
-        tmp_col.append(aCollection[num])
-        del aCollection[num]
-        j += 1
-    for i in range(0, len(tmp_col)):
-        aCollection.append(tmp_col[i])
-    tmp_col = None
+    # tmp_col = list()
+    tmp_list = [
+        "espece", "taxo", "test", "data", "num", "pond", "pcum", "std", "act",
+        "pcum_a"
+    ]
+    # j = 1
+    aCollection.sort(
+        key=operator.attrgetter(tmp_list[itri]),
+        reverse=(True if isens == 0 else False))
+    # while aCollection.Count > 0:
+    #     if (itri <= 3):
+    #         mini = 'z'
+    #         maxi = 'A'
+    #         """ne pas modifier sinon ça ne marche plus"""
+    #     else:
+    #         mini = 10**300
+    #         maxi = -10**300
+    #     for i in range(0, len(aCollection)):
+    #         if (itri == 1):
+    #             tmp = aCollection[i].espece
+    #         elif (itri == 2):
+    #             tmp = aCollection[i].taxo
+    #         elif (itri == 3):
+    #             tmp = aCollection[i].test
+    #         elif (itri == 4):
+    #             tmp = aCollection[i].data
+    #         elif (itri == 5):
+    #             tmp = aCollection[i].num
+    #         elif (itri == 6):
+    #             tmp = aCollection[i].pond
+    #         elif (itri == 7):
+    #             tmp = aCollection[i].pcum
+    #         elif (itri == 8):
+    #             tmp = aCollection[i].std
+    #         elif (itri == 9):
+    #             tmp = aCollection[i].act
+    #         elif (itri == 10):
+    #             tmp = aCollection[i].pcum_a
+    #         if (isens == 1):
+    #             if (tmp <= mini):
+    #                 mini = tmp
+    #                 num = i
+    #         else:
+    #             if (tmp >= maxi):
+    #                 maxi = tmp
+    #                 num = i
+    #     tmp_col.append(aCollection[num])
+    #     del aCollection[num]
+    #     j += 1
+    # for i in range(0, len(tmp_col)):
+    #     aCollection.append(tmp_col[i])
+    # tmp_col = None
 
 
 def encadrer_colonne(nom_feuille, l1, c1, l2, c2):
@@ -216,34 +212,6 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
     Worksheets[nom_feuille_pond] = Worksheet()
 
 
-def maximum(a, b):
-    """Renvoie le maximum de 2 valeurs."""
-    return (a if a > b else b)
-
-
-def minimum(a, b):
-    """Renvoie le minimum de 2 valeurs."""
-    return (a if a < b else b)
-
-
-def minimum_tab(a):
-    """Renvoie la valeur minimum d'un tableau de reels."""
-    _ret = a[0]
-    for i in range(1, len(a)):
-        if (a[i] < _ret):
-            _ret = a[i]
-    return (_ret)
-
-
-def maximum_tab(a):
-    """Renvoie la valeur maximum d'un tableau de reels."""
-    _ret = a[0]
-    for i in range(1, len(a)):
-        if (a[i] > _ret):
-            _ret = a[i]
-    return (_ret)
-
-
 def minimum_tab_dif0(a):
     """Renvoie la valeur minimum <> 0 d'un tableau de reels."""
     _ret = None
@@ -258,7 +226,7 @@ def minimum_tab_dif0(a):
     return _ret
 
 
-def calcul_lig_graph(lig_deb, lig_p, lig_qbe, lig_qbi, lig_qbs):
+def calcul_lig_graph(lig_deb):
     """
     Calcul les indices de lignes pour les graphes dans nom_feuille_res.
 
@@ -280,6 +248,7 @@ def calcul_lig_graph(lig_deb, lig_p, lig_qbe, lig_qbi, lig_qbs):
     lig_qbe = lig_deb + 2
     lig_qbi = lig_deb + 5
     lig_qbs = lig_deb + 6
+    return (lig_p, lig_qbe, lig_qbi, lig_qbs)
 
 
 def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
@@ -393,11 +362,8 @@ log-triangular distribution (log10)'
 log-triangular distribution (log10)'
 
 
-def calcul_col_res(col_deb, col_fin, col_data1, col_data2, col_tax, col_data,
-                   col_pcum, col_data_le, col_pcum_le, c_hc, nbcol_vide,
-                   pourcent, dist, ind_tax, ind_data, ind_pcum, nom_colonne,
-                   col_data_act, col_data_act_le, ind_data_act, col_pcum_a,
-                   ind_pcum_a):
+def calcul_col_res(c_hc, nbcol_vide, pourcent, dist, ind_tax, ind_data,
+                   ind_pcum, nom_colonne, ind_data_act, ind_pcum_a):
     """
     Calcul des indices de colonnes pour l'affichage des resultats.
 
@@ -446,6 +412,9 @@ def calcul_col_res(col_deb, col_fin, col_data1, col_data2, col_tax, col_data,
     col_data_le = col_data2 + ind_data - 1
     col_pcum_le = col_data2 + ind_pcum - 1
     col_data_act_le = col_data2 + ind_data_act - 1
+    return (col_deb, col_fin, col_data1, col_data2, col_tax, col_data,
+            col_pcum, col_data_le, col_pcum_le, col_data_act, col_data_act_le,
+            col_pcum_a)
 
 
 def calcul_ref_pond(col_deb, col_data, col_pcum, col_pond, l1, lig_deb,
@@ -474,6 +443,7 @@ def calcul_ref_pond(col_deb, col_data, col_pcum, col_pond, l1, lig_deb,
     col_pond = col_deb + ind_pond - 1
     col_pcum = col_deb + ind_pcum - 1
     col_data_act = col_deb + ind_data_act - 1
+    return (lig_deb, lig_fin, col_data, col_pond, col_pcum, col_data_act)
 
 
 def efface_feuil_inter(nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
@@ -511,7 +481,7 @@ def trier_tableau(a):
     tmp = None
 
 
-def rechercher_categorie(a, diff):
+def rechercher_categorie(a):
     """
     Recherche les valeurs differentes dans un tableau de strings.
 
@@ -521,6 +491,7 @@ def rechercher_categorie(a, diff):
     !!! Le tableau A doit etre trie dans l'ordre alphabetique !!!
     """
     nb = 0
+    diff = list()
     diff.append(0)
     for i in range(0, len(a)):
         if a(i) != a(i + 1):
@@ -529,6 +500,7 @@ def rechercher_categorie(a, diff):
             nb += 1
     if nb == 0:
         diff = list(a[0])
+    return (diff)
 
 
 def isnumeric(code):
@@ -570,7 +542,7 @@ def csd(val_dbl):
         car_ascii = int(str(val_dbl)[i])
         if (car_ascii == 44):
             car_ascii = 46
-        _ret += str(car_ascii)
+        _ret += chr(car_ascii)
     return _ret
 
 
@@ -588,7 +560,7 @@ def trier_tableau_num(a):
     tmp = list()
     for i in range(0, len(a)):
         tmp.append(a[i])
-    maxi = maximum_tab(a)
+    maxi = max(a)
     num = 0
     for i in range(0, len(a)):
         mini = maxi
@@ -601,31 +573,34 @@ def trier_tableau_num(a):
     tmp = None
 
 
-def rech_l1c1(_str, lig, col, deb_str):
+def rech_l1c1(_str, deb_str):
     """
-    Recherche indice colonne +/- ligne dans une reférence du type L1C1.
+    Recherche indice colonne +/- ligne dans une reference du type L1C1.
 
-    Indépendamment de la langue utilisateur
+    Independamment de la langue utilisateur
     """
-    lig = 0
-    col = 0
-    lg = len(_str)
-    tmp = _str[deb_str:lg]
-    lig = int(tmp)
-    n = len(str(lig)) + deb_str + 1
-    if n > lg:
-        col = lig
-        lig = 1
-    else:
-        tmp = _str[n:lg]
-        col = int(tmp)
+    return (len(_str.split(";")), deb_str)
+    # lig = 0
+    # col = 0
+    # lg = len(_str)
+    # tmp = _str[deb_str:lg]
+    # lig = int(tmp)
+    # n = len(str(lig)) + deb_str + 1
+    # if n > lg:
+    #     col = lig
+    #     lig = 1
+    # else:
+    #     tmp = _str[n:lg]
+    #     col = int(tmp)
+    # return (lig, col)
 
 
 def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
                           nbvar, data):
     """
-    Permet de trier les tirages aléatoires de nom_feuille_stat
-    sauvegarder triés dans une nouvelle dans nom_feuille_sort
+    Permet de trier les tirages aleatoires de nom_feuille_stat.
+
+    sauvegarder tries dans une nouvelle dans nom_feuille_sort
     """
     # Worksheets.Add()
     # ActiveSheet.Name = nom_feuille_sort
@@ -642,12 +617,12 @@ def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
     # Worksheets(nom_feuille_sort).Cells(1, 1).Select()
 
 
-def ischainevide(texte, message, nomboite, erreur):
+def ischainevide(texte, message, nomboite, erreur=False):
     """Test si la chain de texte est vide, error si tel est le cas."""
     if texte == '':
         MsgBox(nomboite, message, 0)
         erreur = True
-        return
+    return (erreur)
 
 
 def sp_opt(isp):

@@ -10,11 +10,15 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-11T09:37:52+02:00
+# @Last modified time: 2017-04-24T14:00:26+02:00
 
+from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
+                                  calcul_ic_triang_p, calcul_ic_triang_q,
+                                  calcul_R2, calcul_res, tirage)
 from fct_generales import (affichage_options, calcul_col_res, calcul_lig_graph,
                            calcul_ref_pond, cellule_gras, ecrire_data_co,
-                           ecrire_titre, verif)
+                           ecrire_titre, efface_feuil_inter, verif)
+from Graphique import decaler_graph, tracer_graphique
 from Initialisation import initialise
 from ponderation import calcul_nbvar, calcul_ponderation, trier_collection
 
@@ -94,10 +98,10 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
                      parametres
     modifiables par l'utilisateur averti
     """
-    initialise(pourcent, pcent, nom_feuille_pond, nom_feuille_stat,
-               nom_feuille_res, nom_feuille_qemp, nom_feuille_qnorm,
-               nom_feuille_sort, nom_feuille_Ftriang, nom_feuille_qtriang,
-               titre_graf, titre_res, a, ind_hc, titre_data, titre_axe)
+    (nom_feuille_pond, nom_feuille_stat, nom_feuille_res, nom_feuille_qemp,
+     nom_feuille_qnorm, nom_feuille_sort, nom_feuille_Ftriang,
+     nom_feuille_qtriang, pourcent, ind_hc, pcent, titre_graf, titre_axe,
+     titre_res, titre_data) = initialise()
     """
     Test sur l'existence de feuilles de resultats et creation des feuilles
     necessaires
@@ -116,10 +120,10 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
                    False, iproc)
     nbdata = data_co.Count
     """2. Calcul nbvar et Tirages aleatoires"""
-    calcul_nbvar(n_optim, data_co, pcat, nb_taxo, nbvar)
-    calcul_ref_pond(pond_col, pond_col_data, pond_col_pcum, pond_col_pond,
-                    pond_lig, pond_lig_deb, pond_lig_fin, ind_data, ind_pond,
-                    ind_pcum, nbdata, tmp, tmp)
+    nbvar = calcul_nbvar(n_optim, data_co, pcat, nb_taxo)
+    (pond_lig_deb, pond_lig_fin,
+     pond_col_data, pond_col_pond, pond_col_pcum) = calcul_ref_pond(
+         pond_col, pond_lig, ind_data, ind_pond, ind_pcum, nbdata, tmp, tmp)
     tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, pond_lig_deb,
            pond_col_data, pond_lig_fin, pond_col_pond)
     """
@@ -149,12 +153,12 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     Calcul des indices des colonnes d'affichage des resultats dans
     nom_feuille_res
     """
-    calcul_col_res(col_deb, col_fin, col_data1, col_data2, col_tax, col_data,
-                   col_pcum, col_data_le, col_pcum_le, col_hc, nbcol_vide,
-                   pourcent, dist, ind_tax, ind_data, ind_pcum,
-                   nom_colonne(), tmp, tmp, tmp, tmp, tmp)
+    (col_deb, col_fin, col_data1, col_data2, col_tax, col_data, col_pcum,
+     col_data_le, col_pcum_le, col_data_act, col_data_act_le,
+     col_pcum_a) = calcul_col_res(col_hc, nbcol_vide, pourcent, dist, ind_tax,
+                                  ind_data, ind_pcum, nom_colonne, tmp, tmp)
     """Calcul des indices des lignes pour les graphes de nom_feuille_res"""
-    calcul_lig_graph(lig_hc, lig_p, lig_qbe, lig_qbi, lig_qbs)
+    (lig_p, lig_qbe, lig_qbi, lig_qbs) = calcul_lig_graph(lig_hc)
     """initialisation de ligne_tot"""
     ligne_tot = 0
     """
@@ -182,19 +186,19 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         calcul_ic_empirique(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                             nom_feuille_qemp, nom_feuille_sort, nbvar, a)
         """Calcul des valeurs best-estimates et affichage des resultats"""
-        calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col,
-                   pond_col_data, pond_col_pcum, lig_hc, col_hc, nbvar,
-                   ligne_tot, loi, titre_res, pcent, pourcent, data_co,
-                   nom_colonne, nom_feuille_res, nom_feuille_qemp,
-                   nom_feuille_pond, '', mup, sigmap, c_mu, _min, _max, mode,
-                   c_min, triang_ajust, iproc, nbdata, data_c)
+        (mup, sigmap, c_mu, _min, _max, mode, c_min, data_c) = calcul_res(
+            l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
+            pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
+            pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
+            nom_feuille_qemp, nom_feuille_pond, '', triang_ajust, iproc,
+            nbdata)
         """Graphes de SSWD"""
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
                          col_deb, col_fin, lig_data, col_tax, col_data,
                          col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
-                         R2_norm, Pvalue_norm, nbdata, mup, sigmap, _min, _max,
-                         mode, titre_axe, val_pcat, liste_taxo, isp, tmp, tmp,
-                         iproc, tmp)
+                         0, 0, nbdata, mup, sigmap, _min, _max, mode,
+                         titre_axe, val_pcat, liste_taxo, isp, tmp, tmp, iproc,
+                         tmp)
         lig_hc = ligne_tot + nblig_vide + 1
         calcul_lig_graph(lig_hc, lig_p, lig_qbe, lig_qbi, lig_qbs)
     """loi normale"""
@@ -202,14 +206,14 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         loi = 2
         calcul_ic_normal(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                          nom_feuille_qnorm, c_mu)
-        calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col,
-                   pond_col_data, pond_col_pcum, lig_hc, col_hc, nbvar,
-                   ligne_tot, loi, titre_res, pcent, pourcent, data_co,
-                   nom_colonne, nom_feuille_res, nom_feuille_qnorm,
-                   nom_feuille_pond, nom_feuille_stat, mup, sigmap, c_mu, _min,
-                   _max, mode, c_min, triang_ajust, iproc, nbdata, data_c)
-        calcul_R2(data_co, loi, R2_norm, Pvalue_norm, mup, sigmap, _min, _max,
-                  mode, nbdata, data_c)
+        (mup, sigmap, c_mu, _min, _max, mode, c_min, data_c) = calcul_res(
+            l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
+            pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
+            pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
+            nom_feuille_qnorm, nom_feuille_pond, nom_feuille_stat,
+            triang_ajust, iproc, nbdata)
+        R2_norm, Pvalue_norm = calcul_R2(data_co, loi, mup, sigmap, _min, _max,
+                                         mode, nbdata, data_c)
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
                          col_deb, col_fin, lig_data, col_tax, col_data,
                          col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
@@ -229,15 +233,14 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
             calcul_ic_triang_p(l1, c1, l2, c2, c1, nbvar, a, pourcent,
                                nom_feuille_stat, nom_feuille_sort,
                                nom_feuille_Ftriang, nom_feuille_qtriang, c_min)
-        calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col,
-                   pond_col_data, pond_col_pcum, lig_hc, col_hc, nbvar,
-                   ligne_tot, loi, titre_res, pcent, pourcent, data_co,
-                   nom_colonne, nom_feuille_res, nom_feuille_qtriang,
-                   nom_feuille_pond, nom_feuille_Ftriang, mup, sigmap, c_mu,
-                   _min, _max, mode, c_min, triang_ajust, iproc, nbdata,
-                   data_c)
-        calcul_R2(data_co, loi, R2_triang, Pvalue_triang, mup, sigmap, _min,
-                  _max, mode, nbdata, data_c)
+        (mup, sigmap, c_mu, _min, _max, mode, c_min, data_c) = calcul_res(
+            l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
+            pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
+            pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
+            nom_feuille_qtriang, nom_feuille_pond, nom_feuille_Ftriang,
+            triang_ajust, iproc, nbdata)
+        R2_triang, Pvalue_triang = calcul_R2(data_co, loi, mup, sigmap, _min,
+                                             _max, mode, nbdata, data_c)
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
                          col_deb, col_fin, lig_data, col_tax, col_data,
                          col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
