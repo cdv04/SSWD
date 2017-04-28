@@ -12,11 +12,11 @@ Problablement inutilisable au niveau de l'IHM.
 # @Project: SSWD
 # @Filename: Initialisation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-12T08:54:53+02:00
+# @Last modified time: 2017-04-28T09:55:14+02:00
 
 import math
 
-import Collection
+from Collection import Collection
 
 
 def init_apropos():
@@ -128,35 +128,41 @@ def init_ihm():
         frm_sswd.Opt_ajust_p.Enabled = False
 
 
-def init_collection(nom_feuille, l_espece, l_taxo, l_data, c_espece, c_taxo,
-                    c_data, data_co):
+# def init_collection(nom_feuille, l_espece, l_taxo, l_data, c_espece, c_taxo,
+#                     c_data, data_co):
+def init_collection(data_co, species, taxo, data):
     """
     Charge en memoire les donnees selectionnees par l'utilisateur.
 
     Creation de la collection data_co
     """
-    global Worksheets
-    ligne = Collection()
-    i = 0
-    while Worksheets[nom_feuille].Cells[l_espece + i, c_espece]:
-        ligne = Collection()
-        ligne.espece = Worksheets[nom_feuille].Cells[l_espece + i, c_espece]
-        ligne.taxo = Worksheets[nom_feuille].Cells[l_taxo + i, c_taxo]
-        ligne.test = 'C'
-        ligne.data = math.log(
-            Worksheets[nom_feuille].Cells[l_data + i, c_data]) / math.log(10)
-        ligne.pond = 1
-        ligne.num = 1
-        ligne.pcum = 1
-        data_co.append(ligne)
-        ligne = None
-        i += 1
+    # print(species, taxo, data)
+    for i in range(0, len(species)):
+        if data[i]:
+            line = Collection()
+            line.espece = species[i]
+            line.taxo = taxo[i]
+            line.data = math.log(float(data[i])) / math.log(10)
+            data_co.append(line)
+    # global Worksheets
+    # ligne = Collection()
+    # i = 0
+    # while Worksheets[nom_feuille].Cells[l_espece + i, c_espece]:
+    #     ligne = Collection()
+    #     ligne.espece = Worksheets[nom_feuille].Cells[l_espece + i, c_espece]
+    #     ligne.taxo = Worksheets[nom_feuille].Cells[l_taxo + i, c_taxo]
+    #     ligne.test = 'C'
+    #     ligne.data = math.log(
+    #         Worksheets[nom_feuille].Cells[l_data + i, c_data]) / math.log(10)
+    #     ligne.pond = 1
+    #     ligne.num = 1
+    #     ligne.pcum = 1
+    #     data_co.append(ligne)
+    #     ligne = None
+    #     i += 1
 
 
-def initialise(pourcent, pcent, nom_feuille_pond, nom_feuille_stat,
-               nom_feuille_res, nom_feuille_qemp, nom_feuille_qnorm,
-               nom_feuille_sort, nom_feuille_Ftriang, nom_feuille_qtriang,
-               titre_graf, titre_res, a, ind_hc, titre_data, titre_axe):
+def initialise():
     """
     Initialisation de certains parametres.
 
@@ -203,3 +209,7 @@ def initialise(pourcent, pcent, nom_feuille_pond, nom_feuille_stat,
     titre_data.append('Used data sorted out by increasing concentrations')
     """Parametre de Hazen pour calcul probabilites empiriques"""
     # a = 0.5
+    return (nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
+            nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
+            nom_feuille_Ftriang, nom_feuille_qtriang, pourcent, ind_hc, pcent,
+            titre_graf, titre_axe, titre_res, titre_data)

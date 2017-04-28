@@ -10,13 +10,12 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-13T11:31:52+02:00
+# @Last modified time: 2017-04-24T14:18:13+02:00
 
 import math
 
 from fct_generales import (cellule_gras, compt_inf, csd, ecrire_titre,
-                           encadrer_colonne, maximum_tab, minimum_tab,
-                           trier_tirages_feuille)
+                           encadrer_colonne, trier_tirages_feuille)
 from Worksheet import Worksheet
 
 
@@ -654,12 +653,9 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     procedure SSWD ou ACT
     """
     data_c = list()
-    if iproc == 1:
-        for i in range(0, nbdata):
-            data_c.append(data_co.Item[i].data)
-    else:
-        for i in range(0, nbdata):
-            data_c.append(data_co.Item[i].act)
+    for i in range(0, nbdata):
+        data_c.append(data_co.Item[i].data
+                      if iproc == 1 else data_co.Item[i].act)
     if (loi == 1):
         calculer_be_empirique(data_co, pourcent, nom_feuille_pond,
                               pond_lig_deb, pond_col_pcum, HC_be, nbdata,
@@ -715,9 +711,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
         encadrer_colonne(nom_feuille_res, l_hc + 1, c_hc + ind_hc,
                          l_hc + nbligne_res - 1, c_hc + ind_hc)
     """Infos supplementaires suivant les distributions"""
-    if (loi == 1):
-        pass
-    elif (loi == 2):
+    if (loi == 2):
         Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
                                           1] = 'Best-Estimate'
         Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc + len(pourcent) +
@@ -811,8 +805,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     # Worksheets(nom_feuille_res).Cells(1, 1).Select()
 
 
-def calcul_R2(data_co, loi, R2, Pvalue, mup, sigmap, min, max, mode, nbdata,
-              data_c):
+def calcul_R2(data_co, loi, mup, sigmap, min, max, mode, nbdata, data_c):
     """
     Calcul de R2 et de Pvalue paired TTest.
 
@@ -848,8 +841,7 @@ def calcul_R2(data_co, loi, R2, Pvalue, mup, sigmap, min, max, mode, nbdata,
             # Pth[i] = Application.WorksheetFunction.NormDist(
             #     data_co.Item[i].data, mup, sigmap, True)
             dif[i] = data_co.Item[i].pcum - Pth[i]
-            if dif[i] < 0:
-                dif[i] = -dif[i]
+            dif[i] = math.fabs(dif[i])
     if loi == 3:
         pmode = (mode - min) / (max - min)
         for i in range(0, nbdata):
@@ -875,8 +867,7 @@ def calcul_R2(data_co, loi, R2, Pvalue, mup, sigmap, min, max, mode, nbdata,
                         Pth[i] = 1
 
             dif[i] = data_co.Item[i].pcum - Pth[i]
-            if dif[i] < 0:
-                dif[i] = -dif[i]
+            dif[i] = math.fabs(dif[i])
     """
     Calcul variance et R2
 
@@ -908,7 +899,7 @@ def calcul_R2(data_co, loi, R2, Pvalue, mup, sigmap, min, max, mode, nbdata,
     R2 = 1 - var_resQ / var_data
     """KS dallal wilkinson approximation pvalue"""
     n = nbdata
-    KS = maximum_tab(dif)
+    KS = max(dif)
     if n < 5:
         Pvalue = 0
     else:
@@ -920,6 +911,7 @@ def calcul_R2(data_co, loi, R2, Pvalue, mup, sigmap, min, max, mode, nbdata,
                           0.974598 / math.sqrt(n) + 1.67997 / n)
     if Pvalue > 0.1:
         Pvalue = 0.5
+    return (R2, Pvalue)
 
 
 def calculer_be_empirique(data_co, pourcent, nom_feuille, lig_deb, col_pcum,
@@ -1025,8 +1017,8 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_data,
     # Application.ScreenUpdating = False
     col = col_deb + len(nom_colonne) + 1
     """Definition des valeurs initiale de min, max et mode"""
-    min = minimum_tab(data_c)
-    max = maximum_tab(data_c)
+    min = min(data_c)
+    max = max(data_c)
     mode = (min + max) / 2
     # Worksheets[nom_feuille].Activate()
     Worksheets[nom_feuille].Cells[lig_deb, col] = min
@@ -1095,20 +1087,20 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_data,
 
 
 def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
-                         col_pcum, pourcent, HC_triang, min, max, mode,
+                         col_pcum, pourcent, HC_triang, _min, _max, mode,
                          nom_colonne, nbdata):
     """
     Calcul des HCp% triang meilleure estimation.
 
     (independant des runs bootstrap)
-    pour cela, calcul prealable des parametres min, max et mode,
+    pour cela, calcul prealable des parametres _min, _max et mode,
     ponderes correspondant aux donnees ; estimation par ajustement
     sur les quantiles
 
     @param nom_feuille: nom_feuille_pond
     @param pourcent: table des probabilites x% correspondant au calcul
                      des HCx%
-    @param min, max, mode: parametre de la loi triangulaire, ajustee
+    @param _min, _max, mode: parametre de la loi triangulaire, ajustee
                            sur donnees ponderees
     @param lig_deb: premiere ligne de donnees numeriques dans
                     nom_feuille
@@ -1122,14 +1114,14 @@ def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
     """
     # Application.ScreenUpdating = False
     col = col_deb + len(nom_colonne) + 1
-    """Definition des valeurs initiale de min, max, mode et pmode"""
-    min = minimum_tab(data_c)
-    max = maximum_tab(data_c)
-    mode = (min + max) / 2
+    """Definition des valeurs initiale de _min, max, mode et pmode"""
+    _min = min(data_c)
+    _max = max(data_c)
+    mode = (_min + max) / 2
     # Worksheets[nom_feuille].Activate()
-    Worksheets[nom_feuille].Cells[lig_deb, col] = min
+    Worksheets[nom_feuille].Cells[lig_deb, col] = _min
     Worksheets[nom_feuille].Cells[lig_deb, col].Name = 'cmin'
-    Worksheets[nom_feuille].Cells[lig_deb + 1, col] = max
+    Worksheets[nom_feuille].Cells[lig_deb + 1, col] = _max
     Worksheets[nom_feuille].Cells[lig_deb + 1, col].Name = 'cmax'
     Worksheets[nom_feuille].Cells[lig_deb + 2, col] = mode
     Worksheets[nom_feuille].Cells[lig_deb + 2, col].Name = 'cmode'
@@ -1175,8 +1167,8 @@ def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
     HC_triang meilleure estimation correspondant
     """
     col = col + 1
-    min = Worksheets[nom_feuille].Cells(lig_deb, col)
-    max = Worksheets[nom_feuille].Cells(lig_deb + 1, col)
+    _min = Worksheets[nom_feuille].Cells(lig_deb, col)
+    _max = Worksheets[nom_feuille].Cells(lig_deb + 1, col)
     mode = Worksheets[nom_feuille].Cells(lig_deb + 2, col)
     pmode = (mode - min) / (max - min)
     for i in range(1, len(pourcent)):
