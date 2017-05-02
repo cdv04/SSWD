@@ -11,7 +11,7 @@ Parse commande line and csv file.
 # @Project: SSWD
 # @Filename: run.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-27T16:09:34+02:00
+# @Last modified time: 2017-04-28T10:22:36+02:00
 
 import argparse
 import sys
@@ -93,7 +93,7 @@ def main():
     espece, taxo, concentration, test = parse_file(args.file)
     return (charger_parametres(
         args.iproc, espece, taxo, concentration, test, args.pcat, (
-            args.pcat == ""), not (args.pcat == ""), args.emp, args.normal,
+            args.pcat is None), not (args.pcat is None), args.emp, args.normal,
         args.triang, args.bootstrap, args.hazen, args.nbvar, args.save,
         args.lbl_liste, args.triang and args.adjustq, args.isp))
 

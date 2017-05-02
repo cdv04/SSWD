@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: ponderation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-24T14:00:40+02:00
+# @Last modified time: 2017-05-02T10:26:21+02:00
 
 from fct_generales import trier_collection
 
@@ -153,13 +153,13 @@ def compte_espece(aCollection, p, nb_espece):
     """Compte le nombre d'especes differentes presentes dans les donnees."""
     if (len(aCollection) == 0):
         return
-    i = 1
     nb_espece = 0
-    compt = 0
+    compt = list()
     """Nombre d'espece differentes par categorie taxonomique"""
-    while i <= len(aCollection):
+    for i in range(0, len(aCollection)):
         tmp = aCollection[i].espece
-        prem = True
+        # prem = True
+        compt.append(aCollection[i].espece)
         for j in range(i, len(aCollection)):
             if (aCollection[j - 1].taxo != aCollection[j].taxo):
                 break
@@ -167,14 +167,13 @@ def compte_espece(aCollection, p, nb_espece):
                 aCollection[i].num = aCollection[i].num + 1
                 aCollection[j].num = aCollection[j].num + 1
                 """compte le nombre de doublons"""
-                if (prem):
-                    compt = compt + 1
-                    prem = False
-        i = i + 1
+                # if (prem):
+                #     compt = compt + 1
+                #     prem = False
     """Compte le nombre d'espece differentes dans la collection"""
-    nb_espece = len(aCollection) - compt
+    nb_espece = len(set(compt))  # len(aCollection) - compt
     for i in range(0, len(aCollection)):
-        p[i] = aCollection[i].num
+        p.append(aCollection[i].num)
     return (nb_espece)
 
 
@@ -185,9 +184,9 @@ def calcul_prob_cumul(aCollection, a):
     attention, la collection doit etre triee dans le sens croissant des data
     """
     p1 = list()
-    p1.append(aCollection[0].pond * aCollection.Count)
+    p1.append(aCollection[0].pond * len(aCollection))
     for i in range(1, len(aCollection)):
-        p1.append(p1(i - 1) + aCollection[i].pond * len(aCollection))
+        p1.append(p1[i - 1] + aCollection[i].pond * len(aCollection))
     """
     si les ponderations sont telles que les premiers points ont des poids
     inferieurs au paramètre de Hazen a, alors le programme prend
@@ -261,7 +260,7 @@ def calcul_nbvar(n_optim, data_co, pcat, nb_taxo, nbvar):
 def calcul_nb_taxo(data_co):
     """Calcul du nombre de categories taxonomiques differentes."""
     nb_taxo = 0
-    for i in range(0, len(data_co)):
+    for i in range(0, len(data_co) - 1):
         if (data_co[i].taxo != data_co[i + 1].taxo):
             nb_taxo = nb_taxo + 1
     return (nb_taxo)

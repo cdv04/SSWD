@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-28T09:04:45+02:00
+# @Last modified time: 2017-04-28T10:29:41+02:00
 
 import operator
 import sys
@@ -40,7 +40,7 @@ def trier_collection(aCollection, itri, isens):
     ]
     # j = 1
     aCollection.sort(
-        key=operator.attrgetter(tmp_list[itri]),
+        key=operator.attrgetter(tmp_list[itri - 1]),
         reverse=(True if isens == 0 else False))
     # while aCollection.Count > 0:
     #     if (itri <= 3):
