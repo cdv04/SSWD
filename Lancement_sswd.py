@@ -10,7 +10,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-24T14:00:26+02:00
+# @Last modified time: 2017-05-02T10:04:09+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -106,9 +106,9 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     Test sur l'existence de feuilles de resultats et creation des feuilles
     necessaires
     """
-    verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
-          nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
-          nom_feuille_Ftriang, nom_feuille_qtriang, '', '', '')
+    # verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
+    #       nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
+    #       nom_feuille_Ftriang, nom_feuille_qtriang, '', '', '')
     """
     1. Calcul des ponderations et affichage resultats
     dans nom_feuille_pond

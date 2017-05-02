@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-28T09:55:33+02:00
+# @Last modified time: 2017-05-02T10:07:16+02:00
 
 import sys
 
@@ -91,7 +91,7 @@ def trf_plage_cellule(nom_feuille, plage):
     return (l1, c1, l2, c2, False)
 
 
-def lire_pcat(val_pcat, pcat, dim_pcat, erreur):
+def lire_pcat(val_pcat, pcat, dim_pcat):
     """
     Lit les valeurs de pcat entrees par l'utilisateur.
 
@@ -194,8 +194,6 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
         # data_co = plage_x.copy()
         init_collection(data_co, plage_x[0].split(";"), plage_x[1].split(";"),
                         plage_x[2].split(";"))
-        print(data_co)
-        sys.exit()
         # init_collection(nom_feuille, l1[0] + 1, l1[1] + 1, l1[2] + 1, c1[0],
         #                 c1[1], c1[2], data_co)
     else:
@@ -214,7 +212,9 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
         # change_nom_taxo(data_co)
     """Titre des colonnes de data_co"""
     nom_colonne = list()
+    nom_colonne.append("SpeciesComp")
     nom_colonne.append("PhylumSup")
+    nom_colonne.append("ED")
     # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[0], c1[0]])
     # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[1], c1[1]])
     # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[2], c1[2]])
@@ -272,6 +272,8 @@ between 0 and 1, strictly less than 1', 0)
         liste_taxo = lbl_liste
         pos = liste_taxo.find('\n')
         ltaxo = liste_taxo[:pos + 1]
+    else:
+        ltaxo = plage_x[1].split(';')
     """
     Option d'ajustement pour loi triangulaire,
     si True ajustement sur quantiles, sinon sur probabilités cumulées
