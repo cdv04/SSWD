@@ -10,8 +10,9 @@ A remettre completement en forme grace a numpy
 # @Project: SSWD
 # @Filename: Graphique.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-24T14:09:01+02:00
+# @Last modified time: 2017-05-03T15:04:50+02:00
 
+import Initialisation
 from fct_generales import sp_opt
 
 
@@ -48,7 +49,6 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     nb_ligne_data -> nombre de ligne du tableau de donnees data
     """
     nseries = 0
-    global Worksheets
     # Charts.Add()
     # ActiveChart.ChartType = xlXYScatterSmooth
     # Menage
@@ -289,10 +289,14 @@ def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
             style_marqueur = nseries_pts
     col2_marqueur = col1_marqueur
     nbligne = 0
-    while Worksheets[nom_feuille].Cells[ligne_data + i, col_tax]:
-        if (Worksheets[nom_feuille].Cells[ligne_data + i, col_pcum] != 0):
-            if (Worksheets[nom_feuille].Cells[ligne_data + i, col_tax] !=
-                    Worksheets[nom_feuille].Cells[ligne_data + i + 1, col_tax]):
+    while Initialisation.Worksheets[nom_feuille].Cells[ligne_data + i,
+                                                       col_tax]:
+        if (Initialisation.Worksheets[nom_feuille].Cells[ligne_data + i,
+                                                         col_pcum] != 0):
+            if (Initialisation.Worksheets[nom_feuille].Cells[ligne_data + i,
+                                                             col_tax] !=
+                    Initialisation.Worksheets[nom_feuille]
+                    .Cells[ligne_data + i + 1, col_tax]):
                 nseries = nseries + 1
                 if style_marqueur == nb_style:
                     style_marqueur = 1
@@ -313,7 +317,7 @@ def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
                 #     nseries].Values = '=' + nom_feuille + '!' + data_y
                 # ActiveChart.SeriesCollection[
                 #     nseries].Name = '=' + nom_feuille + '!' + data_nom
-                if nouveau is True and Worksheets[nom_feuille].Cells(
+                if nouveau is True and Initialisation.Worksheets[nom_feuille].Cells(
                         ldeb, col_pcum_a) != 0:
                     print("A completer")  # TODO
                 #     ActiveChart.SeriesCollection[
@@ -346,7 +350,7 @@ def decaler_graph(nom_feuille):
     @param nom_feuille: nom de la feuille contenant les graphiques
     """
     decalage = 0
-    for ch in Worksheets[nom_feuille].ChartObjects:
+    for ch in Initialisation.Worksheets[nom_feuille].ChartObjects:
         ch.Left = ch.Left + decalage
         decalage = decalage + 200
 

@@ -8,15 +8,13 @@
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-02T10:07:16+02:00
-
-import sys
+# @Last modified time: 2017-05-03T15:03:22+02:00
 
 import numpy as np
 
+import Initialisation
 from fct_generales import (ischainevide, rech_l1c1, rechercher_categorie,
                            trier_collection, trier_tableau)
-from Initialisation import init_collection
 from Lancement_sswd import lance
 from MsgBox import MsgBox
 from ponderation import calcul_nb_taxo
@@ -49,7 +47,6 @@ def recherche_nom_feuille(plage):
 def trf_plage_cellule(nom_feuille, plage):
     """Recherche les lignes et colonnes d'une plage de cellules."""
     # erreur = False
-    global Worksheets
     # if Application.ReferenceStyle == xlR1C1:  # TODO modifie en python IHM
     """
     Recherche separateur ":" specifiant la selection d'une plage
@@ -61,7 +58,7 @@ def trf_plage_cellule(nom_feuille, plage):
         l1, c1 = rech_l1c1(plage, 2)
         c2 = c1
         l2 = l1
-        while Worksheets[nom_feuille].Cells[l2, c1]:
+        while Initialisation.Worksheets[nom_feuille].Cells[l2, c1]:
             l2 = l2 + 1
         l2 = l2 - 1
         """Cas d'une selection d'une plage"""
@@ -136,7 +133,7 @@ def afficher_taxo(data_taxo, liste_taxo, erreur):
     """
     # Worksheets[nom_feuille].Activate()
     # tmp = Worksheets[nom_feuille].Range(Cells[l1, c1], Cells[l2, c2])
-    tmp = np.copy(Worksheets[nom_feuille].Cells[l1:l2, c1:c2])
+    tmp = np.copy(Initialisation.Worksheets[nom_feuille].Cells[l1:l2, c1:c2])
     taxo = list()
     for i in range(0, len(taxo)):
         taxo.append(tmp[i + 1, 1])
@@ -192,8 +189,9 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
     if (iproc == 1):
         """Collection SSWD"""
         # data_co = plage_x.copy()
-        init_collection(data_co, plage_x[0].split(";"), plage_x[1].split(";"),
-                        plage_x[2].split(";"))
+        Initialisation.init_collection(data_co, plage_x[0].split(";"),
+                                       plage_x[1].split(";"),
+                                       plage_x[2].split(";"))
         # init_collection(nom_feuille, l1[0] + 1, l1[1] + 1, l1[2] + 1, c1[0],
         #                 c1[1], c1[2], data_co)
     else:

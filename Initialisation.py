@@ -12,7 +12,7 @@ Problablement inutilisable au niveau de l'IHM.
 # @Project: SSWD
 # @Filename: Initialisation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-28T09:55:14+02:00
+# @Last modified time: 2017-05-03T14:58:25+02:00
 
 import math
 
@@ -169,6 +169,8 @@ def initialise():
     valeurs par defaut modifiables par l'utilisateur averti
     """
     """Nom des feuilles intermediaires et resultat final"""
+    global Worksheets
+    Worksheets = dict()
     nom_feuille_pond = 'weight_result'
     nom_feuille_stat = 'draw_result'
     nom_feuille_res = 'SSWD_result'
