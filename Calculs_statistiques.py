@@ -10,10 +10,11 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-24T14:18:13+02:00
+# @Last modified time: 2017-05-03T15:06:06+02:00
 
 import math
 
+import Initialisation
 from fct_generales import (cellule_gras, compt_inf, csd, ecrire_titre,
                            encadrer_colonne, trier_tirages_feuille)
 from Worksheet import Worksheet
@@ -37,14 +38,13 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
     @param lig_fin: derniere ligne de la plage des donnees a tirer
     @param col_pond: colonne des probabilites associees a chaque donnee
     """
-    global Worksheets
     # Application.Run('ATPVBAEN.XLA!Random', nom_feuille_stat, nbvar, B, 7,
-    #                 Worksheets[nom_feuille_pond].Range(
+    #                 Initialisation.Worksheets[nom_feuille_pond].Range(
     #                     Cells(lig_deb, col_data), Cells(lig_fin, col_pond)))
-    # Worksheets[nom_feuille_stat].Rows(1).Insert()
+    # Initialisation.Worksheets[nom_feuille_stat].Rows(1).Insert()
     for j in range(0, nbvar):
-        Worksheets[nom_feuille_stat].Cells[1, j] = 'POINT ' + j
-    # Worksheets[nom_feuille_stat].Cells[1, 1].Select()
+        Initialisation.Worksheets[nom_feuille_stat].Cells[1, j] = 'POINT ' + j
+    # Initialisation.Worksheets[nom_feuille_stat].Cells[1, 1].Select()
 
 
 def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
@@ -93,18 +93,18 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c1, l2,
                           nbvar, data)
     """Creation de la feuille contenant les quantiles empiriques"""
-    Worksheets[nom_feuille_qemp] = Worksheet()
+    Initialisation.Worksheets[nom_feuille_qemp] = Worksheet()
     """Ecriture des entetes de colonnes"""
     for i in range(0, len(p)):
-        Worksheets[nom_feuille_qemp].Cells[l1 - 1, c3 + i -
-                                           1] = 'QUANT ' + p[i] * 100 + ' %'
+        Initialisation.Worksheets[nom_feuille_qemp].Cells[
+            l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
     """
     Calcul des quantiles p%
     data = "RC" & c1 & ":RC" & c2
     """
     data = nom_feuille_sort + '!RC'
     for i in range(0, len(p)):
-        # Worksheets(nom_feuille_qemp).Cells(l1, c3 + i - 1).FormulaR1C1 =
+        # Initialisation.Worksheets(nom_feuille_qemp).Cells(l1, c3 + i - 1).FormulaR1C1 =
         # "=PERCENTILE(" & nom_feuille_stat & "!" & data & "," & csd(p[i])
         # & ")"
         if (rang[i] == 0 or rang[i] == nbvar):
@@ -112,21 +112,21 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
         else:
             tmp[i] = (pcum[rang[i] + 1] - p[i]) / \
                 (pcum[rang[i] + 1] - pcum[rang[i]])
-        Worksheets[nom_feuille_qemp].Cells[
+        Initialisation.Worksheets[nom_feuille_qemp].Cells[
             l1, c3 + i -
             1].FormulaR1C1 = '=IF(' + rang[i] + '=0,' + data + c1 + \
             ',IF(' + rang[i] + '>=' + nbvar + ',' + data + c2 + ',' + data + \
             rang[i] + 1 + '-(' + data + rang[i] + 1 + '-' + data + rang[i] +\
             ')*' + csd(tmp[i]) + '))'
     # Range(
-    #     Worksheets(nom_feuille_qemp).Cells(l1, c3),
-    #     Worksheets(nom_feuille_qemp).Cells(l1, c3 + len(p) - 1)).Select()
+    #     Initialisation.Worksheets(nom_feuille_qemp).Cells(l1, c3),
+    #     Initialisation.Worksheets(nom_feuille_qemp).Cells(l1, c3 + len(p) - 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_qemp).Cells(l1, c3),
-    #         Worksheets(nom_feuille_qemp).Cells(l2, c3 + len(p) - 1)),
+    #         Initialisation.Worksheets(nom_feuille_qemp).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_qemp).Cells(l2, c3 + len(p) - 1)),
     #     Type=xlFillDefault)
-    # Worksheets(nom_feuille_qemp).Cells(1, 1).Select()
+    # Initialisation.Worksheets(nom_feuille_qemp).Cells(1, 1).Select()
 
 
 def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
@@ -160,48 +160,49 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     (chaque ligne de nom_feuille_stat)
     on travaille dans nom_feuille_stat
     """
-    # Worksheets(nom_feuille_stat).Activate()
-    Worksheets[nom_feuille_stat].Cells[l1 - 1, c_mu] = 'MEAN'
-    Worksheets[nom_feuille_stat].Cells[l1 - 1, c_mu + 1] = 'STDEV'
+    # Initialisation.Worksheets(nom_feuille_stat).Activate()
+    Initialisation.Worksheets[nom_feuille_stat].Cells[l1 - 1, c_mu] = 'MEAN'
+    Initialisation.Worksheets[nom_feuille_stat].Cells[l1 - 1, c_mu +
+                                                      1] = 'STDEV'
     data = 'RC' + c1 + ':RC' + c2
     """1. Calcul de la moyenne des echantillons"""
-    Worksheets[nom_feuille_stat].Cells[
+    Initialisation.Worksheets[nom_feuille_stat].Cells[
         l1,
         c_mu].FormulaR1C1 = '=AVERAGE(' + nom_feuille_stat + '!' + data + ')'
     """2. Calcul de l'ecart type des echantillons"""
-    Worksheets[nom_feuille_stat].Cells[
+    Initialisation.Worksheets[nom_feuille_stat].Cells[
         l1, c_mu +
         1].FormulaR1C1 = '=STDEV(' + nom_feuille_stat + '!' + data + ')'
     # Range(
-    #     Worksheets(nom_feuille_stat).Cells(l1, c_mu),
-    #     Worksheets(nom_feuille_stat).Cells(l1, c_mu + 1)).Select()
+    #     Initialisation.Worksheets(nom_feuille_stat).Cells(l1, c_mu),
+    #     Initialisation.Worksheets(nom_feuille_stat).Cells(l1, c_mu + 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_stat).Cells(l1, c_mu),
-    #         Worksheets(nom_feuille_stat).Cells(l2, c_mu + 1)),
+    #         Initialisation.Worksheets(nom_feuille_stat).Cells(l1, c_mu),
+    #         Initialisation.Worksheets(nom_feuille_stat).Cells(l2, c_mu + 1)),
     #     Type=xlFillDefault)
     """
     3. Calcul quantiles normaux correspondant a p() et a mean et
     stdev precedemment calcules
     """
     """Affichage dans nom_feuille_qnorm"""
-    Worksheets[nom_feuille_qnorm] = Worksheet()
+    Initialisation.Worksheets[nom_feuille_qnorm] = Worksheet()
     for i in range(0, len(p)):
-        Worksheets[nom_feuille_qnorm].Cells[l1 - 1, c3 + i -
-                                            1] = 'QUANT ' + p[i] * 100 + ' %'
-        Worksheets[nom_feuille_qnorm].Cells[
+        Initialisation.Worksheets[nom_feuille_qnorm].Cells[
+            l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
+        Initialisation.Worksheets[nom_feuille_qnorm].Cells[
             l1, c3 + i - 1].FormulaR1C1 = '=NORMINV(' + csd(
                 p[i]) + ',' + nom_feuille_stat + '!RC' + (
                     c_mu) + ',' + nom_feuille_stat + '!RC' + (c_mu + 1) + ')'
     # Range(
-    #     Worksheets(nom_feuille_qnorm).Cells(l1, c3),
-    #     Worksheets(nom_feuille_qnorm).Cells(l1, c3 + len(p) - 1)).Select()
+    #     Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3),
+    #     Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3 + len(p) - 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_qnorm).Cells(l1, c3),
-    #         Worksheets(nom_feuille_qnorm).Cells(l2, c3 + len(p) - 1)),
+    #         Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_qnorm).Cells(l2, c3 + len(p) - 1)),
     #     Type=xlFillDefault)
-    # Worksheets(nom_feuille_qnorm).Cells(1, 1).Select()
+    # Initialisation.Worksheets(nom_feuille_qnorm).Cells(1, 1).Select()
 
 
 def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
@@ -249,7 +250,7 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     Creation de la feuille nom_feuille_sort si pas existante
     (pour empirique)
     """
-    for ws in Worksheets:
+    for ws in Initialisation.Worksheets:
         if ws.Name == nom_feuille_sort:
             indic = 1
     if indic == 0:
@@ -261,7 +262,7 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     probabilite triangulaire qui seront comparees aux probabilites
     empiriques ; creation de la feuille nom_feuille_Ftriang
     """
-    # Worksheets.Add()
+    # Initialisation.Worksheets.Add()
     # ActiveSheet.Name = nom_feuille_Ftriang
     """
     On initialise le solver en prennant le min et le max de chaque
@@ -270,45 +271,48 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     c_min = c3 + nbvar + 1
     c_max = c_min + 1
     c_mode = c_max + 1
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_min] = 'min'
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_max] = 'max'
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_mode] = 'mode'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_min] = 'min'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_max] = 'max'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1,
+                                                         c_mode] = 'mode'
     for i in range(l1, l2):
-        Worksheets[nom_feuille_Ftriang].Cells[i, c_min] = Worksheets[
-            nom_feuille_sort].Cells[i, c3]
-        Worksheets[nom_feuille_Ftriang].Cells[i, c_max] = Worksheets[
-            nom_feuille_sort].Cells[i, c3 + nbvar - 1]
-        Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] = (
-            Worksheets[nom_feuille_Ftriang].Cells[i, c_min] +
-            Worksheets[nom_feuille_Ftriang].Cells[i, c_max]) / 2
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
+            i, c_min] = Initialisation.Worksheets[nom_feuille_sort].Cells[i,
+                                                                          c3]
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
+            i, c_max] = Initialisation.Worksheets[nom_feuille_sort].Cells[
+                i, c3 + nbvar - 1]
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] = (
+            Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_min] +
+            Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_max]) / 2
     """Calcul probabilites empiriques et theoriques pour ajustement"""
     for i in range(0, nbvar):
-        Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c3 + i - 1] = (i - a) / (
-            nbvar + 1 - 2 * a)
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
+            l1 - 1, c3 + i - 1] = (i - a) / (nbvar + 1 - 2 * a)
     # data = Cells(l1, c3).Address(
     #     False, False, xlR1C1, RelativeTo=Cells(l1, c3))
     # data1 = nom_feuille_sort + '!' + data
     ref = nom_feuille_Ftriang + '!RC'
-    # Worksheets[nom_feuille_Ftriang].Cells[l1, c3].FormulaR1C1 = (
+    # Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1, c3].FormulaR1C1 = (
     #     '=IF(' + data1 + '<=' + ref + c_min + ',0, IF(' + data1 + '<=' + ref+
     #     c_mode + ', ((' + data1 + '-' + ref + c_min + ')^2)/(('+ref + c_max +
     #     '-' + ref + c_min + ')*(' + ref + c_mode + '-' +ref+ c_min + ')),' +
     #     'IF(' + data1 + '<=' + ref + c_max + ', 1-((' + data1 + '-' + ref +
     #     c_max + ')^2)/((' + ref + c_max + '-' + ref + c_min + ')*(' + ref +
     #     c_max + '-' + ref + c_mode + ')),1)))')
-    # Worksheets(nom_feuille_Ftriang).Cells(l1, c3).Select()
+    # Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)),
     #     Type=xlFillDefault)
     # Range(
-    #     Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
-    #     Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)).Select()
+    #     Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
+    #     Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
-    #         Worksheets(nom_feuille_Ftriang).Cells(l2, c3 + nbvar - 1)),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l2, c3 + nbvar - 1)),
     #     Type=xlFillDefault)
     """
     On calcule la somme des carres des differences entre probabilites
@@ -316,7 +320,7 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     pour ajustement
     """
     c_ssr = c_mode + 1
-    # Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_ssr] = 'Sum Square Res'
+    # Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_ssr] = 'Sum Square Res'
     # data = Cells(l1 - 1, c3).Address(True, True, xlR1C1) + ':' + Cells(
     #     l1 - 1, c3 + nbvar - 1).Address(True, True, xlR1C1)
     # data = nom_feuille_Ftriang + '!' + data
@@ -325,13 +329,13 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     #         l1, c3 + nbvar - 1).Address(
     #             False, False, xlR1C1, RelativeTo=Cells(l1, c_ssr))
     # data1 = nom_feuille_Ftriang + '!' + data1
-    # Worksheets[nom_feuille_Ftriang].Cells[
+    # Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
     #     l1, c_ssr].FormulaR1C1 = '=SUMXMY2(' + data + ',' + data1 + ')'
-    # Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr).Select()
+    # Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr),
-    #         Worksheets(nom_feuille_Ftriang).Cells(l2, c_ssr)),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l2, c_ssr)),
     #     Type=xlFillDefault)
     """
     Ajustement : on determine les valeurs de min, max, mode qui
@@ -339,48 +343,50 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     (necessaire pour le calcul des quantiles)
     """
     c_pmode = c_ssr + 1
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_pmode] = 'pmode'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1,
+                                                         c_pmode] = 'pmode'
     for i in range(l1, l2):
         # SolverOk(
-        #     SetCell=Worksheets(nom_feuille_Ftriang).Cells(i, c_ssr),
+        #     SetCell=Initialisation.Worksheets(nom_feuille_Ftriang).Cells(i, c_ssr),
         #     MaxMinVal=2,
         #     ValueOf='0',
         #     ByChange=Range(
-        #         Worksheets(nom_feuille_Ftriang).Cells(i, c_min),
-        #         Worksheets(nom_feuille_Ftriang).Cells(i, c_min + 2)))
+        #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(i, c_min),
+        #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(i, c_min + 2)))
         # SolverSolve(UserFinish=True)
-        Worksheets[nom_feuille_Ftriang].Cells[i, c_pmode] = (
-            Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] -
-            Worksheets[nom_feuille_Ftriang].Cells[i, c_min]) / (
-                Worksheets[nom_feuille_Ftriang].Cells[i, c_max] -
-                Worksheets[nom_feuille_Ftriang].Cells[i, c_min])
-    Worksheets[nom_feuille_Ftriang].Cells(1, 1).Select()
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_pmode] = (
+            Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] -
+            Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_min]
+        ) / (Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_max] -
+             Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_min])
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells(1, 1).Select()
     """
     Calcul des quantiles correspondant a la loi triangulaire dont les
     parametres min, max et mode viennent d'etre estimes ; creation de
     la feuille nom_feuille_qtriang
     """
-    Worksheets[nom_feuille_qtriang] = Worksheet()
+    Initialisation.Worksheets[nom_feuille_qtriang] = Worksheet()
     ref = nom_feuille_Ftriang + '!RC'
     for i in range(0, len(p)):
-        Worksheets[nom_feuille_qtriang].Cells[l1 - 1, c3 + i -
-                                              1] = 'QUANT ' + p[i] * 100 + ' %'
-        Worksheets[nom_feuille_qtriang].Cells[l1, c3 + i - 1].FormulaR1C1 = (
-            '=IF(' + csd(p[i]) + '<=' + ref + c_pmode + ',' + ref + c_min +
-            '+SQRT(' + csd(p[i]) + '*(' + ref + c_max + '-' + ref + c_min +
-            ')*(' + ref + c_mode + '-' + ref + c_min + ')), ' + ref + c_max +
-            '-SQRT((' + csd(1 - p[i]) + ')*(' + ref + c_max + '-' + ref + c_min
-            + ')*(' + ref + c_max + '-' + ref + c_mode + ')))')
+        Initialisation.Worksheets[nom_feuille_qtriang].Cells[
+            l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
+        Initialisation.Worksheets[nom_feuille_qtriang].Cells[
+            l1, c3 + i - 1].FormulaR1C1 = (
+                '=IF(' + csd(p[i]) + '<=' + ref + c_pmode + ',' + ref + c_min +
+                '+SQRT(' + csd(p[i]) + '*(' + ref + c_max + '-' + ref + c_min +
+                ')*(' + ref + c_mode + '-' + ref + c_min + ')), ' + ref + c_max
+                + '-SQRT((' + csd(1 - p[i]) + ')*(' + ref + c_max + '-' + ref +
+                c_min + ')*(' + ref + c_max + '-' + ref + c_mode + ')))')
     # Range(
-    #     Worksheets(nom_feuille_qtriang).Cells(l1, c3),
-    #     Worksheets(nom_feuille_qtriang).Cells(l1,
+    #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1, c3),
+    #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1,
     #                                           c3 + len(p) - 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_qtriang).Cells(l1, c3),
-    #         Worksheets(nom_feuille_qtriang).Cells(l2, c3 + len(p) - 1)),
+    #         Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_qtriang).Cells(l2, c3 + len(p) - 1)),
     #     Type=xlFillDefault)
-    # Worksheets(nom_feuille_qtriang).Cells(1, 1).Select()
+    # Initialisation.Worksheets(nom_feuille_qtriang).Cells(1, 1).Select()
 
 
 def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
@@ -428,7 +434,7 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     Creation de la feuille nom_feuille_sort si pas deja existant
     (pour empirique)
     """
-    for ws in Worksheets:
+    for ws in Initialisation.Worksheets:
         if ws.Name == nom_feuille_sort:
             indic = 1
     if indic == 0:
@@ -440,7 +446,7 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     triangulaire qui seront comparees aux valeurs empiriques ;
     creation de la feuille nom_feuille_Ftriang
     """
-    Worksheets[nom_feuille_Ftriang] = Worksheet()
+    Initialisation.Worksheets[nom_feuille_Ftriang] = Worksheet()
     """
     On initialise le solver en prennant le min et le max de chaque
     serie tiree et on calcule mode=(min+max)/2 puis pmode
@@ -451,73 +457,78 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     c_ssr = c_mode + 1
     c_pmode = c_ssr + 1
     ref = nom_feuille_Ftriang + '!RC'
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_min] = 'min'
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_max] = 'max'
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_mode] = 'mode'
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_pmode] = 'pmode'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_min] = 'min'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_max] = 'max'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1,
+                                                         c_mode] = 'mode'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1 - 1,
+                                                         c_pmode] = 'pmode'
     for i in range(l1, l2):
-        Worksheets[nom_feuille_Ftriang].Cells[i, c_min] = Worksheets[
-            nom_feuille_sort].Cells[i, c3]
-        Worksheets[nom_feuille_Ftriang].Cells[i, c_max] = Worksheets[
-            nom_feuille_sort].Cells[i, c3 + nbvar - 1]
-        Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] = (
-            Worksheets[nom_feuille_Ftriang].Cells[i, c_min] +
-            Worksheets[nom_feuille_Ftriang].Cells[i, c_max]) / 2
-    # Worksheets[nom_feuille_Ftriang].Cells[l1, c_pmode].FormulaR1C1 = (
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
+            i, c_min] = Initialisation.Worksheets[nom_feuille_sort].Cells[i,
+                                                                          c3]
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
+            i, c_max] = Initialisation.Worksheets[nom_feuille_sort].Cells[
+                i, c3 + nbvar - 1]
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] = (
+            Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_min] +
+            Initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_max]) / 2
+    # Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1, c_pmode].FormulaR1C1 = (
     #     '=(' + ref + c_mode + '-' + ref + c_min + ')/(' + ref + c_max + '-' +
     #     ref + c_min + ')')
-    # Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode).Select()
+    # Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode),
-    #         Worksheets(nom_feuille_Ftriang).Cells(l2, c_pmode)),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l2, c_pmode)),
     #     Type=xlFillDefault)
     """
     Calcul probabilites empiriques et quantiles triangulaires
     correspondants
     """
     for i in range(0, nbvar):
-        Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c3 + i - 1] = (i - a) / (
-            nbvar + 1 - 2 * a)
+        Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
+            l1 - 1, c3 + i - 1] = (i - a) / (nbvar + 1 - 2 * a)
     ref2 = nom_feuille_Ftriang + '!R'
-    # Worksheets[nom_feuille_Ftriang].Cells[l1, c3].FormulaR1C1 = (
+    # Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1, c3].FormulaR1C1 = (
     #     '=IF(' + ref2 + l1 - 1 + 'C<=' + ref + c_pmode + ',' + ref + c_min +
     #     '+SQRT(' + ref2 + l1 - 1 + 'C*(' + ref + c_max + '-' + ref + c_min +
     #     ')' + '*(' + ref + c_mode + '-' + ref + c_min + ')),' + ref + c_max +
     #     '-SQRT((1-' + ref2 + l1 - 1 + 'C)*(' + ref + c_max + '-' + ref +c_min
     #     + ')' + '*(' + ref + c_max + '-' + ref + c_mode + ')))')
-    # Worksheets(nom_feuille_Ftriang).Cells(l1, c3).Select()
+    # Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)),
     #     Type=xlFillDefault)
     # Range(
-    #     Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
-    #     Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)).Select()
+    #     Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
+    #     Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3 + nbvar - 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
-    #         Worksheets(nom_feuille_Ftriang).Cells(l2, c3 + nbvar - 1)),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l2, c3 + nbvar - 1)),
     #     Type=xlFillDefault)
     """
     On calcule la somme des carres des differences entre donnees
     empiriques etquantiles theoriques triangulaires, pour ajustement
     """
-    Worksheets[nom_feuille_Ftriang].Cells[l1 - 1, c_ssr] = 'Sum Square Res'
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
+        l1 - 1, c_ssr] = 'Sum Square Res'
     # data = Cells(l1, c3).Address(
     #     False, False, xlR1C1, RelativeTo=Cells(l1, c_ssr)) + ':' + Cells(
     #         l1, c3 + nbvar - 1).Address(
     #             False, False, xlR1C1, RelativeTo=Cells(l1, c_ssr))
     # data1 = nom_feuille_Ftriang + '!' + data
     # data = nom_feuille_sort + '!' + data
-    # Worksheets[nom_feuille_Ftriang].Cells[
+    # Initialisation.Worksheets[nom_feuille_Ftriang].Cells[
     #     l1, c_ssr].FormulaR1C1 = '=SUMXMY2(' + data + ',' + data1 + ')'
-    # Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr).Select()
+    # Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr),
-    #         Worksheets(nom_feuille_Ftriang).Cells(l2, c_ssr)),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_ssr),
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l2, c_ssr)),
     #     Type=xlFillDefault)
     """
     Ajustement : on determine les valeurs de min, max, mode qui
@@ -526,39 +537,39 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     """
     # for i in range(l1, l2):
     #     SolverOk(
-    #         SetCell=Worksheets(nom_feuille_Ftriang).Cells(i, c_ssr),
+    #         SetCell=Initialisation.Worksheets(nom_feuille_Ftriang).Cells(i, c_ssr),
     #         MaxMinVal=2,
     #         ValueOf='0',
     #         ByChange=Range(
-    #             Worksheets(nom_feuille_Ftriang).Cells(i, c_min),
-    #             Worksheets(nom_feuille_Ftriang).Cells(i, c_min + 2)))
+    #             Initialisation.Worksheets(nom_feuille_Ftriang).Cells(i, c_min),
+    #             Initialisation.Worksheets(nom_feuille_Ftriang).Cells(i, c_min + 2)))
     #     SolverSolve(UserFinish=True)
-    Worksheets[nom_feuille_Ftriang].Cells(1, 1).Select()
+    Initialisation.Worksheets[nom_feuille_Ftriang].Cells(1, 1).Select()
     """
     Calcul des quantiles correspondant a la loi triangulaire dont les
     parametres min, max et mode viennent d'etre estimes ; creation de
     la feuillenom_feuille_qtriang
     """
-    Worksheets[nom_feuille_qtriang] = Worksheet()
+    Initialisation.Worksheets[nom_feuille_qtriang] = Worksheet()
     for i in range(0, len(p)):
-        Worksheets[nom_feuille_qtriang].Cells[l1 - 1, c3 + i -
-                                              1] = 'QUANT ' + p[i] * 100 + ' %'
-    #     Worksheets[nom_feuille_qtriang].Cells[l1, c3 + i - 1].FormulaR1C1 = (
+        Initialisation.Worksheets[nom_feuille_qtriang].Cells[
+            l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
+    #     Initialisation.Worksheets[nom_feuille_qtriang].Cells[l1, c3 + i - 1].FormulaR1C1 = (
     #         '=IF(' + csd(p[i]) + '<=' + ref + c_pmode + ',' + ref + c_min +
     #         '+SQRT(' + csd(p[i]) + '*(' + ref + c_max + '-' + ref + c_min +
     #         ')*(' + ref + c_mode + '-' + ref + c_min + ')), ' + ref+c_min + 1
     #         + '-SQRT((' + csd(1 - p[i]) + ')*(' + ref + c_max + '-' + ref +
     #         c_min + ')*(' + ref + c_max + '-' + ref + c_mode + ')))')
     # Range(
-    #     Worksheets(nom_feuille_qtriang).Cells(l1, c3),
-    #     Worksheets(nom_feuille_qtriang).Cells(l1,
+    #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1, c3),
+    #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1,
     #                                           c3 + len(p) - 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_qtriang).Cells(l1, c3),
-    #         Worksheets(nom_feuille_qtriang).Cells(l2, c3 + len(p) - 1)),
+    #         Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1, c3),
+    #         Initialisation.Worksheets(nom_feuille_qtriang).Cells(l2, c3 + len(p) - 1)),
     #     Type=xlFillDefault)
-    # Worksheets(nom_feuille_qtriang).Cells(1, 1).Select()
+    # Initialisation.Worksheets(nom_feuille_qtriang).Cells(1, 1).Select()
 
 
 def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
@@ -615,36 +626,39 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
                          les probabilites cumulees
     """
     # Application.ScreenUpdating = False
-    # Worksheets(nom_feuille_res).Activate()
-    # Worksheets(nom_feuille_res).Cells(1, 1).Select()
+    # Initialisation.Worksheets(nom_feuille_res).Activate()
+    # Initialisation.Worksheets(nom_feuille_res).Cells(1, 1).Select()
     """Ecriture du titre"""
     ecrire_titre(titre(loi), nom_feuille_res, l_hc, c_hc, len(pourcent) + 1)
     """
     Affichage titre des lignes du tableau HC et Calcul ecart type
     de HC
     """
-    Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc] = 'HC'
+    Initialisation.Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc] = 'HC'
     for i in range(0, len(pourcent)):
-        # Worksheets(nom_feuille_res).Cells(l_hc + 1, c_hc + i) = (
+        # Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + 1, c_hc + i) = (
         # pourcent[i]*100 & "%")
         # ne fonctionne pas avec les ',' d'où ce qui suit
-        Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc + i] = pourcent[i]
+        Initialisation.Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc +
+                                                         i] = pourcent[i]
         if len(str(pourcent[i])) > 4:
-            Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc +
-                                              i].NumberFormat = '0.0%'
+            Initialisation.Worksheets[nom_feuille_res].Cells[
+                l_hc + 1, c_hc + i].NumberFormat = '0.0%'
         else:
-            Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc +
-                                              i].NumberFormat = '0%'
-    Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc] = 'Best-Estimate'
-    Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc] = 'Geo. Stand. Deviation'
+            Initialisation.Worksheets[nom_feuille_res].Cells[
+                l_hc + 1, c_hc + i].NumberFormat = '0%'
+    Initialisation.Worksheets[nom_feuille_res].Cells[l_hc + 2,
+                                                     c_hc] = 'Best-Estimate'
+    Initialisation.Worksheets[nom_feuille_res].Cells[
+        l_hc + 3, c_hc] = 'Geo. Stand. Deviation'
     for i in range(0, len(pcent)):
-        Worksheets[nom_feuille_res].Cells[l_hc + 3 + i, c_hc] = 'Centile ' + (
-            pcent[i] * 100) + '%'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 3 + i, c_hc] = 'Centile ' + (pcent[i] * 100) + '%'
     nbligne_res = len(pcent) + 3 + 1
     data = 'R' + l1 + 'C[' + c1 - c_hc - 1 + ']:R' + \
         l2 + 'C[' + c1 - c_hc - 1 + ']'
     data = nom_feuille_quant + '!' + data
-    Worksheets[nom_feuille_res].Cells[
+    Initialisation.Worksheets[nom_feuille_res].Cells[
         l_hc + 3, c_hc + 1].FormulaR1C1 = '=10^(STDEV(' + data + '))'
     HC_be = list()
     """
@@ -674,11 +688,11 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
                                  pond_col_deb, pond_col_data, pond_col_pcum,
                                  pourcent, HC_be, min, max, mode, nom_colonne,
                                  nbdata)
-    # Worksheets(nom_feuille_res).Activate()
+    # Initialisation.Worksheets(nom_feuille_res).Activate()
     """Affichage HC best-estimate dans la feuille de resultats"""
     for i in range(0, len(pourcent)):
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc +
-                                          i].Value = 10**HC_be[i]
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + i].Value = 10**HC_be[i]
     cellule_gras(l_hc + 2, c_hc + 2, l_hc + 2, c_hc + 2)
     """
     calcul percentiles intervalles de confiance :
@@ -687,110 +701,112 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     """
     if loi == 1:
         for i in range(0, len(pcent)):
-            Worksheets[nom_feuille_res].Cells[
+            Initialisation.Worksheets[nom_feuille_res].Cells[
                 l_hc + 3 + i, c_hc +
                 1].FormulaR1C1 = '=10^(PERCENTILE(' + data + ',' + csd(
                     pcent[i]) + '))'
     else:
         for i in range(0, len(pcent)):
-            Worksheets[nom_feuille_res].Cells[
+            Initialisation.Worksheets[nom_feuille_res].Cells[
                 l_hc + 3 + i, c_hc +
                 1].FormulaR1C1 = '=10^(PERCENTILE(' + data + ',' + csd(
                     pcent[i]) + ')-MEDIAN(' + data + '))*R' + l_hc + 2 + 'C'
-    # Worksheets(nom_feuille_res).Activate()
+    # Initialisation.Worksheets(nom_feuille_res).Activate()
     # Range(
-    #     Worksheets(nom_feuille_res).Cells(l_hc + 3, c_hc + 1),
-    #     Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
+    #     Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + 3, c_hc + 1),
+    #     Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
     #                                       c_hc + 1)).Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Worksheets(nom_feuille_res).Cells(l_hc + 3, c_hc + 1),
-    #         Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
+    #         Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + 3, c_hc + 1),
+    #         Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
     #                                           c_hc + len(pourcent))),
     #     Type=xlFillDefault)
         encadrer_colonne(nom_feuille_res, l_hc + 1, c_hc + ind_hc,
                          l_hc + nbligne_res - 1, c_hc + ind_hc)
     """Infos supplementaires suivant les distributions"""
     if (loi == 2):
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
-                                          1] = 'Best-Estimate'
-        Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc + len(pourcent) +
-                                          1] = 'Geo. Stand. Deviation'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + len(pourcent) + 1] = 'Best-Estimate'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 3, c_hc + len(pourcent) + 1] = 'Geo. Stand. Deviation'
         for i in range(0, len(pcent)):
-            Worksheets[nom_feuille_res].Cells[l_hc + 3 + i, c_hc + len(
-                pourcent) + 1] = 'Centile ' + (pcent[i] * 100) + '%'
-        Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc + len(pourcent) +
-                                          2] = 'GWM'
-        Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc + len(pourcent) +
-                                          3] = 'GWSD'
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
-                                          2] = 10**mup
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
-                                          3] = 10**sigmap
+            Initialisation.Worksheets[nom_feuille_res].Cells[
+                l_hc + 3 + i, c_hc + len(pourcent) + 1] = 'Centile ' + (
+                    pcent[i] * 100) + '%'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 1, c_hc + len(pourcent) + 2] = 'GWM'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 1, c_hc + len(pourcent) + 3] = 'GWSD'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + len(pourcent) + 2] = 10**mup
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + len(pourcent) + 3] = 10**sigmap
         data = 'R' + l1 + 'C[' + c_mu - c_hc - len(
             pourcent) - 2 + ']:R' + l2 + 'C[' + c_mu - c_hc - len(
                 pourcent) - 2 + ']'
         data = nom_feuille + '!' + data
-        Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc + len(
+        Initialisation.Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc + len(
             pourcent) + 2].FormulaR1C1 = '=10^STDEV(' + data + ')'
         for i in range(0, len(pcent)):
-            Worksheets[nom_feuille_res].Cells[
+            Initialisation.Worksheets[nom_feuille_res].Cells[
                 l_hc + 3 + i, c_hc + len(pourcent) +
                 2].FormulaR1C1 = '=10^(PERCENTILE(' + data + ',' + csd(
                     pcent[i]) + ')-MEDIAN(' + data + '))*R' + l_hc + 2 + 'C'
         # Range(
-        #     Worksheets(nom_feuille_res).Cells(l_hc + 3,
+        #     Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + 3,
         #                                       c_hc + len(pourcent) + 2),
-        #     Worksheets(nom_feuille_res).Cells(
+        #     Initialisation.Worksheets(nom_feuille_res).Cells(
         #         l_hc + nbligne_res - 1, c_hc + len(pourcent) + 2)).Select()
         # Selection.AutoFill(
         #     Destination=Range(
-        #         Worksheets(nom_feuille_res).Cells(l_hc + 3,
+        #         Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + 3,
         #                                           c_hc + len(pourcent) + 2),
-        #         Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
+        #         Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
         #                                           c_hc + len(pourcent) + 3)),
         #     Type=xlFillDefault)
     elif (loi == 3):
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
-                                          1] = 'Best-Estimate'
-        Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc + len(pourcent) +
-                                          1] = 'Geo. Stand. Deviation'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + len(pourcent) + 1] = 'Best-Estimate'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 3, c_hc + len(pourcent) + 1] = 'Geo. Stand. Deviation'
         for i in range(0, len(pcent)):
-            Worksheets[nom_feuille_res].Cells[l_hc + 3 + i, c_hc + len(
-                pourcent) + 1] = 'Centile ' + (pcent[i] * 100) + '%'
-        Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc + len(pourcent) +
-                                          2] = 'GWMin'
-        Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc + len(pourcent) +
-                                          3] = 'GWMax'
-        Worksheets[nom_feuille_res].Cells[l_hc + 1, c_hc + len(pourcent) +
-                                          4] = 'GWMode'
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
-                                          2] = 10**min
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
-                                          3] = 10**max
-        Worksheets[nom_feuille_res].Cells[l_hc + 2, c_hc + len(pourcent) +
-                                          4] = 10**mode
+            Initialisation.Worksheets[nom_feuille_res].Cells[
+                l_hc + 3 + i, c_hc + len(pourcent) + 1] = 'Centile ' + (
+                    pcent[i] * 100) + '%'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 1, c_hc + len(pourcent) + 2] = 'GWMin'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 1, c_hc + len(pourcent) + 3] = 'GWMax'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 1, c_hc + len(pourcent) + 4] = 'GWMode'
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + len(pourcent) + 2] = 10**min
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + len(pourcent) + 3] = 10**max
+        Initialisation.Worksheets[nom_feuille_res].Cells[
+            l_hc + 2, c_hc + len(pourcent) + 4] = 10**mode
         data = 'R' + l1 + 'C[' + c_min - c_hc - len(
             pourcent) - 2 + ']:R' + l2 + 'C[' + c_min - c_hc - len(
                 pourcent) - 2 + ']'
         data = nom_feuille + '!' + data
-        Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc + len(
+        Initialisation.Worksheets[nom_feuille_res].Cells[l_hc + 3, c_hc + len(
             pourcent) + 2].FormulaR1C1 = '=10^STDEV(' + data + ')'
         for i in range(0, len(pcent)):
-            Worksheets[nom_feuille_res].Cells[
+            Initialisation.Worksheets[nom_feuille_res].Cells[
                 l_hc + 3 + i, c_hc + len(pourcent) +
                 2].FormulaR1C1 = '=10^(PERCENTILE(' + data + ',' + csd(
                     pcent[i]) + ')-MEDIAN(' + data + '))*R' + l_hc + 2 + 'C'
         # Range(
-        #     Worksheets(nom_feuille_res).Cells(l_hc + 3,
+        #     Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + 3,
         #                                       c_hc + len(pourcent) + 2),
-        #     Worksheets(nom_feuille_res).Cells(
+        #     Initialisation.Worksheets(nom_feuille_res).Cells(
         #         l_hc + nbligne_res - 1, c_hc + len(pourcent) + 2)).Select()
         # Selection.AutoFill(
         #     Destination=Range(
-        #         Worksheets(nom_feuille_res).Cells(l_hc + 3,
+        #         Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + 3,
         #                                           c_hc + len(pourcent) + 2),
-        #         Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
+        #         Initialisation.Worksheets(nom_feuille_res).Cells(l_hc + nbligne_res - 1,
         #                                           c_hc + len(pourcent) + 4)),
         #     Type=xlFillDefault)
     """3. Sauvegarde des resultats (suppression des formules)"""
@@ -802,7 +818,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     #                              Operation=xlNone,
     #                              SkipBlanks=False,
     #                              Transpose=False)
-    # Worksheets(nom_feuille_res).Cells(1, 1).Select()
+    # Initialisation.Worksheets(nom_feuille_res).Cells(1, 1).Select()
 
 
 def calcul_R2(data_co, loi, mup, sigmap, min, max, mode, nbdata, data_c):
@@ -1020,27 +1036,29 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_data,
     min = min(data_c)
     max = max(data_c)
     mode = (min + max) / 2
-    # Worksheets[nom_feuille].Activate()
-    Worksheets[nom_feuille].Cells[lig_deb, col] = min
-    Worksheets[nom_feuille].Cells[lig_deb, col].Name = 'cmin'
-    Worksheets[nom_feuille].Cells[lig_deb + 1, col] = max
-    Worksheets[nom_feuille].Cells[lig_deb + 1, col].Name = 'cmax'
-    Worksheets[nom_feuille].Cells[lig_deb + 2, col] = mode
-    Worksheets[nom_feuille].Cells[lig_deb + 2, col].Name = 'cmode'
+    # Initialisation.Worksheets[nom_feuille].Activate()
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col] = min
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].Name = 'cmin'
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 1, col] = max
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 1,
+                                                 col].Name = 'cmax'
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 2, col] = mode
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 2,
+                                                 col].Name = 'cmode'
     col = col - 1
     """Recherche de la colonne correspondant à data"""
-    # data = Worksheets[nom_feuille].Cells(lig_deb, col_data).
+    # data = Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col_data).
     # Address(False, False, xlR1C1, RelativeTo= Cells(lig_deb, col))
     # data = nom_feuille + '!' + data
     """Formule correspondant à la probabilite cumulee triangulaire"""
-    # Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 = (
+    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 = (
     #     '=IF(' + data + '<=cmin,0,IF(' + data + '<= cmode ,((' + data +
     #     '-cmin)^2)/((cmax - cmin) * (cmode - cmin))  ,IF(' + data +
     #     '<= cmax ,1-((' + data +
     #     '- cmax)^2)/ ((cmax - cmin) * (cmax - cmode)),1)))')
-    # Worksheets[nom_feuille].Cells(lig_deb, col).Select()
-    # Selection.AutoFill(Destination=Range(Worksheets[nom_feuille].
-    # Cells(lig_deb, col), Worksheets[nom_feuille].Cells(lig_deb + nbdata - 1,
+    # Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col).Select()
+    # Selection.AutoFill(Destination=Range(Initialisation.Worksheets[nom_feuille].
+    # Cells(lig_deb, col), Initialisation.Worksheets[nom_feuille].Cells(lig_deb + nbdata - 1,
     # col)), Type=xlFillDefault)
     # dataF = Cells(lig_deb, col).Address(True, True, xlR1C1) + ':' +
     # Cells(lig_deb + nbdata - 1, col).Address(True, True, xlR1C1)
@@ -1054,11 +1072,11 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_data,
     Calcul somme à minimiser pour estimer parametre min, max et mode
     puis optimisation par la procedure solver
     """
-    # Worksheets[nom_feuille].Cells[
+    # Initialisation.Worksheets[nom_feuille].Cells[
     #     lig_deb + 3, col +
     #     1].FormulaR1C1 = '=SUMXMY2(' + dataP + ',' + dataF + ')'
-    # SolverOk(SetCell=Worksheets[nom_feuille].Cells(lig_deb + 3, col + 1),
-    # MaxMinVal=2, ValueOf='0', ByChange=Worksheets[nom_feuille].
+    # SolverOk(SetCell=Initialisation.Worksheets[nom_feuille].Cells(lig_deb + 3, col + 1),
+    # MaxMinVal=2, ValueOf='0', ByChange=Initialisation.Worksheets[nom_feuille].
     # Range(Cells(lig_deb, col + 1), Cells(lig_deb + 2, col + 1)))
     # SolverSolve(UserFinish=True)
     """
@@ -1066,9 +1084,9 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_data,
     meilleure estimation correspondant
     """
     col = col + 1
-    min = Worksheets[nom_feuille].Cells(lig_deb, col)
-    max = Worksheets[nom_feuille].Cells(lig_deb + 1, col)
-    mode = Worksheets[nom_feuille].Cells(lig_deb + 2, col)
+    min = Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col)
+    max = Initialisation.Worksheets[nom_feuille].Cells(lig_deb + 1, col)
+    mode = Initialisation.Worksheets[nom_feuille].Cells(lig_deb + 2, col)
     pmode = (mode - min) / (max - min)
     for i in range(0, len(pourcent)):
         if (pourcent[i] <= pmode):
@@ -1081,8 +1099,8 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_data,
     On efface la plage de cellules sur laquelle on vient de
     travailler
     """
-    # Range(Worksheets[nom_feuille].Cells(lig_deb, col - 1),
-    # Worksheets[nom_feuille].Cells(lig_deb + nbdata - 1, col)).Select()
+    # Range(Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col - 1),
+    # Initialisation.Worksheets[nom_feuille].Cells(lig_deb + nbdata - 1, col)).Select()
     # Selection.Delete()
 
 
@@ -1118,30 +1136,33 @@ def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
     _min = min(data_c)
     _max = max(data_c)
     mode = (_min + max) / 2
-    # Worksheets[nom_feuille].Activate()
-    Worksheets[nom_feuille].Cells[lig_deb, col] = _min
-    Worksheets[nom_feuille].Cells[lig_deb, col].Name = 'cmin'
-    Worksheets[nom_feuille].Cells[lig_deb + 1, col] = _max
-    Worksheets[nom_feuille].Cells[lig_deb + 1, col].Name = 'cmax'
-    Worksheets[nom_feuille].Cells[lig_deb + 2, col] = mode
-    Worksheets[nom_feuille].Cells[lig_deb + 2, col].Name = 'cmode'
-    # Worksheets[nom_feuille].Cells[lig_deb + 4, col].FormulaR1C1 =
+    # Initialisation.Worksheets[nom_feuille].Activate()
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col] = _min
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].Name = 'cmin'
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 1, col] = _max
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 1,
+                                                 col].Name = 'cmax'
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 2, col] = mode
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 2,
+                                                 col].Name = 'cmode'
+    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 4, col].FormulaR1C1 =
     # '=(cmode - cmin) / (cmax - cmin)'
-    Worksheets[nom_feuille].Cells[lig_deb + 4, col].Name = 'cpmode'
+    Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 4,
+                                                 col].Name = 'cpmode'
     col = col - 1
     """Recherche de la colonne correspondant à pcum"""
-    # data = Worksheets[nom_feuille].Cells(lig_deb, col_pcum).
+    # data = Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col_pcum).
     # Address(False, False, xlR1C1, RelativeTo= Cells(lig_deb, col))
     # data = nom_feuille + '!' + data
     """Formule correspondant aux quantiles de la loi triangulaire"""
-    # Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 = (
+    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 = (
     #     '=IF(' + data + '<=cpmode,cmin+SQRT(' + data +
     #     '*(cmax - cmin) * (cmode - cmin)),cmax -SQRT((1-' + data +
     #     ')*(cmax - cmin) * (cmax - cmode)))')
-    # Worksheets[nom_feuille].Cells[lig_deb, col].Select()
+    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].Select()
     # Selection.AutoFill(
-    #     Destination=Range(Worksheets[nom_feuille].Cells(lig_deb, col),
-    #                       Worksheets[nom_feuille].Cells(
+    #     Destination=Range(Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col),
+    #                       Initialisation.Worksheets[nom_feuille].Cells(
     #                           lig_deb + nbdata - 1, col)),
     #     Type=xlFillDefault)
     # dataF = Cells(lig_deb, col).Address(True, True, xlR1C1) + ':' + Cells(
@@ -1153,13 +1174,13 @@ def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
     Calcul somme à minimiser pour estimer parametre min, max et mode
     puis optimisation par la procedure solver
     """
-    # Worksheets[nom_feuille].Cells[lig_deb + 3, col + 1].FormulaR1C1 = (
+    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb + 3, col + 1].FormulaR1C1 = (
     #     '=SUMXMY2(' + dataP + ',' + dataF + ')')
     # SolverOk(
-    #     SetCell=Worksheets[nom_feuille].Cells(lig_deb + 3, col + 1),
+    #     SetCell=Initialisation.Worksheets[nom_feuille].Cells(lig_deb + 3, col + 1),
     #     MaxMinVal=2,
     #     ValueOf='0',
-    #     ByChange=Worksheets[nom_feuille].Range(
+    #     ByChange=Initialisation.Worksheets[nom_feuille].Range(
     #         Cells(lig_deb, col + 1), Cells(lig_deb + 2, col + 1)))
     # SolverSolve(UserFinish=True)
     """
@@ -1167,9 +1188,9 @@ def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
     HC_triang meilleure estimation correspondant
     """
     col = col + 1
-    _min = Worksheets[nom_feuille].Cells(lig_deb, col)
-    _max = Worksheets[nom_feuille].Cells(lig_deb + 1, col)
-    mode = Worksheets[nom_feuille].Cells(lig_deb + 2, col)
+    _min = Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col)
+    _max = Initialisation.Worksheets[nom_feuille].Cells(lig_deb + 1, col)
+    mode = Initialisation.Worksheets[nom_feuille].Cells(lig_deb + 2, col)
     pmode = (mode - min) / (max - min)
     for i in range(1, len(pourcent)):
         if (pourcent[i] <= pmode):
@@ -1179,6 +1200,6 @@ def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
             HC_triang[i] = max - math.sqrt(
                 (1 - pourcent[i]) * (max - min) * (max - mode))
     """On efface la plage de cellules sur laquelle on vient de travailler"""
-    # Range(Worksheets[nom_feuille].Cells(lig_deb, col - 1),
-    #       Worksheets[nom_feuille].Cells(lig_deb + nbdata - 1, col)).Select()
+    # Range(Initialisation.Worksheets[nom_feuille].Cells(lig_deb, col - 1),
+    #       Initialisation.Worksheets[nom_feuille].Cells(lig_deb + nbdata - 1, col)).Select()
     # Selection.Delete()
