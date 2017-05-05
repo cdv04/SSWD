@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: ponderation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-02T10:26:21+02:00
+# @Last modified time: 2017-05-05T11:13:23+02:00
 
 from fct_generales import trier_collection
 
@@ -206,7 +206,7 @@ def calcul_prob_cumul(aCollection, a):
         aCollection[i].pcum = (p1[i] - a) / (len(aCollection) + 1 - 2 * a)
 
 
-def calcul_nbvar(n_optim, data_co, pcat, nb_taxo, nbvar):
+def calcul_nbvar(n_optim, data_co, pcat, nb_taxo):
     """
     Calcul le nombre de donnees optimal a tirer lors du bootstrap.
 

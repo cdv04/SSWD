@@ -11,7 +11,7 @@ Parse commande line and csv file.
 # @Project: SSWD
 # @Filename: run.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-28T10:22:36+02:00
+# @Last modified time: 2017-05-05T10:58:05+02:00
 
 import argparse
 import sys

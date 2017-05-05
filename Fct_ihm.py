@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-03T15:03:22+02:00
+# @Last modified time: 2017-05-05T11:12:44+02:00
 
 import numpy as np
 
@@ -189,9 +189,10 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
     if (iproc == 1):
         """Collection SSWD"""
         # data_co = plage_x.copy()
-        Initialisation.init_collection(data_co, plage_x[0].split(";"),
-                                       plage_x[1].split(";"),
-                                       plage_x[2].split(";"))
+        delem = ';' if len(plage_x[0].split(";")) > 1 else ','
+        Initialisation.init_collection(data_co, plage_x[0].split(delem),
+                                       plage_x[1].split(delem),
+                                       plage_x[2].split(delem))
         # init_collection(nom_feuille, l1[0] + 1, l1[1] + 1, l1[2] + 1, c1[0],
         #                 c1[1], c1[2], data_co)
     else:

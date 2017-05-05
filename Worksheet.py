@@ -12,15 +12,20 @@ This class contains the full worksheets (like a Excel file).
 # @Project: SSWD
 # @Filename: Worksheet.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-04-27T14:45:34+02:00
+# @Last modified time: 2017-05-05T10:01:45+02:00
 
-import numpy as np
+import pandas
 
 
 class Worksheet:
     """Worksheet class."""
 
-    def __init__(self, cells=np.matrix("0 0;0 0"), name=""):
+    def __repr__(self):
+        """Return the str."""
+        ret = self.Cells.to_csv()
+        return (ret)
+
+    def __init__(self, cells=pandas.DataFrame(), name=""):
         """Initialization for cells."""
         self.Cells = cells
         self.Name = name
