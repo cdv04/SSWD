@@ -10,7 +10,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-03T15:04:01+02:00
+# @Last modified time: 2017-05-05T13:43:42+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -113,17 +113,17 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     1. Calcul des ponderations et affichage resultats
     dans nom_feuille_pond
     """
-    pond_lig = 1
-    pond_col = 1
+    pond_lig = 0
+    pond_col = 0
     calcul_ponderation(data_co, pcat, isp, a, nb_taxo)
     ecrire_data_co(data_co, nom_colonne, pond_lig, pond_col, nom_feuille_pond,
                    False, iproc)
-    nbdata = data_co.Count
+    nbdata = len(data_co)
     """2. Calcul nbvar et Tirages aleatoires"""
     nbvar = calcul_nbvar(n_optim, data_co, pcat, nb_taxo)
-    (pond_lig_deb, pond_lig_fin,
-     pond_col_data, pond_col_pond, pond_col_pcum) = calcul_ref_pond(
-         pond_col, pond_lig, ind_data, ind_pond, ind_pcum, nbdata, tmp, tmp)
+    (pond_lig_deb, pond_lig_fin, pond_col_data, pond_col_pond,
+     pond_col_pcum, pond_col_data_act) = calcul_ref_pond(
+         pond_col, pond_lig, ind_data, ind_pond, ind_pcum, nbdata, tmp)
     tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, pond_lig_deb,
            pond_col_data, pond_lig_fin, pond_col_pond)
     """
@@ -166,7 +166,7 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     dans nom_feuille_res
     """
     trier_collection(data_co, 2, 2)
-    ecrire_titre(titre_data[1], nom_feuille_res, lig_data - 1, col_data1,
+    ecrire_titre(titre_data[0], nom_feuille_res, lig_data - 1, col_data1,
                  nb_col_co)
     ecrire_data_co(data_co, nom_colonne, lig_data, col_data1, nom_feuille_res,
                    True, iproc)
@@ -175,12 +175,12 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     dans nom_feuille_res
     """
     trier_collection(data_co, 7, 1)
-    ecrire_titre(titre_data[2], nom_feuille_res, lig_data - 1, col_data2,
+    ecrire_titre(titre_data[1], nom_feuille_res, lig_data - 1, col_data2,
                  nb_col_co)
     ecrire_data_co(data_co, nom_colonne, lig_data, col_data2, nom_feuille_res,
                    True, iproc)
     """loi empirique"""
-    if dist[1] is True:
+    if dist[0] is True:
         loi = 1
         """Calcul les valeurs correspondant a chaque tirage"""
         calcul_ic_empirique(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
@@ -202,7 +202,7 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         lig_hc = ligne_tot + nblig_vide + 1
         calcul_lig_graph(lig_hc, lig_p, lig_qbe, lig_qbi, lig_qbs)
     """loi normale"""
-    if dist[2] is True:
+    if dist[1] is True:
         loi = 2
         calcul_ic_normal(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                          nom_feuille_qnorm, c_mu)
@@ -223,7 +223,7 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         lig_hc = ligne_tot + nblig_vide + 1
         calcul_lig_graph(lig_hc, lig_p, lig_qbe, lig_qbi, lig_qbs)
     """loi triangulaire"""
-    if dist[3] is True:
+    if dist[2] is True:
         loi = 3
         if triang_ajust is True:
             calcul_ic_triang_q(l1, c1, l2, c2, c1, nbvar, a, pourcent,
@@ -247,7 +247,7 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
                          R2_triang, Pvalue_triang, nbdata, mup, sigmap, _min,
                          _max, mode, titre_axe, val_pcat, liste_taxo, isp, tmp,
                          tmp, iproc, tmp)
-    decaler_graph(nom_feuille_res)
+    # decaler_graph(nom_feuille_res)
     affichage_options(nom_feuille_res, isp, val_pcat, liste_taxo, B, 1, 1,
                       ligne_tot + 3, 1, dist, nbvar, iproc, a)
     cellule_gras(1, 1, 1, 1)

@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-03T15:31:06+02:00
+# @Last modified time: 2017-05-05T14:11:55+02:00
 
 import operator
 import sys
@@ -125,7 +125,7 @@ def ecrire_titre(titre, nom_feuille, lig, col, nbcol):
     @param nbcol: nombre de colonnes du tableau (pour centrer le titre
                   sur toutes les colonnes)
     """
-    Initialisation.Worksheets[nom_feuille].Cells[lig, col] = titre
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(lig, col, titre)
     """Formatage du text."""
     # _with0 = Range(Initialisation.Worksheets(nom_feuille).Cells(lig, col),
     #                Initialisation.Worksheets(nom_feuille).Cells(lig, col + nbcol - 1))
@@ -149,34 +149,34 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
     nbdata = len(data_co)
     """1. Titre des colonnes"""
     for i in range(0, len(nom_colonne)):
-        Initialisation.Worksheets[nom_feuille].Cells[lig, col + i -
-                                                     1] = nom_colonne[i]
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig, col + i, nom_colonne[i])
     """2. Donnees"""
     for i in range(0, nbdata):
-        Initialisation.Worksheets[nom_feuille].Cells[lig + i, col] = data_co[
-            i].espece
-        Initialisation.Worksheets[nom_feuille].Cells[lig + i, col +
-                                                     1] = data_co[i].taxo
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig + i, col, data_co[i].espece)
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig + i, col + 1, data_co[i].taxo)
         if iproc == 2:
-            # Initialisation.Worksheets[nom_feuille].Cells[lig + i, col + 2] = data_co[i].test
+            # Initialisation.Worksheets[nom_feuille].Cells.set_value(lig + i, col + 2, data_co[i].test)
             if invlog is True:
-                Initialisation.Worksheets[nom_feuille].Cells[
-                    lig + i, col + 5] = 10**data_co[i].act
+                Initialisation.Worksheets[nom_feuille].Cells.set_value(
+                    lig + i, col + 5, 10**data_co[i].act)
             else:
-                Initialisation.Worksheets[nom_feuille].Cells[
-                    lig + i, col + 5] = data_co[i].act
-            Initialisation.Worksheets[nom_feuille].Cells[lig + i, col +
-                                                         6] = data_co[i].pcum_a
+                Initialisation.Worksheets[nom_feuille].Cells.set_value(
+                    lig + i, col + 5, data_co[i].act)
+            Initialisation.Worksheets[nom_feuille].Cells.set_value(
+                lig + i, col + 6, data_co[i].pcum_a)
         if invlog is True:
-            Initialisation.Worksheets[nom_feuille].Cells[
-                lig + i, col + 2] = 10**(data_co[i].data)
+            Initialisation.Worksheets[nom_feuille].Cells.set_value(
+                lig + i, col + 2, 10**(data_co[i].data))
         else:
-            Initialisation.Worksheets[nom_feuille].Cells[lig + i, col +
-                                                         2] = data_co[i].data
-        Initialisation.Worksheets[nom_feuille].Cells[lig + i, col +
-                                                     3] = data_co[i].pond
-        Initialisation.Worksheets[nom_feuille].Cells[lig + i, col +
-                                                     4] = data_co[i].pcum
+            Initialisation.Worksheets[nom_feuille].Cells.set_value(
+                lig + i, col + 2, data_co[i].data)
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig + i, col + 3, data_co[i].pond)
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig + i, col + 4, data_co[i].pcum)
 
 
 def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
@@ -190,6 +190,12 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
     nom_feuille_res et nom_feuille_pond
     """
     # prem = True
+    name_list = [
+        nom_feuille_pond, nom_feuille_stat, nom_feuille_res, nom_feuille_qemp,
+        nom_feuille_qnorm, nom_feuille_sort, nom_feuille_Ftriang,
+        nom_feuille_qtriang, nom_feuille_err_ve, nom_feuille_err_inv,
+        nom_feuille_indice
+    ]
     for ws in Initialisation.Worksheets:
         if (ws.Name == nom_feuille_res):
             rep = MsgBox('Attention...', 'Result\'s worksheet already exists!\
@@ -203,18 +209,10 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
             else:
                 del Initialisation.Worksheets[ws.Name]
         else:
-            if (ws.Name == nom_feuille_pond or ws.Name == nom_feuille_stat or
-                    ws.Name == nom_feuille_qemp or
-                    ws.Name == nom_feuille_qnorm or
-                    ws.Name == nom_feuille_sort or
-                    ws.Name == nom_feuille_Ftriang or
-                    ws.Name == nom_feuille_qtriang or
-                    ws.Name == nom_feuille_err_ve or
-                    ws.Name == nom_feuille_err_inv or
-                    ws.Name == nom_feuille_indice):
+            if (ws.Name in name_list):
                 del Initialisation.Worksheets[ws.Name]
-    Initialisation.Worksheets[nom_feuille_res] = Worksheet()
-    Initialisation.Worksheets[nom_feuille_pond] = Worksheet()
+    for name_str in name_list:
+        Initialisation.Worksheets[name_str] = Worksheet(name=name_str)
 
 
 def minimum_tab_dif0(a):
@@ -270,110 +268,111 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
     @param col_s: premiere colonne d'affichage sigles
     """
     nbcol = 1
-    Initialisation.Worksheets[nom_feuille].Cells[lig, col] = 'Options'
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(lig, col, 'Options')
     # Option espece
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 1, col] = 'Species='
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 1, col + 1] = sp_opt(
-        isp)
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 1, col, 'Species=')
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 1, col + 1, sp_opt(isp))
     # Option pcat
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 2, col] = 'Taxonomy'
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 2, col, 'Taxonomy')
     if liste_taxo is not None:
-        Initialisation.Worksheets[nom_feuille].Cells[lig + 2, col +
-                                                     1] = liste_taxo
-        Initialisation.Worksheets[nom_feuille].Cells[lig + 2, col +
-                                                     2] = val_pcat
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig + 2, col + 1, liste_taxo)
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig + 2, col + 2, val_pcat)
     else:
-        Initialisation.Worksheets[nom_feuille].Cells[lig + 2, col +
-                                                     1] = 'No Weight'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig + 2, col + 1, 'No Weight')
     """nbruns B"""
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 3,
-                                                 col] = 'Nb bootstrap samples'
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 3, col, 'Nb bootstrap samples')
     # Range(Initialisation.Worksheets(nom_feuille).Cells(lig + 3, col),
     #       Initialisation.Worksheets(nom_feuille).Cells(lig + 3, col + nbcol)).Select()
     # Selection.Merge()
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 3, col + nbcol + 1] = B
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 3, col + nbcol + 1, B)
     """nbvar"""
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 4, col] = 'Nb data'
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 4, col + nbcol +
-                                                 1] = nbvar
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 4, col, 'Nb data')
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 4, col + nbcol + 1, nbvar)
     """parametre de Hazen : a"""
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 5,
-                                                 col] = 'Hazen parameter a'
-    Initialisation.Worksheets[nom_feuille].Cells[lig + 5, col + nbcol + 1] = a
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 5, col, 'Hazen parameter a')
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig + 5, col + nbcol + 1, a)
     """Sigles=acronyms"""
-    Initialisation.Worksheets[nom_feuille].Cells[
-        lig_s, col_s] = 'SSWD=Species Sensitivity Weighted Distribution'
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig_s, col_s, 'SSWD=Species Sensitivity Weighted Distribution')
     if iproc == 2:
         i = 1
-        Initialisation.Worksheets[nom_feuille].Cells[lig_s + i,
-                                                     col_s] = 'ACT=Acute to\
- Chronic Transformation'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i, col_s, 'ACT=Acute to\
+ Chronic Transformation')
 
     else:
         i = 0
-    Initialisation.Worksheets[nom_feuille].Cells[
-        lig_s + i + 1, col_s] = 'HC=Hazardous Concentration'
-    Initialisation.Worksheets[nom_feuille].Cells[lig_s + i + 2,
-                                                 col_s] = 'Sp=Species'
-    Initialisation.Worksheets[nom_feuille].Cells[
-        lig_s + i + 3, col_s] = 'TW=Taxonomic or Trophical Weights'
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig_s + i + 1, col_s, 'HC=Hazardous Concentration')
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig_s + i + 2, col_s, 'Sp=Species')
+    Initialisation.Worksheets[nom_feuille].Cells.set_value(
+        lig_s + i + 3, col_s, 'TW=Taxonomic or Trophical Weights')
     i = i + 4
-    if dist[2] is True or dist[3] is True:
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i, col_s] = 'R_=Multiple R-square on \
-the empirical quantiles'
+    if dist[1] is True or dist[2] is True:
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i, col_s, 'R_=Multiple R-square on \
+the empirical quantiles')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 1,
-            col_s] = 'KSpvalue=pvalue of the Kolmogorov-Smirnov \
-goodness of fit test (with Dallal-Wilkinson approximation)'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 1, col_s, 'KSpvalue=pvalue of the Kolmogorov-Smirnov \
+goodness of fit test (with Dallal-Wilkinson approximation)')
 
         i = i + 2
     if dist[2] is True:
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i,
-            col_s] = 'GWM=Geometric Weighted Mean of the log-normal \
-            distribution'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i, col_s, 'GWM=Geometric Weighted Mean of the log-normal \
+            distribution')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 1,
-            col_s] = 'GWSD=Geometric Weighted Standard Deviation\
- of the log-normal distribution'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 1, col_s, 'GWSD=Geometric Weighted Standard Deviation\
+ of the log-normal distribution')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 2, col_s] = 'wm.lg=Weighted Mean of the log-normal \
- distribution of the data (log10)'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 2, col_s, 'wm.lg=Weighted Mean of the log-normal \
+ distribution of the data (log10)')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 3, col_s] = 'wsd.lg=Weighted Standard Deviation of the\
- log-normal distribution of the data (log10)'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 3, col_s, 'wsd.lg=Weighted Standard Deviation of the\
+ log-normal distribution of the data (log10)')
 
         i = i + 4
-    if dist[3] is True:
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i,
-            col_s] = 'GWMin=Geometric Min parameter of the Weighted \
-log-triangular distribution'
+    if dist[2] is True:
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i, col_s, 'GWMin=Geometric Min parameter of the Weighted \
+log-triangular distribution')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 1, col_s] = 'GWMax=Geometric Max parameter of the \
-Weighted log-triangular distribution'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 1, col_s, 'GWMax=Geometric Max parameter of the \
+Weighted log-triangular distribution')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 2, col_s] = 'GWMode=Geometric Mode parameter of the \
-Weighted log-triangular distribution'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 2, col_s, 'GWMode=Geometric Mode parameter of the \
+Weighted log-triangular distribution')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 3, col_s] = 'wmin.lg=Min parameter of the Weighted \
-log-triangular distribution (log10)'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 3, col_s, 'wmin.lg=Min parameter of the Weighted \
+log-triangular distribution (log10)')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 4, col_s] = 'wmax.lg=Max parameter of the Weighted \
-log-triangular distribution (log10)'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 4, col_s, 'wmax.lg=Max parameter of the Weighted \
+log-triangular distribution (log10)')
 
-        Initialisation.Worksheets[nom_feuille].Cells[
-            lig_s + i + 5, col_s] = 'wmode.lg=Mode parameter of the Weighted \
-log-triangular distribution (log10)'
+        Initialisation.Worksheets[nom_feuille].Cells.set_value(
+            lig_s + i + 5, col_s, 'wmode.lg=Mode parameter of the Weighted \
+log-triangular distribution (log10)')
 
 
 def calcul_col_res(c_hc, nbcol_vide, pourcent, dist, ind_tax, ind_data,
@@ -408,9 +407,9 @@ def calcul_col_res(c_hc, nbcol_vide, pourcent, dist, ind_tax, ind_data,
                      empirique dans data_co_feuil
     """
     # l'affichage des parametres mu et sig et/ou min, max, mode
-    if dist[3] is True:
+    if dist[2] is True:
         nbcol = 4
-    elif dist[2] is True:
+    elif dist[1] is True:
         nbcol = 3
     else:
         nbcol = 0
@@ -431,9 +430,8 @@ def calcul_col_res(c_hc, nbcol_vide, pourcent, dist, ind_tax, ind_data,
             col_pcum_a)
 
 
-def calcul_ref_pond(col_deb, col_data, col_pcum, col_pond, l1, lig_deb,
-                    lig_fin, ind_data, ind_pond, ind_pcum, nbdata,
-                    ind_data_act, col_data_act):
+def calcul_ref_pond(col_deb, l1, ind_data, ind_pond, ind_pcum, nbdata,
+                    ind_data_act):
     """
     Calcul les indices lignes et colonnes dans nom_feuille_pond.
 
@@ -466,16 +464,15 @@ def efface_feuil_inter(nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
                        nom_feuille_err_ve, nom_feuille_err_inv,
                        nom_feuille_indice):
     """Efface les feuilles de calcul intermediaires si voulu."""
-    for ws in Initialisation.Worksheets:
-        if (ws.Name == nom_feuille_pond or ws.Name == nom_feuille_stat or
-                ws.Name == nom_feuille_qemp or ws.Name == nom_feuille_qnorm or
-                ws.Name == nom_feuille_sort or
-                ws.Name == nom_feuille_Ftriang or
-                ws.Name == nom_feuille_qtriang or
-                ws.Name == nom_feuille_err_ve or
-                ws.Name == nom_feuille_err_inv or
-                ws.Name == nom_feuille_indice):
-            del Initialisation.Worksheets[ws.Name]
+    name_list = [
+        nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
+        nom_feuille_qnorm, nom_feuille_qtriang, nom_feuille_sort,
+        nom_feuille_Ftriang, nom_feuille_err_ve, nom_feuille_err_inv,
+        nom_feuille_indice
+    ]
+    for name in name_list:
+        if name in Initialisation.Worksheets:
+            del Initialisation.Worksheets[name]
 
 
 def trier_tableau(a):
@@ -619,8 +616,8 @@ def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
     # Initialisation.Worksheets.Add()
     # ActiveSheet.Name = nom_feuille_sort
     # for i in vbForRange(1, nbvar):
-    #     Initialisation.Worksheets[nom_feuille_sort].Cells[l1 - 1, c3 + i - 1] = 'RANK ' + i
-    #     Initialisation.Worksheets[nom_feuille_sort].Cells[
+    #     Initialisation.Worksheets[nom_feuille_sort].Cells.set_value(l1 - 1, c3 + i - 1] = 'RANK ' + i)
+    #     Initialisation.Worksheets[nom_feuille_sort].Cells.set_value()
     #         l1, c3 + i - 1].FormulaR1C1 = '=SMALL(' + nom_feuille_stat + '!'
     #         + data + ',' + i + ')'
     # Range(Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3), Initialisation.Worksheets(

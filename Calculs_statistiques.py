@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-03T15:06:06+02:00
+# @Last modified time: 2017-05-05T11:19:37+02:00
 
 import math
 
@@ -43,7 +43,8 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
     #                     Cells(lig_deb, col_data), Cells(lig_fin, col_pond)))
     # Initialisation.Worksheets[nom_feuille_stat].Rows(1).Insert()
     for j in range(0, nbvar):
-        Initialisation.Worksheets[nom_feuille_stat].Cells[1, j] = 'POINT ' + j
+        Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
+            1, j, 'POINT ' + str(j))
     # Initialisation.Worksheets[nom_feuille_stat].Cells[1, 1].Select()
 
 
