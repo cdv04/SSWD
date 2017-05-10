@@ -11,7 +11,7 @@ Parse commande line and csv file.
 # @Project: SSWD
 # @Filename: run.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-05T10:58:05+02:00
+# @Last modified time: 2017-05-10T13:41:07+02:00
 
 import argparse
 import sys
@@ -24,11 +24,12 @@ from Fct_ihm import charger_parametres
 def isp_type(x):
     """Check isp type."""
     x = str(x)
-    if x not in ["w", "u", "m"]:
+    to_index = ["w", "u", "m"]
+    if x not in to_index:
         raise argparse.ArgumentTypeError(
             "%s has to be: m(ean)/w(eighted)/u(nweighted) for poderation" %
             (x, ))
-    return ()
+    return (to_index.index(x))
 
 
 def restricted_float(x):
@@ -39,7 +40,7 @@ def restricted_float(x):
     return x
 
 
-def parse_file(filename, colnames=["SpeciesComp", "PhylumSup", "ED"]):
+def parse_file(filename, colnames=["SpeciesComp", "Class", "EDR10"]):
     """Parse file using pandas module."""
     if not filename:
         raise argparse.ArgumentTypeError("Filename (-f) is None.")
@@ -48,20 +49,15 @@ def parse_file(filename, colnames=["SpeciesComp", "PhylumSup", "ED"]):
         data = pandas.read_csv(filename, sep=";", header=0)
     espece = filename + "!"
     test = filename + "!"
-    for n in data.SpeciesComp.tolist():
+    for n in data[colnames[0]].tolist():
         espece += str(n) + ";"
         test += str(n) + ";"
     taxo = filename + "!"
-    for n in data.PhylumSup.tolist():
+    for n in data[colnames[1]].tolist():
         taxo += str(n) + ";"
     concentration = filename + "!"
-    for n in data.ED.tolist():
+    for n in data[colnames[2]].tolist():
         concentration += str(n) + ";"
-    # print("espece:", espece)
-    # print("taxon:", taxo)
-    # print("concentration", concentration)
-    # print(test)
-    # sys.exit()
     return (espece, taxo, concentration, test)
 
 

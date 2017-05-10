@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-05T11:12:44+02:00
+# @Last modified time: 2017-05-09T16:12:39+02:00
 
 import numpy as np
 
@@ -221,7 +221,7 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
     nom_colonne.append('Weighted Emp. Cumul. Prob.')
     check_nom_colonne(iproc, nom_colonne)
     """Type de pondération espece"""
-    isp = (cbx_e + 1 if (iproc == 1) else 1)
+    isp = (cbx_e + 1) if (iproc == 1) else 1
     """Pcat : pondération taxonomie"""
     trier_collection(data_co, 2, 1)
     nb_taxo = calcul_nb_taxo(data_co)
