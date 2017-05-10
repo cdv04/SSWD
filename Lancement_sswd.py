@@ -10,7 +10,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-05T13:43:42+02:00
+# @Last modified time: 2017-05-10T15:21:34+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -134,13 +134,13 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     """
     """3. Calculs valeurs best-estimates et statistiques apres tirages"""
     """Definition indice lignes et colonnes"""
-    l1 = 2
+    l1 = 1
     """
     l1 ne peut être modifiee : c'est en fait une constante definie par la
     procedure tirage
     """
     l2 = B + l1 - 1
-    c1 = 1
+    c1 = 0
     """c'est une constante definie par la sub tirage"""
     c2 = c1 + nbvar - 1
     lig_hc = 9
@@ -186,11 +186,11 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         calcul_ic_empirique(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                             nom_feuille_qemp, nom_feuille_sort, nbvar, a)
         """Calcul des valeurs best-estimates et affichage des resultats"""
-        (mup, sigmap, c_mu, _min, _max, mode, c_min, data_c) = calcul_res(
+        (mup, sigmap, _min, _max, mode, c_min, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
             pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
-            nom_feuille_qemp, nom_feuille_pond, '', triang_ajust, iproc,
+            nom_feuille_qemp, nom_feuille_pond, '', 0, triang_ajust, iproc,
             nbdata)
         """Graphes de SSWD"""
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
@@ -204,13 +204,13 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     """loi normale"""
     if dist[1] is True:
         loi = 2
-        calcul_ic_normal(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
-                         nom_feuille_qnorm, c_mu)
-        (mup, sigmap, c_mu, _min, _max, mode, c_min, data_c) = calcul_res(
+        c_mu = calcul_ic_normal(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
+                                nom_feuille_qnorm)
+        (mup, sigmap, _min, _max, mode, c_min, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
             pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
-            nom_feuille_qnorm, nom_feuille_pond, nom_feuille_stat,
+            nom_feuille_qnorm, nom_feuille_pond, nom_feuille_stat, c_mu,
             triang_ajust, iproc, nbdata)
         R2_norm, Pvalue_norm = calcul_R2(data_co, loi, mup, sigmap, _min, _max,
                                          mode, nbdata, data_c)

@@ -10,9 +10,11 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-05T11:19:37+02:00
+# @Last modified time: 2017-05-10T15:58:48+02:00
 
 import math
+
+import numpy as np
 
 import Initialisation
 from fct_generales import (cellule_gras, compt_inf, csd, ecrire_titre,
@@ -42,9 +44,14 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
     #                 Initialisation.Worksheets[nom_feuille_pond].Range(
     #                     Cells(lig_deb, col_data), Cells(lig_fin, col_pond)))
     # Initialisation.Worksheets[nom_feuille_stat].Rows(1).Insert()
+    # print(np.random.multinomial(B, ))
     for j in range(0, nbvar):
         Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
-            1, j, 'POINT ' + str(j))
+            -1, j, 'POINT ' + str(j + 1))
+    Initialisation.Worksheets[nom_feuille_stat].Cells.index += 1
+    Initialisation.Worksheets[
+        nom_feuille_stat].Cells = Initialisation.Worksheets[
+            nom_feuille_stat].Cells.sort_index()
     # Initialisation.Worksheets[nom_feuille_stat].Cells[1, 1].Select()
 
 
@@ -131,7 +138,7 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
 
 
 def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
-                     nom_feuille_qnorm, c_mu):
+                     nom_feuille_qnorm):
     """
     Calcul les centiles p% normaux pour chaque echantillon du tirage.
 
@@ -162,10 +169,22 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     on travaille dans nom_feuille_stat
     """
     # Initialisation.Worksheets(nom_feuille_stat).Activate()
-    Initialisation.Worksheets[nom_feuille_stat].Cells[l1 - 1, c_mu] = 'MEAN'
-    Initialisation.Worksheets[nom_feuille_stat].Cells[l1 - 1, c_mu +
-                                                      1] = 'STDEV'
-    data = 'RC' + c1 + ':RC' + c2
+    Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
+        l1 - 1, c_mu, 'MEAN')
+    Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
+        l1 - 1, c_mu + 1, 'STDEV')
+    # data = 'RC' + str(c1) + ':RC' + str(c2)
+    data = list()
+    for i in range(0, len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+        for j in range(c1, c2):
+            print(Initialisation.Worksheets[nom_feuille_stat].Cells)
+            data.append(
+                Initialisation.Worksheets[nom_feuille_stat].Cells[i, j])
+        Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
+            l1 + i, c_mu, np.mean(data))
+        Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
+            i, c_mu + 1, np.std(data))
+    print(Initialisation.Worksheets[nom_feuille_stat].Cells)
     """1. Calcul de la moyenne des echantillons"""
     Initialisation.Worksheets[nom_feuille_stat].Cells[
         l1,
@@ -204,6 +223,7 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     #         Initialisation.Worksheets(nom_feuille_qnorm).Cells(l2, c3 + len(p) - 1)),
     #     Type=xlFillDefault)
     # Initialisation.Worksheets(nom_feuille_qnorm).Cells(1, 1).Select()
+    return (c_mu)
 
 
 def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
@@ -630,7 +650,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     # Initialisation.Worksheets(nom_feuille_res).Activate()
     # Initialisation.Worksheets(nom_feuille_res).Cells(1, 1).Select()
     """Ecriture du titre"""
-    ecrire_titre(titre(loi), nom_feuille_res, l_hc, c_hc, len(pourcent) + 1)
+    ecrire_titre(titre[loi], nom_feuille_res, l_hc, c_hc, len(pourcent) + 1)
     """
     Affichage titre des lignes du tableau HC et Calcul ecart type
     de HC

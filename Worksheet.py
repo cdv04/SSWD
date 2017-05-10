@@ -12,7 +12,7 @@ This class contains the full worksheets (like a Excel file).
 # @Project: SSWD
 # @Filename: Worksheet.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-05T10:01:45+02:00
+# @Last modified time: 2017-05-10T15:09:30+02:00
 
 import pandas
 
@@ -25,7 +25,10 @@ class Worksheet:
         ret = self.Cells.to_csv()
         return (ret)
 
-    def __init__(self, cells=pandas.DataFrame(), name=""):
+    def __init__(self, cells=None, name=""):
         """Initialization for cells."""
-        self.Cells = cells
+        if cells is None:
+            self.Cells = pandas.DataFrame().copy(deep=True)
+        else:
+            self.Cells = cells
         self.Name = name

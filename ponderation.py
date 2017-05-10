@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: ponderation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-05T11:13:23+02:00
+# @Last modified time: 2017-05-10T13:39:48+02:00
 
 from fct_generales import trier_collection
 
@@ -55,16 +55,16 @@ def calcul_ponderation(data_co, pcat, isp, a, nb_taxo):
     if (somme_pcat == 0):
         if (isp > 1):
             for i in range(0, len(data_co)):
-                p.append(1 / len(data_co))
+                p[i] = (1 / len(data_co))
         else:
             for i in range(0, len(data_co)):
-                p.append(1 / p[i] * nb_espece)
+                p[i] = (1 / (p[i] * nb_espece))
     else:
         if (isp > 1):
-            ind_debut = 1
-            ind_taxo = 1
-            nb = 1
-            j = 1
+            ind_debut = 0
+            ind_taxo = 0
+            nb = 0
+            j = 0
             """
             Pour chaque categorie taxo, calcul du nombre d'espece presente puis
             des ponderations
@@ -78,12 +78,13 @@ def calcul_ponderation(data_co, pcat, isp, a, nb_taxo):
                 ind_fin = j
                 for k in range(ind_debut, ind_fin):
                     p[k] = (1 / nb) * pcat[ind_taxo]
+                    print(k)
                 ind_debut = ind_fin + 1
                 ind_taxo = ind_taxo + 1
                 j = j + 1
                 nb = 1
         else:
-            j = 1
+            j = 0
             nb = 0
             nespece = 1
             """
@@ -134,10 +135,10 @@ def moyenne(aCollection):
 
     @param aCollection: la collection a traiter
     """
-    i = 1
-    while i <= len(aCollection):
+    i = 0
+    while i in range(0, len(aCollection)):
         tmp = aCollection[i].espece
-        for j in range(i, len(aCollection)):
+        for j in range(i + 1, len(aCollection)):
             if tmp == aCollection[j].espece:
                 aCollection[i].data += aCollection[j].data
                 aCollection[i].num = aCollection[i].num + 1
@@ -160,7 +161,7 @@ def compte_espece(aCollection, p, nb_espece):
         tmp = aCollection[i].espece
         # prem = True
         compt.append(aCollection[i].espece)
-        for j in range(i, len(aCollection)):
+        for j in range(i + 1, len(aCollection)):
             if (aCollection[j - 1].taxo != aCollection[j].taxo):
                 break
             if tmp == aCollection[j].espece:
