@@ -10,16 +10,17 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-11T11:20:34+02:00
+# @Last modified time: 2017-05-11T14:48:09+02:00
 
 import math
 
-import numpy as np
+from numpy import mean, std
+from numpy.random import choice
+from scipy.stats import norm
 
 import Initialisation
-from fct_generales import (cellule_gras, compt_inf, csd, ecrire_titre,
+from fct_generales import (cellule_gras, compt_inf, ecrire_titre,
                            encadrer_colonne, trier_tirages_feuille)
-from Worksheet import Worksheet
 
 
 def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
@@ -40,10 +41,6 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
     @param lig_fin: derniere ligne de la plage des donnees a tirer
     @param col_pond: colonne des probabilites associees a chaque donnee
     """
-    # Application.Run('ATPVBAEN.XLA!Random', nom_feuille_stat, nbvar, B, 7,
-    #                 Initialisation.Worksheets[nom_feuille_pond].Range(
-    #                     Cells(lig_deb, col_data), Cells(lig_fin, col_pond)))
-    # Initialisation.Worksheets[nom_feuille_stat].Rows(1).Insert()
     data = list()
     pond = list()
     for x in range(0, len(Initialisation.Worksheets[nom_feuille_pond].Cells)):
@@ -57,8 +54,7 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
     for i in range(1, B + 1):
         for j in range(0, nbvar):
             Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
-                i, j, np.random.choice(data, p=pond))
-    # Initialisation.Worksheets[nom_feuille_stat].Cells[1, 1].Select()
+                i, j, choice(data, p=pond))
 
 
 def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
@@ -118,7 +114,7 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     data = nom_feuille_sort + '!RC'
     for i in range(0, len(p)):
         # Initialisation.Worksheets(nom_feuille_qemp).Cells(l1, c3 + i - 1).FormulaR1C1 =
-        # "=PERCENTILE(" & nom_feuille_stat & "!" & data & "," & csd(p[i])
+        # "=PERCENTILE(" & nom_feuille_stat & "!" & data & "," & p[i]
         # & ")"
         if (rang[i] == 0 or rang[i] == nbvar):
             tmp[i] = 0
@@ -130,7 +126,7 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
             1].FormulaR1C1 = '=IF(' + rang[i] + '=0,' + data + c1 + \
             ',IF(' + rang[i] + '>=' + nbvar + ',' + data + c2 + ',' + data + \
             rang[i] + 1 + '-(' + data + rang[i] + 1 + '-' + data + rang[i] +\
-            ')*' + csd(tmp[i]) + '))'
+            ')*' + tmp[i] + '))'
     # Range(
     #     Initialisation.Worksheets(nom_feuille_qemp).Cells(l1, c3),
     #     Initialisation.Worksheets(nom_feuille_qemp).Cells(l1, c3 + len(p) - 1)).Select()
@@ -187,13 +183,10 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
                       .Cells.get_value(i, j)))
         """1. Calcul de la moyenne des echantillons"""
         Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
-            i, c_mu, np.mean(data))
+            i, c_mu, mean(data))
         """2. Calcul de l'ecart type des echantillons"""
         Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
-            i, c_mu + 1, np.std(data))
-    print(Initialisation.Worksheets[nom_feuille_stat].Cells.to_csv())
-    import sys
-    sys.exit()
+            i, c_mu + 1, std(data))
 
     # Initialisation.Worksheets[nom_feuille_stat].Cells[
     #     l1,
@@ -216,12 +209,16 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     """
     """Affichage dans nom_feuille_qnorm"""
     for i in range(0, len(p)):
-        Initialisation.Worksheets[nom_feuille_qnorm].Cells[
-            l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
-        Initialisation.Worksheets[nom_feuille_qnorm].Cells[
-            l1, c3 + i - 1].FormulaR1C1 = '=NORMINV(' + csd(
-                p[i]) + ',' + nom_feuille_stat + '!RC' + (
-                    c_mu) + ',' + nom_feuille_stat + '!RC' + (c_mu + 1) + ')'
+        Initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
+            l1 - 1, c3 + i - 1, 'QUANT ' + str(p[i] * 100) + ' %')
+        for x in range(1,
+                       len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+            Initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
+                x, c3 + i - 1,
+                norm.ppf(p[i], Initialisation.Worksheets[nom_feuille_stat]
+                         .Cells.get_value(x, c_mu), Initialisation.Worksheets[
+                             nom_feuille_stat].Cells.get_value(x, c_mu + 1)))
+    print(Initialisation.Worksheets[nom_feuille_qnorm].Cells)
     # Range(
     #     Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3),
     #     Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3 + len(p) - 1)).Select()
@@ -400,10 +397,10 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
             l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
         Initialisation.Worksheets[nom_feuille_qtriang].Cells[
             l1, c3 + i - 1].FormulaR1C1 = (
-                '=IF(' + csd(p[i]) + '<=' + ref + c_pmode + ',' + ref + c_min +
-                '+SQRT(' + csd(p[i]) + '*(' + ref + c_max + '-' + ref + c_min +
+                '=IF(' + p[i] + '<=' + ref + c_pmode + ',' + ref + c_min +
+                '+SQRT(' + p[i] + '*(' + ref + c_max + '-' + ref + c_min +
                 ')*(' + ref + c_mode + '-' + ref + c_min + ')), ' + ref + c_max
-                + '-SQRT((' + csd(1 - p[i]) + ')*(' + ref + c_max + '-' + ref +
+                + '-SQRT((' + 1 - p[i] + ')*(' + ref + c_max + '-' + ref +
                 c_min + ')*(' + ref + c_max + '-' + ref + c_mode + ')))')
     # Range(
     #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1, c3),
@@ -581,10 +578,10 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
         Initialisation.Worksheets[nom_feuille_qtriang].Cells[
             l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
     #     Initialisation.Worksheets[nom_feuille_qtriang].Cells[l1, c3 + i - 1].FormulaR1C1 = (
-    #         '=IF(' + csd(p[i]) + '<=' + ref + c_pmode + ',' + ref + c_min +
-    #         '+SQRT(' + csd(p[i]) + '*(' + ref + c_max + '-' + ref + c_min +
+    #         '=IF(' + p[i] + '<=' + ref + c_pmode + ',' + ref + c_min +
+    #         '+SQRT(' + p[i] + '*(' + ref + c_max + '-' + ref + c_min +
     #         ')*(' + ref + c_mode + '-' + ref + c_min + ')), ' + ref+c_min + 1
-    #         + '-SQRT((' + csd(1 - p[i]) + ')*(' + ref + c_max + '-' + ref +
+    #         + '-SQRT((' + 1 - p[i] + ')*(' + ref + c_max + '-' + ref +
     #         c_min + ')*(' + ref + c_max + '-' + ref + c_mode + ')))')
     # Range(
     #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1, c3),
