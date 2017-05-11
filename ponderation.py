@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: ponderation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-10T13:39:48+02:00
+# @Last modified time: 2017-05-11T11:19:54+02:00
 
 from fct_generales import trier_collection
 
@@ -78,7 +78,6 @@ def calcul_ponderation(data_co, pcat, isp, a, nb_taxo):
                 ind_fin = j
                 for k in range(ind_debut, ind_fin):
                     p[k] = (1 / nb) * pcat[ind_taxo]
-                    print(k)
                 ind_debut = ind_fin + 1
                 ind_taxo = ind_taxo + 1
                 j = j + 1

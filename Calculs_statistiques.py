@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-10T15:58:48+02:00
+# @Last modified time: 2017-05-11T11:20:34+02:00
 
 import math
 
@@ -44,14 +44,20 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
     #                 Initialisation.Worksheets[nom_feuille_pond].Range(
     #                     Cells(lig_deb, col_data), Cells(lig_fin, col_pond)))
     # Initialisation.Worksheets[nom_feuille_stat].Rows(1).Insert()
-    # print(np.random.multinomial(B, ))
+    data = list()
+    pond = list()
+    for x in range(0, len(Initialisation.Worksheets[nom_feuille_pond].Cells)):
+        data.append(Initialisation.Worksheets[nom_feuille_pond]
+                    .Cells.get_value(x, col_data))
+        pond.append(Initialisation.Worksheets[nom_feuille_pond]
+                    .Cells.get_value(x, col_pond))
     for j in range(0, nbvar):
         Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
-            -1, j, 'POINT ' + str(j + 1))
-    Initialisation.Worksheets[nom_feuille_stat].Cells.index += 1
-    Initialisation.Worksheets[
-        nom_feuille_stat].Cells = Initialisation.Worksheets[
-            nom_feuille_stat].Cells.sort_index()
+            0, j, 'POINT ' + str(j + 1))
+    for i in range(1, B + 1):
+        for j in range(0, nbvar):
+            Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
+                i, j, np.random.choice(data, p=pond))
     # Initialisation.Worksheets[nom_feuille_stat].Cells[1, 1].Select()
 
 
@@ -101,7 +107,6 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c1, l2,
                           nbvar, data)
     """Creation de la feuille contenant les quantiles empiriques"""
-    Initialisation.Worksheets[nom_feuille_qemp] = Worksheet()
     """Ecriture des entetes de colonnes"""
     for i in range(0, len(p)):
         Initialisation.Worksheets[nom_feuille_qemp].Cells[
@@ -174,25 +179,29 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
         l1 - 1, c_mu + 1, 'STDEV')
     # data = 'RC' + str(c1) + ':RC' + str(c2)
-    data = list()
-    for i in range(0, len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+    for i in range(1, len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+        data = list()
         for j in range(c1, c2):
-            print(Initialisation.Worksheets[nom_feuille_stat].Cells)
             data.append(
-                Initialisation.Worksheets[nom_feuille_stat].Cells[i, j])
+                float(Initialisation.Worksheets[nom_feuille_stat]
+                      .Cells.get_value(i, j)))
+        """1. Calcul de la moyenne des echantillons"""
         Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
-            l1 + i, c_mu, np.mean(data))
+            i, c_mu, np.mean(data))
+        """2. Calcul de l'ecart type des echantillons"""
         Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
             i, c_mu + 1, np.std(data))
-    print(Initialisation.Worksheets[nom_feuille_stat].Cells)
-    """1. Calcul de la moyenne des echantillons"""
-    Initialisation.Worksheets[nom_feuille_stat].Cells[
-        l1,
-        c_mu].FormulaR1C1 = '=AVERAGE(' + nom_feuille_stat + '!' + data + ')'
-    """2. Calcul de l'ecart type des echantillons"""
-    Initialisation.Worksheets[nom_feuille_stat].Cells[
-        l1, c_mu +
-        1].FormulaR1C1 = '=STDEV(' + nom_feuille_stat + '!' + data + ')'
+    print(Initialisation.Worksheets[nom_feuille_stat].Cells.to_csv())
+    import sys
+    sys.exit()
+
+    # Initialisation.Worksheets[nom_feuille_stat].Cells[
+    #     l1,
+    #     c_mu].FormulaR1C1 = '=AVERAGE(' + nom_feuille_stat + '!' + data + ')'
+    #
+    # Initialisation.Worksheets[nom_feuille_stat].Cells[
+    #     l1, c_mu +
+    #     1].FormulaR1C1 = '=STDEV(' + nom_feuille_stat + '!' + data + ')'
     # Range(
     #     Initialisation.Worksheets(nom_feuille_stat).Cells(l1, c_mu),
     #     Initialisation.Worksheets(nom_feuille_stat).Cells(l1, c_mu + 1)).Select()
@@ -206,7 +215,6 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     stdev precedemment calcules
     """
     """Affichage dans nom_feuille_qnorm"""
-    Initialisation.Worksheets[nom_feuille_qnorm] = Worksheet()
     for i in range(0, len(p)):
         Initialisation.Worksheets[nom_feuille_qnorm].Cells[
             l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
@@ -386,7 +394,6 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     parametres min, max et mode viennent d'etre estimes ; creation de
     la feuille nom_feuille_qtriang
     """
-    Initialisation.Worksheets[nom_feuille_qtriang] = Worksheet()
     ref = nom_feuille_Ftriang + '!RC'
     for i in range(0, len(p)):
         Initialisation.Worksheets[nom_feuille_qtriang].Cells[
@@ -467,7 +474,6 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     triangulaire qui seront comparees aux valeurs empiriques ;
     creation de la feuille nom_feuille_Ftriang
     """
-    Initialisation.Worksheets[nom_feuille_Ftriang] = Worksheet()
     """
     On initialise le solver en prennant le min et le max de chaque
     serie tiree et on calcule mode=(min+max)/2 puis pmode
@@ -571,7 +577,6 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     parametres min, max et mode viennent d'etre estimes ; creation de
     la feuillenom_feuille_qtriang
     """
-    Initialisation.Worksheets[nom_feuille_qtriang] = Worksheet()
     for i in range(0, len(p)):
         Initialisation.Worksheets[nom_feuille_qtriang].Cells[
             l1 - 1, c3 + i - 1] = 'QUANT ' + p[i] * 100 + ' %'
