@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-05T14:11:55+02:00
+# @Last modified time: 2017-05-11T14:40:06+02:00
 
 import operator
 import sys
@@ -545,16 +545,16 @@ def cellule_gras(l1, c1, l2, c2):
     # Range[Cells(l1, c1), Cells(l2, c2)].Font.Bold = True
 
 
-def csd(val_dbl):
-    """Remplace une virgule en un point pour les forumles."""
-    # csd = Replace(CStr(val_dbl), ",", ".")
-    _ret = ''
-    for i in range(0, len(str(val_dbl))):
-        car_ascii = int(str(val_dbl)[i])
-        if (car_ascii == 44):
-            car_ascii = 46
-        _ret += chr(car_ascii)
-    return _ret
+# def csd(val_dbl):
+#     """Remplace une virgule en un point pour les forumles."""
+#     # csd = Replace(CStr(val_dbl), ",", ".")
+#     _ret = ''
+#     for i in range(0, len(str(val_dbl))):
+#         car_ascii = int(str(val_dbl)[i])
+#         if (car_ascii == 44):
+#             car_ascii = 46
+#         _ret += chr(car_ascii)
+#     return _ret
 
 
 def compt_inf(ech, ind):
