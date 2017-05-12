@@ -11,7 +11,7 @@ Parse commande line and csv file.
 # @Project: SSWD
 # @Filename: run.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-11T16:10:19+02:00
+# @Last modified time: 2017-05-12T11:39:06+02:00
 
 import argparse
 import sys
@@ -27,7 +27,7 @@ def isp_type(x):
     to_index = ["w", "u", "m"]
     if x not in to_index:
         raise argparse.ArgumentTypeError(
-            "%s has to be: m(ean)/w(eighted)/u(nweighted) for poderation" %
+            "%s has to be: m(ean)/w(eighted)/u(nweighted) for ponderation" %
             (x, ))
     return (to_index.index(x))
 

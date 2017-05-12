@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-11T14:40:06+02:00
+# @Last modified time: 2017-05-12T14:15:50+02:00
 
 import operator
 import sys
@@ -154,29 +154,29 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
     """2. Donnees"""
     for i in range(0, nbdata):
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig + i, col, data_co[i].espece)
+            lig + i + 1, col, data_co[i].espece)
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig + i, col + 1, data_co[i].taxo)
+            lig + i + 1, col + 1, data_co[i].taxo)
         if iproc == 2:
-            # Initialisation.Worksheets[nom_feuille].Cells.set_value(lig + i, col + 2, data_co[i].test)
+            # Initialisation.Worksheets[nom_feuille].Cells.set_value(lig + i + 1, col + 2, data_co[i].test)
             if invlog is True:
                 Initialisation.Worksheets[nom_feuille].Cells.set_value(
-                    lig + i, col + 5, 10**data_co[i].act)
+                    lig + i + 1, col + 5, 10**data_co[i].act)
             else:
                 Initialisation.Worksheets[nom_feuille].Cells.set_value(
-                    lig + i, col + 5, data_co[i].act)
+                    lig + i + 1, col + 5, data_co[i].act)
             Initialisation.Worksheets[nom_feuille].Cells.set_value(
-                lig + i, col + 6, data_co[i].pcum_a)
+                lig + i + 1, col + 6, data_co[i].pcum_a)
         if invlog is True:
             Initialisation.Worksheets[nom_feuille].Cells.set_value(
-                lig + i, col + 2, 10**(data_co[i].data))
+                lig + i + 1, col + 2, 10**(data_co[i].data))
         else:
             Initialisation.Worksheets[nom_feuille].Cells.set_value(
-                lig + i, col + 2, data_co[i].data)
+                lig + i + 1, col + 2, data_co[i].data)
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig + i, col + 3, data_co[i].pond)
+            lig + i + 1, col + 3, data_co[i].pond)
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig + i, col + 4, data_co[i].pcum)
+            lig + i + 1, col + 4, data_co[i].pcum)
 
 
 def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
