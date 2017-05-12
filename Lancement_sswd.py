@@ -10,7 +10,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-10T15:21:34+02:00
+# @Last modified time: 2017-05-12T10:46:20+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -143,9 +143,9 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     c1 = 0
     """c'est une constante definie par la sub tirage"""
     c2 = c1 + nbvar - 1
-    lig_hc = 9
+    lig_hc = 8
     """attention : il faut tenir compte de l'affichage des options"""
-    col_hc = 1
+    col_hc = 0
     nblig_vide = 2
     nbcol_vide = 1
     lig_data = 2
