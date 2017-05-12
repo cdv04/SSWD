@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-11T14:48:09+02:00
+# @Last modified time: 2017-05-11T15:31:32+02:00
 
 import math
 
@@ -218,16 +218,6 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
                 norm.ppf(p[i], Initialisation.Worksheets[nom_feuille_stat]
                          .Cells.get_value(x, c_mu), Initialisation.Worksheets[
                              nom_feuille_stat].Cells.get_value(x, c_mu + 1)))
-    print(Initialisation.Worksheets[nom_feuille_qnorm].Cells)
-    # Range(
-    #     Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3),
-    #     Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3 + len(p) - 1)).Select()
-    # Selection.AutoFill(
-    #     Destination=Range(
-    #         Initialisation.Worksheets(nom_feuille_qnorm).Cells(l1, c3),
-    #         Initialisation.Worksheets(nom_feuille_qnorm).Cells(l2, c3 + len(p) - 1)),
-    #     Type=xlFillDefault)
-    # Initialisation.Worksheets(nom_feuille_qnorm).Cells(1, 1).Select()
     return (c_mu)
 
 
@@ -598,9 +588,8 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
 def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
                pond_col_data, pond_col_pcum, l_hc, c_hc, nbvar, ligne_tot, loi,
                titre, pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
-               nom_feuille_quant, nom_feuille_pond, nom_feuille, mup, sigmap,
-               c_mu, min, max, mode, c_min, triang_ajust, iproc, nbdata,
-               data_c):
+               nom_feuille_quant, nom_feuille_pond, nom_feuille, c_mu,
+               triang_ajust, iproc, nbdata):
     """
     Calcul des resultats statistiques finaux.
 
@@ -676,7 +665,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
         l_hc + 3, c_hc] = 'Geo. Stand. Deviation'
     for i in range(0, len(pcent)):
         Initialisation.Worksheets[nom_feuille_res].Cells[
-            l_hc + 3 + i, c_hc] = 'Centile ' + (pcent[i] * 100) + '%'
+            l_hc + 3 + i, c_hc] = 'Centile ' + str(pcent[i] * 100) + '%'
     nbligne_res = len(pcent) + 3 + 1
     data = 'R' + l1 + 'C[' + c1 - c_hc - 1 + ']:R' + \
         l2 + 'C[' + c1 - c_hc - 1 + ']'

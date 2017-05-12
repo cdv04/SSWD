@@ -8,13 +8,13 @@
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-09T16:12:39+02:00
+# @Last modified time: 2017-05-11T15:38:10+02:00
 
 import numpy as np
 
 import Initialisation
 from fct_generales import (ischainevide, rech_l1c1, rechercher_categorie,
-                           trier_collection, trier_tableau)
+                           trier_collection)
 from Lancement_sswd import lance
 from MsgBox import MsgBox
 from ponderation import calcul_nb_taxo
@@ -137,9 +137,9 @@ def afficher_taxo(data_taxo, liste_taxo, erreur):
     taxo = list()
     for i in range(0, len(taxo)):
         taxo.append(tmp[i + 1, 1])
-    trier_tableau(taxo)
+    taxo.sort()
     """Extraction des differentes categories taxo"""
-    taxo_dif = rechercher_categorie(taxo)  # TODO return taxo_dif
+    taxo_dif = rechercher_categorie(taxo)
     """Si une seule categorie taxo, pas de ponderation possible"""
     if len(taxo_dif) < 3:
         erreur = True
