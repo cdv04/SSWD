@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-11T15:38:10+02:00
+# @Last modified time: 2017-05-15T14:35:36+02:00
 
 import numpy as np
 
@@ -18,20 +18,13 @@ from fct_generales import (ischainevide, rech_l1c1, rechercher_categorie,
 from Lancement_sswd import lance
 from MsgBox import MsgBox
 from ponderation import calcul_nb_taxo
-from specific_sswd import filtre_collection_act  # init_collection_act
+from specific_sswd import filtre_collection_act  # , init_collection_act
 
 
 def recherche_nom_feuille(plage):
     """Recherche nom_feuille contenu dans RefEdit et data_plage."""
     erreur = False
     separateur = '!'
-    # If plage = "" Then
-    #   MsgBox "Selected the range or the column containing the data!",
-    #   0, "SSWD"
-    #   erreur = True
-    #   Exit Sub
-    #   End If
-    # ceci est pris en charge par une fonction ischainevide specifique
     ipos = plage.find(separateur)
     if (ipos == 0):
         MsgBox('SSWD',
@@ -46,8 +39,6 @@ def recherche_nom_feuille(plage):
 
 def trf_plage_cellule(nom_feuille, plage):
     """Recherche les lignes et colonnes d'une plage de cellules."""
-    # erreur = False
-    # if Application.ReferenceStyle == xlR1C1:  # TODO modifie en python IHM
     """
     Recherche separateur ":" specifiant la selection d'une plage
     """
@@ -157,7 +148,8 @@ you cannot enter weight!', 0)
 
 def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
                        opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t, txt_val_b,
-                       txt_val_a, ch_nb, ch_sauve, lbl_liste, opt_bt_q, cbx_e):
+                       txt_val_a, ch_nb, ch_sauve, lbl_liste, opt_bt_q, cbx_e,
+                       colnames):
     """
     Charge les parametres receuillis par la boite de dialogue.
 
@@ -168,10 +160,6 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
     """Chargement de la collection"""
     r_x = [r_espece, r_taxo, r_concentration]
     plage_x = [None, None, None]
-    # l1 = [0, 0, 0]
-    # c1 = [0, 0, 0]
-    # l2 = [0, 0, 0]
-    # c2 = [0, 0, 0]
     str_x = [
         "the species or genus names!",
         "the trophic levels or taxonomic groups!", "concentration data!"
@@ -183,18 +171,12 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
                          nomboite) is False)
         nom_feuille, plage_x[i], erreur = recherche_nom_feuille(data)
         assert (erreur is False)
-        # l1[i], c1[i], l2[i], c2[i], erreur = trf_plage_cellule(
-        #     nom_feuille, plage_x[i])
-        # assert (erreur is False)
     if (iproc == 1):
         """Collection SSWD"""
-        # data_co = plage_x.copy()
         delem = ';' if len(plage_x[0].split(";")) > 1 else ','
         Initialisation.init_collection(data_co, plage_x[0].split(delem),
                                        plage_x[1].split(delem),
                                        plage_x[2].split(delem))
-        # init_collection(nom_feuille, l1[0] + 1, l1[1] + 1, l1[2] + 1, c1[0],
-        #                 c1[1], c1[2], data_co)
     else:
         """Collection ACT"""
         data = r_test
@@ -211,12 +193,9 @@ def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
         # change_nom_taxo(data_co)
     """Titre des colonnes de data_co"""
     nom_colonne = list()
-    nom_colonne.append("SpeciesComp")
-    nom_colonne.append("PhylumSup")
-    nom_colonne.append("ED")
-    # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[0], c1[0]])
-    # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[1], c1[1]])
-    # nom_colonne.append(Worksheets[nom_feuille].Cells[l1[2], c1[2]])
+    nom_colonne.append(colnames[0])
+    nom_colonne.append(colnames[1])
+    nom_colonne.append(colnames[2])
     nom_colonne.append('Weight')
     nom_colonne.append('Weighted Emp. Cumul. Prob.')
     check_nom_colonne(iproc, nom_colonne)

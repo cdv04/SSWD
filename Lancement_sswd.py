@@ -10,7 +10,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-12T10:46:20+02:00
+# @Last modified time: 2017-05-15T14:42:05+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -18,7 +18,7 @@ from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
 from fct_generales import (affichage_options, calcul_col_res, calcul_lig_graph,
                            calcul_ref_pond, cellule_gras, ecrire_data_co,
                            ecrire_titre, efface_feuil_inter, verif)
-from Graphique import decaler_graph, tracer_graphique
+from Graphique import tracer_graphique
 from Initialisation import initialise
 from ponderation import calcul_nbvar, calcul_ponderation, trier_collection
 
@@ -186,11 +186,11 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         calcul_ic_empirique(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                             nom_feuille_qemp, nom_feuille_sort, nbvar, a)
         """Calcul des valeurs best-estimates et affichage des resultats"""
-        (mup, sigmap, _min, _max, mode, c_min, data_c) = calcul_res(
+        (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
             pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
-            nom_feuille_qemp, nom_feuille_pond, '', 0, triang_ajust, iproc,
+            nom_feuille_qemp, nom_feuille_pond, '', 0, 0, triang_ajust, iproc,
             nbdata)
         """Graphes de SSWD"""
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
@@ -206,14 +206,15 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         loi = 2
         c_mu = calcul_ic_normal(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                                 nom_feuille_qnorm)
-        (mup, sigmap, _min, _max, mode, c_min, data_c) = calcul_res(
+        (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
             pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
-            nom_feuille_qnorm, nom_feuille_pond, nom_feuille_stat, c_mu,
+            nom_feuille_qnorm, nom_feuille_pond, nom_feuille_stat, c_mu, 0,
             triang_ajust, iproc, nbdata)
         R2_norm, Pvalue_norm = calcul_R2(data_co, loi, mup, sigmap, _min, _max,
                                          mode, nbdata, data_c)
+        print('R2={:.4f} Pvalue={:.4f}'.format(R2_norm, Pvalue_norm))
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
                          col_deb, col_fin, lig_data, col_tax, col_data,
                          col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
@@ -226,19 +227,19 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     if dist[2] is True:
         loi = 3
         if triang_ajust is True:
-            calcul_ic_triang_q(l1, c1, l2, c2, c1, nbvar, a, pourcent,
-                               nom_feuille_stat, nom_feuille_sort,
-                               nom_feuille_Ftriang, nom_feuille_qtriang, c_min)
+            c_min = calcul_ic_triang_q(
+                l1, c1, l2, c2, c1, nbvar, a, pourcent, nom_feuille_stat,
+                nom_feuille_sort, nom_feuille_Ftriang, nom_feuille_qtriang)
         else:
-            calcul_ic_triang_p(l1, c1, l2, c2, c1, nbvar, a, pourcent,
-                               nom_feuille_stat, nom_feuille_sort,
-                               nom_feuille_Ftriang, nom_feuille_qtriang, c_min)
-        (mup, sigmap, c_mu, _min, _max, mode, c_min, data_c) = calcul_res(
+            c_min = calcul_ic_triang_p(
+                l1, c1, l2, c2, c1, nbvar, a, pourcent, nom_feuille_stat,
+                nom_feuille_sort, nom_feuille_Ftriang, nom_feuille_qtriang)
+        (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
             pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
-            nom_feuille_qtriang, nom_feuille_pond, nom_feuille_Ftriang,
-            triang_ajust, iproc, nbdata)
+            nom_feuille_qtriang, nom_feuille_pond, nom_feuille_Ftriang, 0,
+            c_min, triang_ajust, iproc, nbdata)
         R2_triang, Pvalue_triang = calcul_R2(data_co, loi, mup, sigmap, _min,
                                              _max, mode, nbdata, data_c)
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,

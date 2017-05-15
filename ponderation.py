@@ -8,7 +8,7 @@
 # @Project: SSWD
 # @Filename: ponderation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-11T11:19:54+02:00
+# @Last modified time: 2017-05-15T14:46:17+02:00
 
 from fct_generales import trier_collection
 

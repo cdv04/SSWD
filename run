@@ -11,7 +11,7 @@ Parse commande line and csv file.
 # @Project: SSWD
 # @Filename: run.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-12T11:39:06+02:00
+# @Last modified time: 2017-05-15T14:23:56+02:00
 
 import argparse
 import sys
@@ -40,7 +40,7 @@ def restricted_float(x):
     return x
 
 
-def parse_file(filename, colnames=["SpeciesComp", "PhylumSup", "ED"]):
+def parse_file(filename, colnames):
     """Parse file using pandas module."""
     if not filename:
         raise argparse.ArgumentTypeError("Filename (-f) is None.")
@@ -59,6 +59,19 @@ def parse_file(filename, colnames=["SpeciesComp", "PhylumSup", "ED"]):
     for n in data[colnames[2]].tolist():
         concentration += str(n) + ";"
     return (espece, taxo, concentration, test)
+
+
+def get_columns(filename):
+    """Get columns for further parsing."""
+    names = list()
+    if not filename:
+        raise argparse.ArgumentTypeError("Filename (-f) is None.")
+    data = pandas.read_csv(filename, header=0)
+    if len(data.columns) == 1:
+        data = pandas.read_csv(filename, sep=";", header=0)
+    for x in data.columns:
+        names.append(str(x))
+    return (names)
 
 
 def main():
@@ -86,12 +99,14 @@ def main():
         "--isp", help="poderation type", default=1, type=isp_type)
     parser.add_argument("--lbl_liste", help="weight of each taxonomic group")
     args = parser.parse_args()
-    espece, taxo, concentration, test = parse_file(args.file)
+    # columns_name = get_columns(args.file)
+    columns_name = ["SpeciesComp", "PhylumSup", "ED"]
+    espece, taxo, concentration, test = parse_file(args.file, columns_name)
     return (charger_parametres(
         args.iproc, espece, taxo, concentration, test, args.pcat, (
             args.pcat is None), not (args.pcat is None), args.emp, args.normal,
         args.triang, args.bootstrap, args.hazen, args.nbvar, args.save,
-        args.lbl_liste, args.triang and args.adjustq, args.isp))
+        args.lbl_liste, args.triang and args.adjustq, args.isp, columns_name))
 
 
 if __name__ == '__main__':
