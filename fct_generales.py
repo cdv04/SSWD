@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-12T14:15:50+02:00
+# @Last modified time: 2017-05-15T14:41:35+02:00
 
 import operator
 import sys
@@ -41,49 +41,6 @@ def trier_collection(aCollection, itri, isens):
     aCollection.sort(
         key=operator.attrgetter(tmp_list[itri - 1]),
         reverse=(True if isens == 0 else False))
-    # while aCollection.Count > 0:
-    #     if (itri <= 3):
-    #         mini = 'z'
-    #         maxi = 'A'
-    #         """ne pas modifier sinon ça ne marche plus"""
-    #     else:
-    #         mini = 10**300
-    #         maxi = -10**300
-    #     for i in range(0, len(aCollection)):
-    #         if (itri == 1):
-    #             tmp = aCollection[i].espece
-    #         elif (itri == 2):
-    #             tmp = aCollection[i].taxo
-    #         elif (itri == 3):
-    #             tmp = aCollection[i].test
-    #         elif (itri == 4):
-    #             tmp = aCollection[i].data
-    #         elif (itri == 5):
-    #             tmp = aCollection[i].num
-    #         elif (itri == 6):
-    #             tmp = aCollection[i].pond
-    #         elif (itri == 7):
-    #             tmp = aCollection[i].pcum
-    #         elif (itri == 8):
-    #             tmp = aCollection[i].std
-    #         elif (itri == 9):
-    #             tmp = aCollection[i].act
-    #         elif (itri == 10):
-    #             tmp = aCollection[i].pcum_a
-    #         if (isens == 1):
-    #             if (tmp <= mini):
-    #                 mini = tmp
-    #                 num = i
-    #         else:
-    #             if (tmp >= maxi):
-    #                 maxi = tmp
-    #                 num = i
-    #     tmp_col.append(aCollection[num])
-    #     del aCollection[num]
-    #     j += 1
-    # for i in range(0, len(tmp_col)):
-    #     aCollection.append(tmp_col[i])
-    # tmp_col = None
 
 
 def encadrer_colonne(nom_feuille, l1, c1, l2, c2):
@@ -128,7 +85,8 @@ def ecrire_titre(titre, nom_feuille, lig, col, nbcol):
     Initialisation.Worksheets[nom_feuille].Cells.set_value(lig, col, titre)
     """Formatage du text."""
     # _with0 = Range(Initialisation.Worksheets(nom_feuille).Cells(lig, col),
-    #                Initialisation.Worksheets(nom_feuille).Cells(lig, col + nbcol - 1))
+    #                Initialisation.Worksheets(nom_feuille)
+    #                .Cells(lig, col + nbcol - 1))
     # _with0.HorizontalAlignment = xlCenterAcrossSelection
 
 
@@ -158,7 +116,6 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
             lig + i + 1, col + 1, data_co[i].taxo)
         if iproc == 2:
-            # Initialisation.Worksheets[nom_feuille].Cells.set_value(lig + i + 1, col + 2, data_co[i].test)
             if invlog is True:
                 Initialisation.Worksheets[nom_feuille].Cells.set_value(
                     lig + i + 1, col + 5, 10**data_co[i].act)
@@ -189,7 +146,6 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
     supprime les feuilles intermediaires et cree les feuilles
     nom_feuille_res et nom_feuille_pond
     """
-    # prem = True
     name_list = [
         nom_feuille_pond, nom_feuille_stat, nom_feuille_res, nom_feuille_qemp,
         nom_feuille_qnorm, nom_feuille_sort, nom_feuille_Ftriang,
@@ -203,7 +159,6 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
                           Would you like to go on?\n\
                           If you want to keep this previous results,\
                           rename the SSWD_result worksheet.', 4)
-            # prem = False
             if rep == 7 or not rep:
                 sys.exit(0)
             else:
@@ -269,12 +224,12 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
     """
     nbcol = 1
     Initialisation.Worksheets[nom_feuille].Cells.set_value(lig, col, 'Options')
-    # Option espece
+    """Option espece"""
     Initialisation.Worksheets[nom_feuille].Cells.set_value(
         lig + 1, col, 'Species=')
     Initialisation.Worksheets[nom_feuille].Cells.set_value(
         lig + 1, col + 1, sp_opt(isp))
-    # Option pcat
+    """Option pcat"""
     Initialisation.Worksheets[nom_feuille].Cells.set_value(
         lig + 2, col, 'Taxonomy')
     if liste_taxo is not None:
@@ -288,9 +243,6 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
     """nbruns B"""
     Initialisation.Worksheets[nom_feuille].Cells.set_value(
         lig + 3, col, 'Nb bootstrap samples')
-    # Range(Initialisation.Worksheets(nom_feuille).Cells(lig + 3, col),
-    #       Initialisation.Worksheets(nom_feuille).Cells(lig + 3, col + nbcol)).Select()
-    # Selection.Merge()
     Initialisation.Worksheets[nom_feuille].Cells.set_value(
         lig + 3, col + nbcol + 1, B)
     """nbvar"""
@@ -545,18 +497,6 @@ def cellule_gras(l1, c1, l2, c2):
     # Range[Cells(l1, c1), Cells(l2, c2)].Font.Bold = True
 
 
-# def csd(val_dbl):
-#     """Remplace une virgule en un point pour les forumles."""
-#     # csd = Replace(CStr(val_dbl), ",", ".")
-#     _ret = ''
-#     for i in range(0, len(str(val_dbl))):
-#         car_ascii = int(str(val_dbl)[i])
-#         if (car_ascii == 44):
-#             car_ascii = 46
-#         _ret += chr(car_ascii)
-#     return _ret
-
-
 def compt_inf(ech, ind):
     """Nombre de valeur d'un ech >= a un nombre ind."""
     _ret = 0
@@ -566,22 +506,22 @@ def compt_inf(ech, ind):
     return _ret
 
 
-def trier_tableau_num(a):
-    """Trie un tableau de nombres."""
-    tmp = list()
-    for i in range(0, len(a)):
-        tmp.append(a[i])
-    maxi = max(a)
-    num = 0
-    for i in range(0, len(a)):
-        mini = maxi
-        for j in range(1, len(tmp)):
-            if (mini > tmp[j]):
-                mini = tmp[j]
-                num = j
-        del tmp[num]
-        a[i] = mini
-    tmp = None
+# def trier_tableau_num(a):
+#     """Trie un tableau de nombres."""
+#     tmp = list()
+#     for i in range(0, len(a)):
+#         tmp.append(a[i])
+#     maxi = max(a)
+#     num = 0
+#     for i in range(0, len(a)):
+#         mini = maxi
+#         for j in range(1, len(tmp)):
+#             if (mini > tmp[j]):
+#                 mini = tmp[j]
+#                 num = j
+#         del tmp[num]
+#         a[i] = mini
+#     tmp = None
 
 
 def rech_l1c1(_str, deb_str):
@@ -591,19 +531,6 @@ def rech_l1c1(_str, deb_str):
     Independamment de la langue utilisateur
     """
     return (len(_str.split(";")), deb_str)
-    # lig = 0
-    # col = 0
-    # lg = len(_str)
-    # tmp = _str[deb_str:lg]
-    # lig = int(tmp)
-    # n = len(str(lig)) + deb_str + 1
-    # if n > lg:
-    #     col = lig
-    #     lig = 1
-    # else:
-    #     tmp = _str[n:lg]
-    #     col = int(tmp)
-    # return (lig, col)
 
 
 def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
@@ -616,14 +543,17 @@ def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
     # Initialisation.Worksheets.Add()
     # ActiveSheet.Name = nom_feuille_sort
     # for i in vbForRange(1, nbvar):
-    #     Initialisation.Worksheets[nom_feuille_sort].Cells.set_value(l1 - 1, c3 + i - 1] = 'RANK ' + i)
+    #     Initialisation.Worksheets[nom_feuille_sort]
+    #     .Cells.set_value(l1 - 1, c3 + i - 1] = 'RANK ' + i)
     #     Initialisation.Worksheets[nom_feuille_sort].Cells.set_value()
     #         l1, c3 + i - 1].FormulaR1C1 = '=SMALL(' + nom_feuille_stat + '!'
     #         + data + ',' + i + ')'
-    # Range(Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3), Initialisation.Worksheets(
-    #     nom_feuille_sort).Cells(l1, c3 + nbvar)).Select()
-    # Selection.AutoFill(Destination=Range(Initialisation.Worksheets(nom_feuille_sort).Cells(
-    #     l1, c3), Initialisation.Worksheets(nom_feuille_sort).Cells(l2, c3 + nbvar)),
+    # Range(Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3),
+    #       Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3 + nbvar))
+    #       .Select()
+    # Selection.AutoFill(Destination=Range(
+    #     Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3),
+    #     Initialisation.Worksheets(nom_feuille_sort).Cells(l2, c3 + nbvar)),
     #     Type=xlFillDefault)
     # Initialisation.Worksheets(nom_feuille_sort).Cells(1, 1).Select()
 

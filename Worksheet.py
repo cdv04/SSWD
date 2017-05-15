@@ -12,7 +12,7 @@ This class contains the full worksheets (like a Excel file).
 # @Project: SSWD
 # @Filename: Worksheet.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-10T15:09:30+02:00
+# @Last modified time: 2017-05-15T14:47:02+02:00
 
 import pandas
 
