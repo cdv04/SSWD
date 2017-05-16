@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T14:01:54+02:00
+# @Last modified time: 2017-05-16T08:36:59+02:00
 
 import math
 
@@ -120,8 +120,8 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
             if (rang[i] == 0 or rang[i] == nbvar):
                 tmp[i] = 0
             else:
-                tmp[i] = (pcum[rang[i] + 1] - p[i]) / \
-                    (pcum[rang[i] + 1] - pcum[rang[i]])
+                tmp[i] = ((pcum[rang[i] + 1] - p[i]) /
+                          (pcum[rang[i] + 1] - pcum[rang[i]]))
             set_data = None
             if rang[i] == 0:
                 set_data = Initialisation.Worksheets[
@@ -195,13 +195,15 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     for i in range(0, len(p)):
         Initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
             l1 - 1, c3 + i, 'QUANT ' + str(p[i] * 100) + ' %')
-        for x in range(1,
-                       len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+        for x in range(l1, l2):
             Initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
                 x, c3 + i,
-                norm.ppf(p[i], Initialisation.Worksheets[nom_feuille_stat]
-                         .Cells.get_value(x, c_mu), Initialisation.Worksheets[
-                             nom_feuille_stat].Cells.get_value(x, c_mu + 1)))
+                norm.ppf(
+                    p[i],
+                    loc=Initialisation.Worksheets[nom_feuille_stat]
+                    .Cells.get_value(x, c_mu),
+                    scale=Initialisation.Worksheets[nom_feuille_stat]
+                    .Cells.get_value(x, c_mu + 1)))
     return (c_mu)
 
 
@@ -679,6 +681,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     empirique : pas de bias correction
     normal et triangulaire : bias correction
     """
+    print(Initialisation.Worksheets[nom_feuille_quant].Cells)
     for x in range(0, len(pourcent)):
         data = list()
         for y in range(1, l2):
@@ -694,8 +697,8 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
             for i in range(0, len(pcent)):
                 Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
                     l_hc + 4 + i, c_hc + 1 + x,
-                    (10**(percentile(data, pcent[i]) - median(data)) *
-                     (10**HC_be[i])))
+                    (10**(percentile(data, pcent[i]) - median(data)) * 10**
+                     HC_be[i]))
     encadrer_colonne(nom_feuille_res, l_hc + 1, c_hc + ind_hc,
                      l_hc + nbligne_res - 1, c_hc + ind_hc)
     """Infos supplementaires suivant les distributions"""

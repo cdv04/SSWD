@@ -10,7 +10,9 @@ A remettre completement en forme grace a numpy
 # @Project: SSWD
 # @Filename: Graphique.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-03T15:04:50+02:00
+# @Last modified time: 2017-05-15T16:00:19+02:00
+
+from matplotlib import pyplot as plot
 
 import Initialisation
 from fct_generales import sp_opt
@@ -58,9 +60,21 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     """Ajout de la serie Mediane"""
     if (loi != 1):
         nseries = nseries + 1
-        data_x = 'R' + lig_qbe + 'C' + col_deb + ':R' + lig_qbe + 'C' + col_fin
-        data_y = 'R' + lig_p + 'C' + col_deb + ':R' + lig_p + 'C' + col_fin
-        data_nom = 'R' + lig_qbe + 'C' + col_deb - 1
+        data_x = list()
+        data_y = list()
+        for x in range(col_deb, col_fin):
+            data_x.append(Initialisation.Worksheets[nom_feuille]
+                          .Cells.get_value(lig_qbe, x))
+            data_y.append(
+                float(Initialisation.Worksheets[nom_feuille]
+                      .Cells.get_value(lig_p, x)[:-1]))
+        data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
+            lig_qbe, col_deb - 1)
+        # TODO modifer en loi log avec range 0, 100
+        plot.plot(data_x, data_y, label=data_nom)
+        # data_x = 'R' + lig_qbe + 'C' + col_deb + ':R' + lig_qbe + 'C' + col_fin
+        # data_y = 'R' + lig_p + 'C' + col_deb + ':R' + lig_p + 'C' + col_fin
+        # data_nom = 'R' + lig_qbe + 'C' + col_deb - 1
         # ActiveChart.SeriesCollection.NewSeries()
         # ActiveChart.SeriesCollection[nseries].XValues = '=' + nom_feuille + '!' + data_x
         # ActiveChart.SeriesCollection[nseries].Values = '=' + nom_feuille + '!' + data_y
@@ -78,7 +92,23 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
             tracer_courbe_empirique(nseries, nom_feuille, ligne_data + 1,
                                     nb_ligne_data, col_data_act_le,
                                     col_pcum_le)
-    # Ajout de la serie quantile borne inf
+    """Ajout de la serie quantile borne inf"""
+    data_x = list()
+    data_y = list()
+    for x in range(col_deb, col_fin):
+        data_x.append(Initialisation.Worksheets[nom_feuille]
+                      .Cells.get_value(lig_qbi, x))
+        data_y.append(
+            float(Initialisation.Worksheets[nom_feuille]
+                  .Cells.get_value(lig_p, x)[:-1]))
+    data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
+        lig_qbi, col_deb - 1)
+    print(data_x, data_y)
+    plot.plot(data_x, data_y, label=data_nom)
+    plot.ylabel("Percent")
+    plot.xscale('log')
+    plot.legend()
+    plot.show()
     nseries = nseries + 1
     data_x = 'R' + lig_qbi + 'C' + col_deb + ':R' + lig_qbi + 'C' + col_fin
     data_y = 'R' + lig_p + 'C' + col_deb + ':R' + lig_p + 'C' + col_fin
