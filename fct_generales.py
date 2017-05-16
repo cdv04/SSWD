@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T14:41:35+02:00
+# @Last modified time: 2017-05-15T16:11:32+02:00
 
 import operator
 import sys
@@ -26,18 +26,17 @@ def trier_collection(aCollection, itri, isens):
     """
     Trie la collection data_co suivant une de ses variables donnee.
 
-    # WARNING: A OPTIMISER DE FACON PYTHONESQUE
-
     @param aCollection: collection a trier
     @param itri: numero de l'item sur lequel on effectue le tri
     @param isens: sens du tri (0=decroissant,1=croissant)
     """
-    # tmp_col = list()
     tmp_list = [
         "espece", "taxo", "test", "data", "num", "pond", "pcum", "std", "act",
         "pcum_a"
     ]
-    # j = 1
+    print(tmp_list[itri - 1])
+    if itri - 1 == 1:
+        aCollection.sort(key=operator.attrgetter(tmp_list[3]), reverse=True)
     aCollection.sort(
         key=operator.attrgetter(tmp_list[itri - 1]),
         reverse=(True if isens == 0 else False))
