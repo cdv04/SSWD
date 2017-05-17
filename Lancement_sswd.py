@@ -10,7 +10,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-17T10:12:59+02:00
+# @Last modified time: 2017-05-17T15:52:25+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -200,7 +200,7 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
                          titre_axe, val_pcat, liste_taxo, isp, tmp, tmp, iproc,
                          tmp)
         lig_hc = ligne_tot + nblig_vide + 1
-        calcul_lig_graph(lig_hc, lig_p, lig_qbe, lig_qbi, lig_qbs)
+        lig_p, lig_qbe, lig_qbi, lig_qbs = calcul_lig_graph(lig_hc)
     """loi normale"""
     if dist[1] is True:
         loi = 2

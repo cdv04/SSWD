@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-16T14:14:21+02:00
+# @Last modified time: 2017-05-17T15:43:38+02:00
 
 import operator
 import sys
@@ -538,22 +538,16 @@ def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
 
     sauvegarder tries dans une nouvelle dans nom_feuille_sort
     """
-    # Initialisation.Worksheets.Add()
-    # ActiveSheet.Name = nom_feuille_sort
-    # for i in vbForRange(1, nbvar):
-    #     Initialisation.Worksheets[nom_feuille_sort]
-    #     .Cells.set_value(l1 - 1, c3 + i - 1] = 'RANK ' + i)
-    #     Initialisation.Worksheets[nom_feuille_sort].Cells.set_value()
-    #         l1, c3 + i - 1].FormulaR1C1 = '=SMALL(' + nom_feuille_stat + '!'
-    #         + data + ',' + i + ')'
-    # Range(Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3),
-    #       Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3 + nbvar))
-    #       .Select()
-    # Selection.AutoFill(Destination=Range(
-    #     Initialisation.Worksheets(nom_feuille_sort).Cells(l1, c3),
-    #     Initialisation.Worksheets(nom_feuille_sort).Cells(l2, c3 + nbvar)),
-    #     Type=xlFillDefault)
-    # Initialisation.Worksheets(nom_feuille_sort).Cells(1, 1).Select()
+    for i in range(0, nbvar):
+        Initialisation.Worksheets[nom_feuille_sort].Cells.set_value(
+            0, i, "RANK" + str(i + 1))
+    for x in range(1, len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+        i = 0
+        for e in sorted(
+                Initialisation.Worksheets[nom_feuille_stat].Cells.ix[x, :]):
+            Initialisation.Worksheets[nom_feuille_sort].Cells.set_value(
+                x, i, e)
+            i += 1
 
 
 def ischainevide(texte, message, nomboite, erreur=False):

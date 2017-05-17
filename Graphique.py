@@ -10,7 +10,7 @@ A remettre completement en forme grace a numpy
 # @Project: SSWD
 # @Filename: Graphique.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-17T10:23:47+02:00
+# @Last modified time: 2017-05-17T15:51:43+02:00
 
 from matplotlib import pyplot as plot
 
@@ -67,14 +67,11 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
         # TODO modifer en loi log avec range 0, 100
         plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=1)
     else:
-        if iproc == 1:
-            nseries = tracer_courbe_empirique(nseries, nom_feuille,
-                                              ligne_data + 1, nb_ligne_data,
-                                              col_data_le, col_pcum_le)
-        else:
-            nseries = tracer_courbe_empirique(nseries, nom_feuille,
-                                              ligne_data + 1, nb_ligne_data,
-                                              col_data_act_le, col_pcum_le)
+        nseries = tracer_courbe_empirique(
+            nseries, nom_feuille, ligne_data + 1, nb_ligne_data, col_data_le,
+            col_pcum_le) if iproc == 1 else tracer_courbe_empirique(
+                nseries, nom_feuille, ligne_data + 1, nb_ligne_data,
+                col_data_act_le, col_pcum_le)
     """Ajout de la serie quantile borne inf"""
     data_x = list()
     data_y = list()
@@ -115,20 +112,14 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     """
     Ajoute une zone de texte avec les valeurs de R2, Pttest, GWM et GWSD
     """
-    if (loi == 2):
+    if (loi > 1):
+        plot.text((max(data_x) * .01), 10,
+                  'R_ = {:.4f}\nKSpvalue = {:.3f}'.format(R2, Pvalue))
         plot.text(
-            max(data_x) - 1, 0.9, 'R_ = {:.4f}\nKSpvalue = {:.3f}'.format(
-                R2, Pvalue))
-        plot.text(
-            max(data_x), 1, 'wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(
-                mup, sigmap))
-    elif (loi == 3):
-        plot.text(0.1, 0.9, 'R_ = {:.4f}\nKSpvalue = {:.3f}'.format(
-            R2, Pvalue))
-        plot.text(
-            1, 1,
-            'wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
-                _min, _max, mode))
+            (max(data_x) * .01), 1, ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(
+                mup, sigmap)) if loi == 2 else
+            ('wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
+                _min, _max, mode)))
     """Rappel des options dans le titre du graphique"""
     ligne_option = 'Sp = ' + sp_opt(isp)
     if val_pcat != '':
@@ -146,25 +137,6 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     plot.legend()
     plot.grid()
     plot.show()
-    # ActiveChart.ChartTitle.Characters.text = titre_graf(loi) + '\n' + ligne_option
-    # ActiveChart.ChartTitle.Characters[Start= 1, Length= len(titre_graf(loi))].Font.Size = 10
-    # ActiveChart.ChartTitle.Characters[Start= len(titre_graf(loi)) + 1, Length= nb_car].Font.Bold = False
-    # ActiveChart.ChartTitle.Characters[Start= len(titre_graf(loi)) + 1, Length= nb_car].Font.Size = 8
-    # On reduit la taille de police de la legende
-    # ActiveChart.Legend.Select()
-    # Selection.AutoScaleFont = True
-    # _with13 = Selection.Font
-    # _with13.Name = 'Arial'
-    # _with13.FontStyle = 'Normal'
-    # _with13.Size = 8
-    # _with13.Strikethrough = False
-    # _with13.Superscript = False
-    # _with13.Subscript = False
-    # _with13.OutlineFont = False
-    # _with13.Shadow = False
-    # _with13.Underline = xlUnderlineStyleNone
-    # _with13.ColorIndex = xlAutomatic
-    # _with13.Background = xlAutomatic
 
 
 def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
@@ -246,7 +218,7 @@ def tracer_courbe_empirique(nseries, nom_feuille, lig_deb, nbligne, col_data,
         data_x.append(Initialisation.Worksheets[nom_feuille]
                       .Cells.get_value(y, col_data))
         data_y.append(Initialisation.Worksheets[nom_feuille]
-                      .Cells.get_value(y, col_pcum))
+                      .Cells.get_value(y, col_pcum) * 100)
     data_nom = 'Weighted Empirical'
     plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=0.5)
     return (nseries)

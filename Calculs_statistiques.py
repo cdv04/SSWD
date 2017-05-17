@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-16T15:57:46+02:00
+# @Last modified time: 2017-05-17T15:49:10+02:00
 
 import math
 
@@ -84,7 +84,6 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     """
     pcum = list()
     rang = list()
-    tmp = list()
     """
     On calcule la probabilite cumulee empirique de chaque point tire
     sauvegarde dans pcum
@@ -109,19 +108,19 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     """Ecriture des entetes de colonnes"""
     for i in range(0, len(p)):
         Initialisation.Worksheets[nom_feuille_qemp].Cells.set_value(
-            l1 - 1, c3 + i - 1, 'QUANT ' + str(p[i] * 100) + ' %')
+            l1 - 1, c3 + i, 'QUANT ' + str(p[i] * 100) + ' %')
     """
     Calcul des quantiles p%
     data = "RC" & c1 & ":RC" & c2
     """
-    data = nom_feuille_sort + '!RC'
-    for y in range(1, l2):
+    for y in range(1, l2 + 1):
+        tmp = list()
         for i in range(0, len(p)):
             if (rang[i] == 0 or rang[i] == nbvar):
-                tmp[i] = 0
+                tmp.append(0)
             else:
-                tmp[i] = ((pcum[rang[i] + 1] - p[i]) /
-                          (pcum[rang[i] + 1] - pcum[rang[i]]))
+                tmp.append((pcum[rang[i] + 1] - p[i]) /
+                           (pcum[rang[i] + 1] - pcum[rang[i]]))
             set_data = None
             if rang[i] == 0:
                 set_data = Initialisation.Worksheets[
@@ -138,7 +137,7 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
                      Worksheets[nom_feuille_sort].Cells.get_value(y, rang[i]))
                     * tmp[i])
             Initialisation.Worksheets[nom_feuille_qemp].Cells.set_value(
-                y, c3 + i - 1, set_data)
+                y, c3 + i, set_data)
 
 
 def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
@@ -625,6 +624,8 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     _min = 0
     _max = 0
     mode = 0
+    mup = 0
+    sigmap = 0
     """Ecriture du titre"""
     ecrire_titre(titre[loi], nom_feuille_res, l_hc, c_hc, len(pourcent) + 1)
     """
@@ -904,20 +905,20 @@ def calculer_be_empirique(data_co, pourcent, nom_feuille, lig_deb, col_pcum,
     """
     pcum = list()
     for i in range(0, nbdata):
-        pcum[i] = data_co[i].pcum
-    rang = list(0, len(pourcent))
+        pcum.append(data_co[i].pcum)
+    rang = list()
     """Calcul de HC_emp"""
     for i in range(0, len(pourcent)):
-        rang[i] = compt_inf(pcum, pourcent[i])
+        rang.append(compt_inf(pcum, pourcent[i]))
         if (rang[i] == 0):
-            HC_emp[i] = data[1]
+            HC_emp.append(data[1])
         elif (rang[i] >= nbdata):
-            HC_emp[i] = data[nbdata]
+            HC_emp.append(data[nbdata])
         else:
-            HC_emp[i] = (data[rang[i] + 1] -
-                         (data[rang[i] + 1] - data[rang[i]]) *
-                         (data_co[rang[i] + 1].pcum - pourcent[i]) /
-                         (data_co[rang[i] + 1].pcum - data_co[rang[i]].pcum))
+            HC_emp.append(data[rang[i] +
+                               1] - (data[rang[i] + 1] - data[rang[i]]) *
+                          (data_co[rang[i] + 1].pcum - pourcent[i]) /
+                          (data_co[rang[i] + 1].pcum - data_co[rang[i]].pcum))
 
 
 def calculer_be_normal(data_co, pourcent, HC_norm, nbdata, data):
