@@ -12,7 +12,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T16:11:32+02:00
+# @Last modified time: 2017-05-16T14:14:21+02:00
 
 import operator
 import sys
@@ -34,7 +34,6 @@ def trier_collection(aCollection, itri, isens):
         "espece", "taxo", "test", "data", "num", "pond", "pcum", "std", "act",
         "pcum_a"
     ]
-    print(tmp_list[itri - 1])
     if itri - 1 == 1:
         aCollection.sort(key=operator.attrgetter(tmp_list[3]), reverse=True)
     aCollection.sort(

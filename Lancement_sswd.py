@@ -10,7 +10,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T14:42:05+02:00
+# @Last modified time: 2017-05-17T10:12:59+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -214,7 +214,6 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
             triang_ajust, iproc, nbdata)
         R2_norm, Pvalue_norm = calcul_R2(data_co, loi, mup, sigmap, _min, _max,
                                          mode, nbdata, data_c)
-        print('R2={:.4f} Pvalue={:.4f}'.format(R2_norm, Pvalue_norm))
         tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
                          col_deb, col_fin, lig_data, col_tax, col_data,
                          col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
@@ -222,7 +221,7 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
                          mode, titre_axe, val_pcat, liste_taxo, isp, tmp, tmp,
                          iproc, tmp)
         lig_hc = ligne_tot + nblig_vide + 1
-        calcul_lig_graph(lig_hc, lig_p, lig_qbe, lig_qbi, lig_qbs)
+        lig_p, lig_qbe, lig_qbi, lig_qbs = calcul_lig_graph(lig_hc)
     """loi triangulaire"""
     if dist[2] is True:
         loi = 3
