@@ -10,7 +10,7 @@ A remettre completement en forme grace a numpy
 # @Project: SSWD
 # @Filename: Graphique.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T16:00:19+02:00
+# @Last modified time: 2017-05-17T10:23:47+02:00
 
 from matplotlib import pyplot as plot
 
@@ -51,12 +51,6 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     nb_ligne_data -> nombre de ligne du tableau de donnees data
     """
     nseries = 0
-    # Charts.Add()
-    # ActiveChart.ChartType = xlXYScatterSmooth
-    # Menage
-    # if ActiveChart.SeriesCollection.Count > 0:
-    # for i in vbForRange(ActiveChart.SeriesCollection.Count, 1):
-    # ActiveChart.SeriesCollection(i).Delete()
     """Ajout de la serie Mediane"""
     if (loi != 1):
         nseries = nseries + 1
@@ -71,27 +65,16 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
         data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
             lig_qbe, col_deb - 1)
         # TODO modifer en loi log avec range 0, 100
-        plot.plot(data_x, data_y, label=data_nom)
-        # data_x = 'R' + lig_qbe + 'C' + col_deb + ':R' + lig_qbe + 'C' + col_fin
-        # data_y = 'R' + lig_p + 'C' + col_deb + ':R' + lig_p + 'C' + col_fin
-        # data_nom = 'R' + lig_qbe + 'C' + col_deb - 1
-        # ActiveChart.SeriesCollection.NewSeries()
-        # ActiveChart.SeriesCollection[nseries].XValues = '=' + nom_feuille + '!' + data_x
-        # ActiveChart.SeriesCollection[nseries].Values = '=' + nom_feuille + '!' + data_y
-        # ActiveChart.SeriesCollection[nseries].Name = '=' + nom_feuille + '!' + data_nom
-        # _with0 = ActiveChart.SeriesCollection(nseries).Border
-        # _with0.ColorIndex = 1
-        # _with0.Weight = xlThin
-        # _with0.LineStyle = xlContinuous
-        # ActiveChart.SeriesCollection[nseries].MarkerStyle = xlNone
+        plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=1)
     else:
         if iproc == 1:
-            tracer_courbe_empirique(nseries, nom_feuille, ligne_data + 1,
-                                    nb_ligne_data, col_data_le, col_pcum_le)
+            nseries = tracer_courbe_empirique(nseries, nom_feuille,
+                                              ligne_data + 1, nb_ligne_data,
+                                              col_data_le, col_pcum_le)
         else:
-            tracer_courbe_empirique(nseries, nom_feuille, ligne_data + 1,
-                                    nb_ligne_data, col_data_act_le,
-                                    col_pcum_le)
+            nseries = tracer_courbe_empirique(nseries, nom_feuille,
+                                              ligne_data + 1, nb_ligne_data,
+                                              col_data_act_le, col_pcum_le)
     """Ajout de la serie quantile borne inf"""
     data_x = list()
     data_y = list()
@@ -103,99 +86,24 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
                   .Cells.get_value(lig_p, x)[:-1]))
     data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
         lig_qbi, col_deb - 1)
-    print(data_x, data_y)
-    plot.plot(data_x, data_y, label=data_nom)
-    plot.ylabel("Percent")
-    plot.xscale('log')
-    plot.legend()
-    plot.show()
+    plot.plot(data_x, data_y, 'r--', label=data_nom, linewidth=0.5)
     nseries = nseries + 1
-    data_x = 'R' + lig_qbi + 'C' + col_deb + ':R' + lig_qbi + 'C' + col_fin
-    data_y = 'R' + lig_p + 'C' + col_deb + ':R' + lig_p + 'C' + col_fin
-    # data_nom = "Confidence limits 5% - 95%"
-    data_nom = 'R' + lig_qbi + 'C' + col_deb - 1
-    # ActiveChart.SeriesCollection.NewSeries()
-    # ActiveChart.SeriesCollection[nseries].XValues = '=' + nom_feuille + '!' + data_x
-    # ActiveChart.SeriesCollection[nseries].Values = '=' + nom_feuille + '!' + data_y
-    # ActiveChart.SeriesCollection[nseries].Name = '=' + nom_feuille + '!' + data_nom
-    # _with1 = ActiveChart.SeriesCollection(nseries).Border
-    # _with1.ColorIndex = 1
-    # _with1.Weight = xlThin
-    # _with1.LineStyle = xlDot
-    # ActiveChart.SeriesCollection[nseries].MarkerStyle = xlNone
-    # Ajout de la serie quantile borne superieure
+    """Ajout de la serie quantile borne superieure"""
+    data_x = list()
+    data_y = list()
+    for x in range(col_deb, col_fin):
+        data_x.append(Initialisation.Worksheets[nom_feuille]
+                      .Cells.get_value(lig_qbs, x))
+        data_y.append(
+            float(Initialisation.Worksheets[nom_feuille]
+                  .Cells.get_value(lig_p, x)[:-1]))
+    data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
+        lig_qbs, col_deb - 1)
+    plot.plot(data_x, data_y, 'r--', label=data_nom, linewidth=0.5)
     nseries = nseries + 1
-    data_x = 'R' + lig_qbs + 'C' + col_deb + ':R' + lig_qbs + 'C' + col_fin
-    data_y = 'R' + lig_p + 'C' + col_deb + ':R' + lig_p + 'C' + col_fin
-    data_nom = 'R' + lig_qbs + 'C' + col_deb - 1
-    # ActiveChart.SeriesCollection.NewSeries()
-    # ActiveChart.SeriesCollection[nseries].XValues = '=' + nom_feuille + '!' + data_x
-    # ActiveChart.SeriesCollection[nseries].Values = '=' + nom_feuille + '!' + data_y
-    # ActiveChart.SeriesCollection[nseries].Name = '=' + nom_feuille + '!' + data_nom
-    # _with2 = ActiveChart.SeriesCollection(nseries).Border
-    # _with2.ColorIndex = 1
-    # _with2.Weight = xlThin
-    # _with2.LineStyle = xlDot
-    # ActiveChart.SeriesCollection[nseries].MarkerStyle = xlNone
-    # ActiveChart.Legend.LegendEntries(nseries).Delete
     """
-    Mise en forme du graphique
+    Ajoute les donnees data
     """
-    # ActiveChart.Location(Where=xlLocationAsObject, Name=nom_feuille)
-    # position de la legende
-    # ActiveChart.HasLegend = True
-    # ActiveChart.Legend.Select()
-    # Selection.Position = xlBottom
-    # format quadrillage et axe
-    # ActiveChart.Axes(xlValue).Select()
-    # _with3 = ActiveChart.Axes(xlValue)
-    # _with3.MinimumScaleIsAuto = True
-    # _with3.MaximumScale = 1
-    # _with3.MinorUnitIsAuto = True
-    # _with3.MajorUnitIsAuto = True
-    # _with3.Crosses = xlAutomatic
-    # _with3.ReversePlotOrder = False
-    # _with3.ScaleType = xlLinear
-    # .DisplayUnit = xlNone
-    # _with3.HasMajorGridlines = True
-    # _with3.HasMinorGridlines = False
-    # _with3.TickLabels.NumberFormat = '0%'
-    # graphique log
-    # ActiveChart.PlotArea.Select()
-    # _with4 = ActiveChart.Axes(xlCategory)
-    # _with4.HasMajorGridlines = True
-    # _with4.HasMinorGridlines = False
-    # _with4.ScaleType = xlLogarithmic
-    # _with5 = Selection.Border
-    # _with5.ColorIndex = 16
-    # _with5.Weight = xlThin
-    # _with5.LineStyle = xlContinuous
-    # Selection.Interior.ColorIndex = xlNone
-    # ActiveChart.Axes(xlValue).MajorGridlines.Select()
-    # _with6 = Selection.Border
-    # _with6.ColorIndex = 15
-    # _with6.Weight = xlHairline
-    # _with6.LineStyle = xlContinuous
-    # ActiveChart.Axes(xlValue).MajorGridlines.Select()
-    # ActiveChart.Axes(xlCategory).MajorGridlines.Select()
-    # _with7 = Selection.Border
-    # _with7.ColorIndex = 15
-    # _with7.Weight = xlHairline
-    # _with7.LineStyle = xlContinuous
-    # _with8 = ActiveChart
-    # _with8.HasTitle = True
-    # _with8.ChartTitle.text = titre_graf(loi)
-    # _with8.Axes[xlCategory, xlPrimary].HasTitle = True
-    # _with8.Axes[xlCategory, xlPrimary].AxisTitle.Characters.text = titre_axe(1)
-    # _with8.Axes[xlCategory, xlPrimary].AxisTitle.Font.Size = 8
-    # _with8.Axes[xlCategory, xlPrimary].AxisTitle.Font.Bold = False
-    # _with8.Axes[xlValue, xlPrimary].HasTitle = True
-    # _with8.Axes[xlValue, xlPrimary].AxisTitle.Characters.text = titre_axe(2)
-    # _with8.Axes[xlValue, xlPrimary].AxisTitle.Font.Size = 8
-    # _with8.Axes[xlValue, xlPrimary].AxisTitle.Font.Bold = False
-    #
-    # Ajoute les donnees data
-    #
     if iproc == 1:
         ajoute_series(nom_feuille, nseries, True, ligne_data, col_tax,
                       col_data, col_pcum, col_pcum_a)
@@ -204,67 +112,40 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
                       col_data_act, col_pcum, col_pcum_a)
         ajoute_series(nom_feuille, nseries, False, ligne_data, col_tax,
                       col_data, col_pcum_a, col_pcum_a)
-    #
-    # Ajoute une zone de texte avec les valeurs de R2, Pttest, GWM et GWSD
-    #
-    _select0 = loi
-    if (_select0 == 2):
-        # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 9, 7.5, 80, 25).Select()
-        #   Selection.Characters.text = "R_ = " & FormatNumber(R2, 4)
-        _str = 'R_ = ' + '{}'.format(
-            ':.4f',
-            R2, ) + '\n' + 'KSpvalue = ' + '{}'.format(':.3f', Pvalue)
-        # Selection.Characters.text = _str
-        # Selection.AutoScaleFont = False
-        long_chaine = len(_str)
-        # _with9 = Selection.Characters(Start=1, Length=long_chaine).Font
-        # _with9.Name = 'Arial'
-        # _with9.FontStyle = 'Normal'
-        # _with9.Size = 8
-        # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 330, 7.5,
-        # 80, 25).Select()
-        _str = ' wm.lg = ' + '{}'.format(
-            ':.2f', mup) + '\n' + ' wsd.lg = ' + '{}'.format(':.2f', sigmap)
-        # Selection.Characters.text = _str
-        # Selection.AutoScaleFont = False
-        long_chaine = len(_str)
-        # _with10 = Selection.Characters(Start=1, Length=long_chaine).Font
-        # _with10.Name = 'Arial'
-        # _with10.FontStyle = 'Normal'
-        # _with10.Size = 8
-    elif (_select0 == 3):
-        # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 9, 7.5, 80, 25).Select()
-        # _str = "R_ = " & Format(R2, "#0.0000")
-        _str = 'R_ = ' + '{}'.format(
-            ':.4f',
-            R2, ) + '\n' + 'KSpvalue = ' + '{}'.format(':.3f', Pvalue)
-        # Selection.Characters.text = _str
-        # Selection.AutoScaleFont = False
-        long_chaine = len(_str)
-        # _with11 = Selection.Characters(Start=1, Length=long_chaine).Font
-        # _with11.Name = 'Arial'
-        # _with11.FontStyle = 'Normal'
-        # _with11.Size = 8
-        # ActiveChart.Shapes.AddTextbox(msoTextOrientationHorizontal, 330, 7.5,
-        # 80, 35).Select()
-        _str = ' wmin.lg = ' + '{}'.format(
-            ':.2f', _min) + '\n' + ' wmax.lg = ' + '{}'.format(
-                ':.2f', _max) + '\n' + ' wmode.lg = ' + '{}'.format(
-                    ':.2f', mode)
-        # Selection.Characters.text = _str
-        # Selection.AutoScaleFont = False
-        long_chaine = len(_str)
-        # _with12 = Selection.Characters(Start=1, Length=long_chaine).Font
-        # _with12.Name = 'Arial'
-        # _with12.FontStyle = 'Normal'
-        # _with12.Size = 8
-    # Rappel des options dans le titre du graphique
+    """
+    Ajoute une zone de texte avec les valeurs de R2, Pttest, GWM et GWSD
+    """
+    if (loi == 2):
+        plot.text(
+            max(data_x) - 1, 0.9, 'R_ = {:.4f}\nKSpvalue = {:.3f}'.format(
+                R2, Pvalue))
+        plot.text(
+            max(data_x), 1, 'wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(
+                mup, sigmap))
+    elif (loi == 3):
+        plot.text(0.1, 0.9, 'R_ = {:.4f}\nKSpvalue = {:.3f}'.format(
+            R2, Pvalue))
+        plot.text(
+            1, 1,
+            'wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
+                _min, _max, mode))
+    """Rappel des options dans le titre du graphique"""
     ligne_option = 'Sp = ' + sp_opt(isp)
     if val_pcat != '':
-        ligne_option = ligne_option + '; TW: ' + liste_taxo + ' = ' + val_pcat
+        _str = ""
+        for x in set(liste_taxo):
+            if x != "":
+                _str += x + " "
+        ligne_option = '{}; TW: {}= {}'.format(ligne_option, _str, val_pcat)
     else:
-        ligne_option = ligne_option + '; TW: none'
-    nb_car = len(titre_graf(loi)) + len(ligne_option)
+        ligne_option = '{}; TW: none'.format(ligne_option)
+    plot.title(titre_graf[loi - 1] + '\n' + ligne_option)
+    plot.xlabel(titre_axe[0])
+    plot.ylabel(titre_axe[1])
+    plot.xscale('log')
+    plot.legend()
+    plot.grid()
+    plot.show()
     # ActiveChart.ChartTitle.Characters.text = titre_graf(loi) + '\n' + ligne_option
     # ActiveChart.ChartTitle.Characters[Start= 1, Length= len(titre_graf(loi))].Font.Size = 10
     # ActiveChart.ChartTitle.Characters[Start= len(titre_graf(loi)) + 1, Length= nb_car].Font.Bold = False
@@ -300,77 +181,37 @@ def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
     @param col_pcum: colonne des probabilites cumulees ponderees
                      empiriques
     """
-    nb_style = 5
-    nb_col = 14
-    col_possible = [1, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16]
-    style_possible = [1, 2, 3, 7, 8]
-    i = 1
-    nseries_pts = nseries - 3
-    ldeb = ligne_data + 1
-    if nouveau is True:
-        col1_marqueur = 0
-        style_marqueur = 0
-    else:
-        col1_marqueur = nseries_pts % nb_col
-        if col1_marqueur == 0:
-            col1_marqueur = nseries_pts
-        style_marqueur = nseries_pts % nb_style
-        if style_marqueur == 0:
-            style_marqueur = nseries_pts
-    col2_marqueur = col1_marqueur
-    nbligne = 0
-    while Initialisation.Worksheets[nom_feuille].Cells[ligne_data + i,
-                                                       col_tax]:
-        if (Initialisation.Worksheets[nom_feuille].Cells[ligne_data + i,
-                                                         col_pcum] != 0):
-            if (Initialisation.Worksheets[nom_feuille].Cells[ligne_data + i,
-                                                             col_tax] !=
-                    Initialisation.Worksheets[nom_feuille]
-                    .Cells[ligne_data + i + 1, col_tax]):
-                nseries = nseries + 1
-                if style_marqueur == nb_style:
-                    style_marqueur = 1
-                else:
-                    style_marqueur = style_marqueur + 1
-                if col1_marqueur == nb_col:
-                    col1_marqueur = 1
-                else:
-                    col1_marqueur = col1_marqueur + 1
-                col2_marqueur = col1_marqueur
-                data_x = 'R' + ldeb + 'C' + col_data + ':R' + ldeb + nbligne + 'C' + col_data
-                data_y = 'R' + ldeb + 'C' + col_pcum + ':R' + ldeb + nbligne + 'C' + col_pcum
-                data_nom = 'R' + ldeb + 'C' + col_tax
-                # ActiveChart.SeriesCollection.NewSeries()
-                # ActiveChart.SeriesCollection[
-                #     nseries].XValues = '=' + nom_feuille + '!' + data_x
-                # ActiveChart.SeriesCollection[
-                #     nseries].Values = '=' + nom_feuille + '!' + data_y
-                # ActiveChart.SeriesCollection[
-                #     nseries].Name = '=' + nom_feuille + '!' + data_nom
-                if nouveau is True and Initialisation.Worksheets[nom_feuille].Cells(
-                        ldeb, col_pcum_a) != 0:
-                    print("A completer")  # TODO
-                #     ActiveChart.SeriesCollection[
-                #         nseries].Name = ActiveChart.SeriesCollection(
-                #             nseries).Name + '_ACT'
-                # _with0 = ActiveChart.SeriesCollection(nseries).Border
-                # _with0.ColorIndex = 1
-                # _with0.Weight = xlThin
-                # _with0.LineStyle = xlNone
-                # _with1 = ActiveChart.SeriesCollection(nseries)
-                # _with1.MarkerBackgroundColorIndex = col_possible(col2_marqueur)
-                # .MarkerBackgroundColorIndex = xlNone
-                # _with1.MarkerForegroundColorIndex = col_possible(col1_marqueur)
-                # _with1.MarkerStyle = style_possible(style_marqueur)
-                # _with1.MarkerSize = 5
-                ldeb = ligne_data + i + 1
-                nbligne = 0
-            else:
-                nbligne = nbligne + 1
-        else:
-            ldeb = ligne_data + i + 1
-            nbligne = 0
-        i = i + 1
+    marker_style = [
+        'o', 'v', '1', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|', '_',
+        '.', '^', '<', '>', '2', '3', '4'
+    ]
+    color_style = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
+    data_x = list(
+        Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_data].dropna())
+    data_y = list(
+        Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_pcum].dropna())
+    taxon = list(
+        Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_tax].dropna())
+    species = ["s"] * (len(taxon))
+    # list(Initialisation.Worksheets[nom_feuille].Cells.ix[
+    #     3:, col_tax - 1].dropna())
+    s_species = list(set(species))
+    s_taxon = list(set(taxon))
+    for e in s_taxon:
+        for s in s_species:
+            sub_data_x = list()
+            sub_data_y = list()
+            for i in range(0, len(taxon)):
+                if e == taxon[i] and s == species[i]:
+                    sub_data_x.append(data_x[i])
+                    sub_data_y.append(data_y[i] * 100)
+            if sub_data_x and sub_data_y:
+                plot.plot(
+                    sub_data_x,
+                    sub_data_y,
+                    color_style[s_taxon.index(e)] +
+                    marker_style[s_species.index(s)],
+                    label=e)
 
 
 def decaler_graph(nom_feuille):
@@ -399,19 +240,13 @@ def tracer_courbe_empirique(nseries, nom_feuille, lig_deb, nbligne, col_data,
                      empiriques
     """
     nseries = nseries + 1
-    data_x = 'R' + lig_deb + 'C' + col_data + \
-        ':R' + lig_deb + nbligne - 1 + 'C' + col_data
-    data_y = 'R' + lig_deb + 'C' + col_pcum + \
-        ':R' + lig_deb + nbligne - 1 + 'C' + col_pcum
+    data_x = list()
+    data_y = list()
+    for y in range(lig_deb, lig_deb + nbligne):
+        data_x.append(Initialisation.Worksheets[nom_feuille]
+                      .Cells.get_value(y, col_data))
+        data_y.append(Initialisation.Worksheets[nom_feuille]
+                      .Cells.get_value(y, col_pcum))
     data_nom = 'Weighted Empirical'
-    # ActiveChart.SeriesCollection.NewSeries()
-    # ActiveChart.SeriesCollection[
-    #     nseries].XValues = '=' + nom_feuille + '!' + data_x
-    # ActiveChart.SeriesCollection[
-    #     nseries].Values = '=' + nom_feuille + '!' + data_y
-    # ActiveChart.SeriesCollection[nseries].Name = data_nom
-    # _with0 = ActiveChart.SeriesCollection(nseries).Border
-    # _with0.ColorIndex = 1
-    # _with0.Weight = xlThin
-    # _with0.LineStyle = xlContinuous
-    # ActiveChart.SeriesCollection[nseries].MarkerStyle = xlNone
+    plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=0.5)
+    return (nseries)

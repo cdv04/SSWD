@@ -12,7 +12,7 @@ Problablement inutilisable au niveau de l'IHM.
 # @Project: SSWD
 # @Filename: Initialisation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T13:50:43+02:00
+# @Last modified time: 2017-05-17T10:20:43+02:00
 
 import math
 
@@ -190,7 +190,6 @@ def initialise():
     titre_data = list()
     titre_data.append('Used data sorted out by taxonomy group')
     titre_data.append('Used data sorted out by increasing concentrations')
-    """Parametre de Hazen pour calcul probabilites empiriques"""
     return (nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
             nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
             nom_feuille_Ftriang, nom_feuille_qtriang, pourcent, ind_hc, pcent,

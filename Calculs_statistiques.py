@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-16T08:36:59+02:00
+# @Last modified time: 2017-05-16T15:57:46+02:00
 
 import math
 
@@ -175,7 +175,7 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
         l1 - 1, c_mu, 'MEAN')
     Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
         l1 - 1, c_mu + 1, 'STDEV')
-    for i in range(1, len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+    for i in range(l1, l2):
         data = list()
         for j in range(c1, c2):
             data.append(
@@ -681,7 +681,6 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     empirique : pas de bias correction
     normal et triangulaire : bias correction
     """
-    print(Initialisation.Worksheets[nom_feuille_quant].Cells)
     for x in range(0, len(pourcent)):
         data = list()
         for y in range(1, l2):
@@ -692,13 +691,15 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
         if loi == 1:
             for i in range(0, len(pcent)):
                 Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-                    l_hc + 4 + i, c_hc + 1 + x, 10**percentile(data, pcent[i]))
+                    l_hc + 4 + i, c_hc + 1 + x, 10**percentile(
+                        data, pcent[i] * 100))
         else:
             for i in range(0, len(pcent)):
                 Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
                     l_hc + 4 + i, c_hc + 1 + x,
-                    (10**(percentile(data, pcent[i]) - median(data)) * 10**
-                     HC_be[i]))
+                    (10**(percentile(data, pcent[i] * 100) - median(data)) *
+                     Initialisation.Worksheets[nom_feuille_res]
+                     .Cells.get_value(l_hc + 2, c_hc + 1 + x)))
     encadrer_colonne(nom_feuille_res, l_hc + 1, c_hc + ind_hc,
                      l_hc + nbligne_res - 1, c_hc + ind_hc)
     """Infos supplementaires suivant les distributions"""
@@ -728,8 +729,10 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
             for i in range(0, len(pcent)):
                 Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
                     l_hc + 4 + i, c_hc + len(pourcent) + 1 + x - nbvar,
-                    (10**(percentile(data, pcent[i]) - median(data)) *
-                     (10**HC_be[i])))
+                    (10**(percentile(data, pcent[i] * 100) - median(data)) *
+                     Initialisation.Worksheets[
+                         nom_feuille_res].Cells.get_value(
+                             l_hc + 2, c_hc + len(pourcent) + 1 + x - nbvar)))
         Initialisation.Worksheets[nom_feuille_res].Cells.sort_index(
             axis=1).reindex_axis(
                 range(0, Initialisation.Worksheets[nom_feuille_res]
@@ -766,8 +769,10 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
             for i in range(0, len(pcent)):
                 Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
                     l_hc + 4 + i, c_hc + len(pourcent) + 1 + x - c_min,
-                    (10**(percentile(data, pcent[i]) - median(data)) *
-                     (10**HC_be[i])))
+                    (10**(percentile(data, pcent[i] * 100) - median(data)) *
+                     Initialisation.Worksheets[
+                         nom_feuille_res].Cells.get_value(
+                             l_hc + 2, c_hc + len(pourcent) + 2 + x - c_min)))
     return (mup, sigmap, _min, _max, mode, data_c)
 
 
