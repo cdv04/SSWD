@@ -12,9 +12,11 @@ Problablement inutilisable au niveau de l'IHM.
 # @Project: SSWD
 # @Filename: Initialisation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-17T10:20:43+02:00
+# @Last modified time: 2017-05-19T15:43:50+02:00
 
 import math
+
+from tqdm import tqdm
 
 from Collection import Collection
 
@@ -134,7 +136,7 @@ def init_collection(data_co, species, taxo, data):
 
     Creation de la collection data_co
     """
-    for i in range(0, len(species)):
+    for i in tqdm(range(0, len(species)), desc="Creating data_co"):
         if data[i]:
             line = Collection()
             line.espece = species[i]

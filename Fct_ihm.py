@@ -8,9 +8,10 @@
 # @Project: SSWD
 # @Filename: Fct_ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T14:35:36+02:00
+# @Last modified time: 2017-05-23T11:04:43+02:00
 
 import numpy as np
+from tqdm import tqdm
 
 import Initialisation
 from fct_generales import (ischainevide, rech_l1c1, rechercher_categorie,
@@ -88,7 +89,7 @@ def lire_pcat(val_pcat, pcat, dim_pcat):
     erreur = False
     ipos = 0
     debut = 0
-    for i in range(0, dim_pcat):
+    for i in tqdm(range(0, dim_pcat), desc='Read pcat'):
         ipos = val_pcat.find(';')
         if ipos != 0 and i == dim_pcat:
             erreur = True
@@ -126,7 +127,7 @@ def afficher_taxo(data_taxo, liste_taxo, erreur):
     # tmp = Worksheets[nom_feuille].Range(Cells[l1, c1], Cells[l2, c2])
     tmp = np.copy(Initialisation.Worksheets[nom_feuille].Cells[l1:l2, c1:c2])
     taxo = list()
-    for i in range(0, len(taxo)):
+    for i in tqdm(range(0, len(taxo)), desc='Sorting taxo'):
         taxo.append(tmp[i + 1, 1])
     taxo.sort()
     """Extraction des differentes categories taxo"""
@@ -146,10 +147,10 @@ you cannot enter weight!', 0)
             liste_taxo += taxo_dif[i] + ';'
 
 
-def charger_parametres(iproc, r_espece, r_taxo, r_concentration, r_test, txt_p,
-                       opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t, txt_val_b,
-                       txt_val_a, ch_nb, ch_sauve, lbl_liste, opt_bt_q, cbx_e,
-                       colnames):
+def charger_parametres(fname, iproc, r_espece, r_taxo, r_concentration, r_test,
+                       txt_p, opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t,
+                       txt_val_b, txt_val_a, ch_nb, ch_sauve, lbl_liste,
+                       opt_bt_q, cbx_e, colnames):
     """
     Charge les parametres receuillis par la boite de dialogue.
 
@@ -251,14 +252,14 @@ between 0 and 1, strictly less than 1', 0)
         pos = liste_taxo.find('\n')
         ltaxo = liste_taxo[:pos + 1]
     else:
-        ltaxo = plage_x[1].split(';')
+        ltaxo = None
     """
     Option d'ajustement pour loi triangulaire,
     si True ajustement sur quantiles, sinon sur probabilités cumulées
     """
     triang_ajust = opt_bt_q
-    lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
-          conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust)
+    lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
+          n_optim, conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust)
 
 
 def check_nom_colonne(iproc, nom_colonne):

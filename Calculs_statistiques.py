@@ -10,13 +10,14 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-17T15:49:10+02:00
+# @Last modified time: 2017-05-23T09:23:43+02:00
 
 import math
 
 from numpy import mean, median, percentile, std
 from numpy.random import choice
 from scipy.stats import norm
+from tqdm import tqdm
 
 import Initialisation
 from fct_generales import (cellule_gras, compt_inf, ecrire_titre,
@@ -43,17 +44,19 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, lig_deb, col_data,
     """
     data = list()
     pond = list()
-    for x in range(1, len(Initialisation.Worksheets[nom_feuille_pond].Cells)):
+    for x in tqdm(
+            range(1, len(Initialisation.Worksheets[nom_feuille_pond].Cells)),
+            desc="Collecting data for bootstrap"):
         data.append(Initialisation.Worksheets[nom_feuille_pond]
                     .Cells.get_value(x, col_data))
         pond.append(Initialisation.Worksheets[nom_feuille_pond]
                     .Cells.get_value(x, col_pond))
-    for j in range(0, nbvar):
+    for j in tqdm(range(0, nbvar), desc="Setting columns \'POINT\'"):
         Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
             0, j, 'POINT ' + str(j + 1))
     i = 1
     j = 0
-    for x in choice(data, nbvar * B, p=pond):
+    for x in tqdm(choice(data, nbvar * B, p=pond), desc="Bootstrap"):
         if j == nbvar:
             j = 0
             i += 1
@@ -88,13 +91,13 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     On calcule la probabilite cumulee empirique de chaque point tire
     sauvegarde dans pcum
     """
-    for i in range(0, nbvar):
+    for i in tqdm(range(0, nbvar), desc="Empirical Probability Cumulated"):
         pcum.append((i - a) / (nbvar + 1 - 2 * a))
     """
     On calcule le rang qu'occupe la probabilite voulues (p) au sein des
     pcum, sauvegarde dans rang
     """
-    for i in range(0, len(p)):
+    for i in tqdm(range(0, len(p)), desc="Probability rang"):
         rang.append(compt_inf(pcum, p[i]))
     """
     On trie les donnees a exploiter (issues des tirages aleatoires)
@@ -106,14 +109,14 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
                           nbvar, data)
     """Creation de la feuille contenant les quantiles empiriques"""
     """Ecriture des entetes de colonnes"""
-    for i in range(0, len(p)):
+    for i in tqdm(range(0, len(p)), desc="Setting columns \'QUANT\'"):
         Initialisation.Worksheets[nom_feuille_qemp].Cells.set_value(
             l1 - 1, c3 + i, 'QUANT ' + str(p[i] * 100) + ' %')
     """
     Calcul des quantiles p%
     data = "RC" & c1 & ":RC" & c2
     """
-    for y in range(1, l2 + 1):
+    for y in tqdm(range(1, l2 + 1), desc="Calculating quantils"):
         tmp = list()
         for i in range(0, len(p)):
             if (rang[i] == 0 or rang[i] == nbvar):
@@ -174,7 +177,7 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
         l1 - 1, c_mu, 'MEAN')
     Initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
         l1 - 1, c_mu + 1, 'STDEV')
-    for i in range(l1, l2):
+    for i in tqdm(range(l1, l2), desc="Calculating MEAN and STDEV"):
         data = list()
         for j in range(c1, c2):
             data.append(
@@ -191,7 +194,7 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     stdev precedemment calcules
     """
     """Affichage dans nom_feuille_qnorm"""
-    for i in range(0, len(p)):
+    for i in tqdm(range(0, len(p)), desc="Calculating quantils"):
         Initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
             l1 - 1, c3 + i, 'QUANT ' + str(p[i] * 100) + ' %')
         for x in range(l1, l2):
@@ -634,14 +637,14 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     """
     Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 1, c_hc, 'HC')
-    for i in range(0, len(pourcent)):
+    for i in tqdm(range(0, len(pourcent)), desc="Displaying percent"):
         Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 1, c_hc + i + 1, "{:.3g}%".format(pourcent[i] * 100))
     Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 2, c_hc, 'Best-Estimate')
     Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 3, c_hc, 'Geo. Stand. Deviation')
-    for i in range(0, len(pcent)):
+    for i in tqdm(range(0, len(pcent)), desc='Displaying centile'):
         Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 4 + i, c_hc, 'Centile ' + str(pcent[i] * 100) + '%')
     nbligne_res = len(pcent) + 3 + 1
@@ -652,7 +655,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     procedure SSWD ou ACT
     """
     data_c = list()
-    for i in range(0, nbdata):
+    for i in tqdm(range(0, nbdata), desc='Getting data_c'):
         data_c.append(data_co[i].data if iproc == 1 else data_co[i].act)
     if (loi == 1):
         calculer_be_empirique(data_co, pourcent, nom_feuille_pond,
@@ -673,7 +676,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
                 pond_col_data, pond_col_pcum, pourcent, HC_be, nom_colonne,
                 nbdata)
     """Affichage HC best-estimate dans la feuille de resultats"""
-    for i in range(0, len(pourcent)):
+    for i in tqdm(range(0, len(pourcent)), desc='Displaying HC best-estimate'):
         Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 2, c_hc + 1 + i, 10**HC_be[i])
     cellule_gras(l_hc + 2, c_hc + 2, l_hc + 2, c_hc + 2)
@@ -682,7 +685,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
     empirique : pas de bias correction
     normal et triangulaire : bias correction
     """
-    for x in range(0, len(pourcent)):
+    for x in tqdm(range(0, len(pourcent)), desc='Calcul percentils'):
         data = list()
         for y in range(1, l2):
             data.append(Initialisation.Worksheets[nom_feuille_quant]
@@ -734,12 +737,6 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
                      Initialisation.Worksheets[
                          nom_feuille_res].Cells.get_value(
                              l_hc + 2, c_hc + len(pourcent) + 1 + x - nbvar)))
-        Initialisation.Worksheets[nom_feuille_res].Cells.sort_index(
-            axis=1).reindex_axis(
-                range(0, Initialisation.Worksheets[nom_feuille_res]
-                      .Cells.columns.max() + 1),
-                axis=1).to_excel(
-                    "res.xlsx", index=False, header=False)
     if (loi == 3):
         Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 2, c_hc + len(pourcent) + 1, 'Best-Estimate')
@@ -804,7 +801,7 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
     dif = [0.0] * nbdata
 
     if loi == 2:
-        for i in range(0, nbdata):
+        for i in tqdm(range(0, nbdata), desc="Calcul Qth/resQ/Pth/dif"):
             Qth[i] = norm.ppf(data_co[i].pcum, mup, sigmap)
             resQ[i] = Qth[i] - data_c[i]
             Pth[i] = norm.cdf(data_co[i].data, mup, sigmap)
@@ -812,7 +809,7 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
             dif[i] = math.fabs(dif[i])
     if loi == 3:
         pmode = (mode - _min) / (_max - _min)
-        for i in range(0, nbdata):
+        for i in tqdm(range(0, nbdata), desc="Calcul Qth/resQ/Pth/dif"):
             if data_co[i].pcum <= pmode:
                 Qth[i] = (_min + math.sqrt(data_co[i].pcum * (_max - _min) *
                                            (mode - _min)))
@@ -848,10 +845,10 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
     effectue dans le cas de la loi log - normale)
     """
     mu = 0
-    for i in range(0, nbdata):
+    for i in tqdm(range(0, nbdata), desc="Calcul mu"):
         mu = mu + data_co[i].data * data_co[i].pond
     var_data = 0
-    for i in range(0, nbdata):
+    for i in tqdm(range(0, nbdata), desc="Calcul var_data"):
         var_data = (var_data + data_co[i].pond * (data_co[i].data - mu)**2.)
     var_data = var_data * nbdata / (nbdata - 1)
     """calcul variance ponderee des residus"""
@@ -904,11 +901,11 @@ def calculer_be_empirique(data_co, pourcent, nom_feuille, lig_deb, col_pcum,
     dans data et data_co
     """
     pcum = list()
-    for i in range(0, nbdata):
+    for i in tqdm(range(0, nbdata), desc='Getting pcum'):
         pcum.append(data_co[i].pcum)
     rang = list()
     """Calcul de HC_emp"""
-    for i in range(0, len(pourcent)):
+    for i in tqdm(range(0, len(pourcent)), desc='Calcul HC_emp'):
         rang.append(compt_inf(pcum, pourcent[i]))
         if (rang[i] == 0):
             HC_emp.append(data[1])
@@ -940,15 +937,13 @@ def calculer_be_normal(data_co, pourcent, HC_norm, nbdata, data):
                  de HC
     """
     mup = 0
-    for i in range(0, nbdata):
+    for i in tqdm(range(0, nbdata), desc="Calcul mup"):
         mup = mup + data[i] * data_co[i].pond
-
     sigmap = 0
-    for i in range(0, nbdata):
+    for i in tqdm(range(0, nbdata), desc="Calcul sigmap"):
         sigmap = sigmap + data_co[i].pond * (data[i] - mup)**2
     sigmap = math.sqrt(sigmap * nbdata / (nbdata - 1))
-
-    for i in range(0, len(pourcent)):
+    for i in tqdm(range(0, len(pourcent)), desc="Calcul HC_norm"):
         HC_norm.append(norm.ppf(pourcent[i], mup, sigmap))
     return (mup, sigmap)
 

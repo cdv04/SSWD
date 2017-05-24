@@ -10,20 +10,51 @@ A remettre completement en forme grace a numpy
 # @Project: SSWD
 # @Filename: Graphique.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-17T15:51:43+02:00
+# @Last modified time: 2017-05-23T16:08:40+02:00
+
+from os.path import splitext
 
 from matplotlib import pyplot as plot
+from pandas import ExcelWriter
+from tqdm import tqdm
 
 import Initialisation
 from fct_generales import sp_opt
 
 
-def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
-                     col_fin, ligne_data, col_tax, col_data, col_pcum,
-                     col_data_le, col_pcum_le, loi, titre_graf, R2, Pvalue,
-                     nb_ligne_data, mup, sigmap, _min, _max, mode, titre_axe,
-                     val_pcat, liste_taxo, isp, col_data_act, col_data_act_le,
-                     iproc, col_pcum_a):
+def tracer_graphique(fname,
+                     nom_feuille,
+                     lig_p,
+                     lig_qbe,
+                     lig_qbi,
+                     lig_qbs,
+                     col_deb,
+                     col_fin,
+                     ligne_data,
+                     col_tax,
+                     col_data,
+                     col_pcum,
+                     col_data_le,
+                     col_pcum_le,
+                     loi,
+                     titre_graf,
+                     R2,
+                     Pvalue,
+                     nb_ligne_data,
+                     mup,
+                     sigmap,
+                     _min,
+                     _max,
+                     mode,
+                     titre_axe,
+                     val_pcat,
+                     liste_taxo,
+                     isp,
+                     col_data_act,
+                     col_data_act_le,
+                     iproc,
+                     col_pcum_a,
+                     override=False):
     """
     Trace les graphiques (Mediane, quantile 5%, quantile 95% et data).
 
@@ -50,13 +81,27 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     _min, _max, mode parametres de la loi triangulaire ponderee
     nb_ligne_data -> nombre de ligne du tableau de donnees data
     """
+    writer = ExcelWriter(
+        splitext(filename)[0] + (".xlsx" if override else "_sswd.xlsx"))
+    workbook = writer.book
+    Initialisation.Worksheets[nom_feuille].Cells.sort_index(
+        axis=1).reindex_axis(
+            range(0,
+                  Initialisation.Worksheets[nom_feuille].Cells.columns.max() +
+                  1),
+            axis=1).to_excel(
+                writer, sheet_name=nom_feuille, index=False, header=False)
+    worksheet = writer.sheets[nom_feuille]
     nseries = 0
     """Ajout de la serie Mediane"""
     if (loi != 1):
         nseries = nseries + 1
         data_x = list()
         data_y = list()
-        for x in range(col_deb, col_fin):
+        for x in tqdm(
+                range(col_deb, col_fin),
+                desc='Getting data for plotting \
+Normal and Triangular law'):
             data_x.append(Initialisation.Worksheets[nom_feuille]
                           .Cells.get_value(lig_qbe, x))
             data_y.append(
@@ -75,7 +120,7 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     """Ajout de la serie quantile borne inf"""
     data_x = list()
     data_y = list()
-    for x in range(col_deb, col_fin):
+    for x in tqdm(range(col_deb, col_fin), desc='Getting percentil 5%'):
         data_x.append(Initialisation.Worksheets[nom_feuille]
                       .Cells.get_value(lig_qbi, x))
         data_y.append(
@@ -88,7 +133,7 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     """Ajout de la serie quantile borne superieure"""
     data_x = list()
     data_y = list()
-    for x in range(col_deb, col_fin):
+    for x in tqdm(range(col_deb, col_fin), desc='Getting percentil 95%'):
         data_x.append(Initialisation.Worksheets[nom_feuille]
                       .Cells.get_value(lig_qbs, x))
         data_y.append(
@@ -122,12 +167,13 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
                 _min, _max, mode)))
     """Rappel des options dans le titre du graphique"""
     ligne_option = 'Sp = ' + sp_opt(isp)
-    if val_pcat != '':
+    if val_pcat is not None:
         _str = ""
         for x in set(liste_taxo):
             if x != "":
-                _str += x + " "
-        ligne_option = '{}; TW: {}= {}'.format(ligne_option, _str, val_pcat)
+                _str += x + "/"
+        ligne_option = '{}; TW: {}= {}'.format(ligne_option, _str[:-1],
+                                               val_pcat)
     else:
         ligne_option = '{}; TW: none'.format(ligne_option)
     plot.title(titre_graf[loi - 1] + '\n' + ligne_option)
@@ -136,7 +182,7 @@ def tracer_graphique(nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     plot.xscale('log')
     plot.legend()
     plot.grid()
-    plot.show()
+    plot.draw()
 
 
 def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
@@ -154,8 +200,8 @@ def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
                      empiriques
     """
     marker_style = [
-        'o', 'v', '1', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|', '_',
-        '.', '^', '<', '>', '2', '3', '4'
+        '.', 'o', 'v', '1', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|',
+        '_', '^', '<', '>', '2', '3', '4'
     ]
     color_style = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
     data_x = list(
@@ -214,7 +260,9 @@ def tracer_courbe_empirique(nseries, nom_feuille, lig_deb, nbligne, col_data,
     nseries = nseries + 1
     data_x = list()
     data_y = list()
-    for y in range(lig_deb, lig_deb + nbligne):
+    for y in tqdm(
+            range(lig_deb, lig_deb + nbligne),
+            desc='Getting data for Empirical law'):
         data_x.append(Initialisation.Worksheets[nom_feuille]
                       .Cells.get_value(y, col_data))
         data_y.append(Initialisation.Worksheets[nom_feuille]

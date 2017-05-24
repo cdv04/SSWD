@@ -11,10 +11,11 @@ Parse commande line and csv file.
 # @Project: SSWD
 # @Filename: run.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-15T14:23:56+02:00
+# @Last modified time: 2017-05-23T11:03:44+02:00
 
 import argparse
 import sys
+from os.path import splitext
 
 import pandas
 
@@ -44,9 +45,16 @@ def parse_file(filename, colnames):
     """Parse file using pandas module."""
     if not filename:
         raise argparse.ArgumentTypeError("Filename (-f) is None.")
-    data = pandas.read_csv(filename, header=0)
-    if len(data.columns) == 1:
-        data = pandas.read_csv(filename, sep=";", header=0)
+    if splitext(filename)[1] in ['.xls', '.xlsx']:
+        data = pandas.read_excel(filename, sheetname=None)
+        # select sheetname
+        data = data['chronic']
+    elif splitext(filename)[1] is '.csv':
+        data = pandas.read_csv(filename, header=0)
+        if len(data.columns) == 1:
+            data = pandas.read_csv(filename, sep=";", header=0)
+    else:
+        raise IOError("Invalid file")
     espece = filename + "!"
     test = filename + "!"
     for n in data[colnames[0]].tolist():
@@ -100,13 +108,14 @@ def main():
     parser.add_argument("--lbl_liste", help="weight of each taxonomic group")
     args = parser.parse_args()
     # columns_name = get_columns(args.file)
-    columns_name = ["SpeciesComp", "PhylumSup", "ED"]
+    columns_name = ["Species", "PhylumSup", "ED"]
     espece, taxo, concentration, test = parse_file(args.file, columns_name)
-    return (charger_parametres(
-        args.iproc, espece, taxo, concentration, test, args.pcat, (
-            args.pcat is None), not (args.pcat is None), args.emp, args.normal,
+    charger_parametres(
+        args.file, args.iproc, espece, taxo, concentration, test, args.pcat,
+        args.pcat is None, args.pcat is not None, args.emp, args.normal,
         args.triang, args.bootstrap, args.hazen, args.nbvar, args.save,
-        args.lbl_liste, args.triang and args.adjustq, args.isp, columns_name))
+        args.lbl_liste, args.triang and args.adjustq, args.isp, columns_name)
+    return (0)
 
 
 if __name__ == '__main__':
