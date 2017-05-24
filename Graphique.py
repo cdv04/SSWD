@@ -10,19 +10,18 @@ A remettre completement en forme grace a numpy
 # @Project: SSWD
 # @Filename: Graphique.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-23T16:08:40+02:00
+# @Last modified time: 2017-05-24T19:01:01+02:00
 
-from os.path import splitext
-
-from matplotlib import pyplot as plot
-from pandas import ExcelWriter
-from tqdm import tqdm
+# from matplotlib import pyplot as plot
 
 import Initialisation
 from fct_generales import sp_opt
 
 
-def tracer_graphique(fname,
+# from tqdm import tqdm
+
+
+def tracer_graphique(writer,
                      nom_feuille,
                      lig_p,
                      lig_qbe,
@@ -81,8 +80,6 @@ def tracer_graphique(fname,
     _min, _max, mode parametres de la loi triangulaire ponderee
     nb_ligne_data -> nombre de ligne du tableau de donnees data
     """
-    writer = ExcelWriter(
-        splitext(filename)[0] + (".xlsx" if override else "_sswd.xlsx"))
     workbook = writer.book
     Initialisation.Worksheets[nom_feuille].Cells.sort_index(
         axis=1).reindex_axis(
@@ -96,75 +93,108 @@ def tracer_graphique(fname,
     """Ajout de la serie Mediane"""
     if (loi != 1):
         nseries = nseries + 1
-        data_x = list()
-        data_y = list()
-        for x in tqdm(
-                range(col_deb, col_fin),
-                desc='Getting data for plotting \
-Normal and Triangular law'):
-            data_x.append(Initialisation.Worksheets[nom_feuille]
-                          .Cells.get_value(lig_qbe, x))
-            data_y.append(
-                float(Initialisation.Worksheets[nom_feuille]
-                      .Cells.get_value(lig_p, x)[:-1]))
-        data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
-            lig_qbe, col_deb - 1)
-        # TODO modifer en loi log avec range 0, 100
-        plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=1)
+        chart = workbook.add_chart({
+            'type': 'scatter',
+            'subtype': 'smooth_with_markers'
+        })
+        chart.add_series({
+            'values': [nom_feuille, lig_p - 1, col_deb, lig_p - 1, col_fin],
+            'categories':
+            [nom_feuille, lig_qbe - 1, col_deb, lig_qbe - 1, col_fin],
+            'name': [nom_feuille, lig_qbe - 1, col_deb - 1],
+            'line': {
+                'color': 'red'
+            },
+            'marker': {
+                'type': 'none'
+            }
+        })
+
+#         data_x = list()
+#         data_y = list()
+#         for x in tqdm(
+#                 range(col_deb, col_fin),
+#                 desc='Getting data for plotting \
+# Normal and Triangular law'):
+#             data_x.append(Initialisation.Worksheets[nom_feuille]
+#                           .Cells.get_value(lig_qbe, x))
+#             data_y.append(
+#                 float(Initialisation.Worksheets[nom_feuille]
+#                       .Cells.get_value(lig_p, x)[:-1]))
+#         data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
+#             lig_qbe, col_deb - 1)
+#         # TODO modifer en loi log avec range 0, 100
+#         plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=1)
     else:
-        nseries = tracer_courbe_empirique(
-            nseries, nom_feuille, ligne_data + 1, nb_ligne_data, col_data_le,
+        nseries, chart = tracer_courbe_empirique(
+            workbook, nseries, nom_feuille, ligne_data + 1, nb_ligne_data,
+            col_data_le,
             col_pcum_le) if iproc == 1 else tracer_courbe_empirique(
-                nseries, nom_feuille, ligne_data + 1, nb_ligne_data,
+                workbook, nseries, nom_feuille, ligne_data + 1, nb_ligne_data,
                 col_data_act_le, col_pcum_le)
     """Ajout de la serie quantile borne inf"""
-    data_x = list()
-    data_y = list()
-    for x in tqdm(range(col_deb, col_fin), desc='Getting percentil 5%'):
-        data_x.append(Initialisation.Worksheets[nom_feuille]
-                      .Cells.get_value(lig_qbi, x))
-        data_y.append(
-            float(Initialisation.Worksheets[nom_feuille]
-                  .Cells.get_value(lig_p, x)[:-1]))
-    data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
-        lig_qbi, col_deb - 1)
-    plot.plot(data_x, data_y, 'r--', label=data_nom, linewidth=0.5)
+    chart.add_series({
+        'values': [nom_feuille, lig_p - 1, col_deb, lig_p - 1, col_fin],
+        'categories':
+        [nom_feuille, lig_qbi - 1, col_deb, lig_qbi - 1, col_fin],
+        'name': [nom_feuille, lig_qbi - 1, col_deb - 1],
+        'line': {
+            'color': 'black',
+            'dash_type': 'dash'
+        },
+        'marker': {
+            'type': 'none'
+        }
+    })
+    # data_x = list()
+    # data_y = list()
+    # for x in tqdm(range(col_deb, col_fin), desc='Getting percentil 5%'):
+    #     data_x.append(Initialisation.Worksheets[nom_feuille]
+    #                   .Cells.get_value(lig_qbi, x))
+    #     data_y.append(
+    #         float(Initialisation.Worksheets[nom_feuille]
+    #               .Cells.get_value(lig_p, x)[:-1]))
+    # data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
+    #     lig_qbi, col_deb - 1)
+    # plot.plot(data_x, data_y, 'r--', label=data_nom, linewidth=0.5)
     nseries = nseries + 1
     """Ajout de la serie quantile borne superieure"""
-    data_x = list()
-    data_y = list()
-    for x in tqdm(range(col_deb, col_fin), desc='Getting percentil 95%'):
-        data_x.append(Initialisation.Worksheets[nom_feuille]
-                      .Cells.get_value(lig_qbs, x))
-        data_y.append(
-            float(Initialisation.Worksheets[nom_feuille]
-                  .Cells.get_value(lig_p, x)[:-1]))
-    data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
-        lig_qbs, col_deb - 1)
-    plot.plot(data_x, data_y, 'r--', label=data_nom, linewidth=0.5)
+    chart.add_series({
+        'values': [nom_feuille, lig_p - 1, col_deb, lig_p - 1, col_fin],
+        'categories':
+        [nom_feuille, lig_qbs - 1, col_deb, lig_qbs - 1, col_fin],
+        'name': [nom_feuille, lig_qbs - 1, col_deb - 1],
+        'line': {
+            'color': 'black',
+            'dash_type': 'dash'
+        },
+        'marker': {
+            'type': 'none'
+        }
+    })
+    # data_x = list()
+    # data_y = list()
+    # for x in tqdm(range(col_deb, col_fin), desc='Getting percentil 95%'):
+    #     data_x.append(Initialisation.Worksheets[nom_feuille]
+    #                   .Cells.get_value(lig_qbs, x))
+    #     data_y.append(
+    #         float(Initialisation.Worksheets[nom_feuille]
+    #               .Cells.get_value(lig_p, x)[:-1]))
+    # data_nom = Initialisation.Worksheets[nom_feuille].Cells.get_value(
+    #     lig_qbs, col_deb - 1)
+    # plot.plot(data_x, data_y, 'r--', label=data_nom, linewidth=0.5)
     nseries = nseries + 1
     """
     Ajoute les donnees data
     """
     if iproc == 1:
-        ajoute_series(nom_feuille, nseries, True, ligne_data, col_tax,
-                      col_data, col_pcum, col_pcum_a)
+        chart = ajoute_series(chart, nom_feuille, nseries, True, ligne_data,
+                              col_tax, col_data, col_pcum, col_pcum_a)
     else:
-        ajoute_series(nom_feuille, nseries, True, ligne_data, col_tax,
-                      col_data_act, col_pcum, col_pcum_a)
-        ajoute_series(nom_feuille, nseries, False, ligne_data, col_tax,
-                      col_data, col_pcum_a, col_pcum_a)
-    """
-    Ajoute une zone de texte avec les valeurs de R2, Pttest, GWM et GWSD
-    """
-    if (loi > 1):
-        plot.text((max(data_x) * .01), 10,
-                  'R_ = {:.4f}\nKSpvalue = {:.3f}'.format(R2, Pvalue))
-        plot.text(
-            (max(data_x) * .01), 1, ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(
-                mup, sigmap)) if loi == 2 else
-            ('wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
-                _min, _max, mode)))
+        chart = ajoute_series(chart, nom_feuille, nseries, True, ligne_data,
+                              col_tax, col_data_act, col_pcum, col_pcum_a)
+        # ajoute_series(nom_feuille, nseries, False, ligne_data, col_tax,
+        #               col_data, col_pcum_a, col_pcum_a)
     """Rappel des options dans le titre du graphique"""
     ligne_option = 'Sp = ' + sp_opt(isp)
     if val_pcat is not None:
@@ -176,17 +206,62 @@ Normal and Triangular law'):
                                                val_pcat)
     else:
         ligne_option = '{}; TW: none'.format(ligne_option)
-    plot.title(titre_graf[loi - 1] + '\n' + ligne_option)
-    plot.xlabel(titre_axe[0])
-    plot.ylabel(titre_axe[1])
-    plot.xscale('log')
-    plot.legend()
-    plot.grid()
-    plot.draw()
+    chart.set_title({'name': titre_graf[loi - 1] + '\n' + ligne_option})
+    chart.set_x_axis({
+        'name': titre_axe[0],
+        'log_base': 10,
+        'crossing': 0,
+        'major_gridlines': {
+            'visible': True
+        }
+    })
+    chart.set_y_axis({
+        'min': 0,
+        'max': 1,
+        'major_unit': .1,
+        'crossing': 0,
+        'name': titre_axe[1],
+        'major_gridlines': {
+            'visible': True
+        }
+    })
+    chart.set_size({'width': 896, 'height': 500})
+    chart.set_legend({'position': 'bottom'})
+    # plot.title(titre_graf[loi - 1] + '\n' + ligne_option)
+    # plot.xlabel(titre_axe[0])
+    # plot.ylabel(titre_axe[1])
+    # plot.xscale('log')
+    # plot.legend()
+    # plot.grid()
+    # plot.draw()
+    worksheet.insert_chart('A1', chart)
+    """
+    Ajoute une zone de texte avec les valeurs de R2, Pttest, GWM et GWSD
+    """
+    if (loi > 1):
+        worksheet.insert_textbox('M1', 'R² = {:.4f}\nKSpvalue = {:.3f}'.format(
+            R2, Pvalue), {'width': 128,
+                          'height': 40})
+        worksheet.insert_textbox(
+            'M3', ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(mup, sigmap))
+            if loi == 2 else (
+                'wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
+                    _min, _max, mode)), {'width': 128,
+                                         'height': 40})
+        # plot.text((max(data_x) * .01), 10,
+        #           'R_ = {:.4f}\nKSpvalue = {:.3f}'.format(R2, Pvalue))
+        # plot.text(
+        #     (max(data_x) * .01), 1, ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'
+        #         .format(mup, sigmap)) if loi == 2 else
+        #     ('wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
+        #         _min, _max, mode)))
+    # writer.save()
+    # from sys import exit
+    # exit()
 
 
-def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
-                  col_pcum, col_pcum_a):
+def ajoute_series(chart, nom_feuille, nseries, nouveau, ligne_data, col_tax,
+                  col_data, col_pcum, col_pcum_a):
     """
     Ajoute les donnees par especes.
 
@@ -199,37 +274,60 @@ def ajoute_series(nom_feuille, nseries, nouveau, ligne_data, col_tax, col_data,
     @param col_pcum: colonne des probabilites cumulees ponderees
                      empiriques
     """
-    marker_style = [
-        '.', 'o', 'v', '1', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|',
-        '_', '^', '<', '>', '2', '3', '4'
-    ]
-    color_style = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
-    data_x = list(
-        Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_data].dropna())
-    data_y = list(
-        Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_pcum].dropna())
-    taxon = list(
-        Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_tax].dropna())
-    species = ["s"] * (len(taxon))
-    # list(Initialisation.Worksheets[nom_feuille].Cells.ix[
-    #     3:, col_tax - 1].dropna())
-    s_species = list(set(species))
-    s_taxon = list(set(taxon))
-    for e in s_taxon:
-        for s in s_species:
-            sub_data_x = list()
-            sub_data_y = list()
-            for i in range(0, len(taxon)):
-                if e == taxon[i] and s == species[i]:
-                    sub_data_x.append(data_x[i])
-                    sub_data_y.append(data_y[i] * 100)
-            if sub_data_x and sub_data_y:
-                plot.plot(
-                    sub_data_x,
-                    sub_data_y,
-                    color_style[s_taxon.index(e)] +
-                    marker_style[s_species.index(s)],
-                    label=e)
+    # marker_style = [
+    #     '.', 'o', 'v', '1', 's', 'p', '*', 'h', 'H', '+', 'x', 'D', 'd', '|',
+    #     '_', '^', '<', '>', '2', '3', '4'
+    # ]
+    # color_style = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
+    # data_x = list(
+    #     Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_data]
+    #     .dropna())
+    # data_y = list(
+    #     Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_pcum]
+    #     .dropna())
+    # taxon = list(
+    #     Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_tax]
+    #     .dropna())
+    # species = ["s"] * (len(taxon))
+    # # list(Initialisation.Worksheets[nom_feuille].Cells.ix[
+    # #     3:, col_tax - 1].dropna())
+    # s_species = list(set(species))
+    # s_taxon = list(set(taxon))
+    # for e in s_taxon:
+    #     for s in s_species:
+    #         sub_data_x = list()
+    #         sub_data_y = list()
+    #         for i in range(0, len(taxon)):
+    #             if e == taxon[i] and s == species[i]:
+    #                 sub_data_x.append(data_x[i])
+    #                 sub_data_y.append(data_y[i] * 100)
+    #         if sub_data_x and sub_data_y:
+    #             plot.plot(
+    #                 sub_data_x,
+    #                 sub_data_y,
+    #                 color_style[s_taxon.index(e)] +
+    #                 marker_style[s_species.index(s)],
+    #                 label=e)
+    end = len(
+        list(Initialisation.Worksheets[nom_feuille].Cells.ix[3:, col_tax]))
+    chart.add_series({
+        'values': [nom_feuille, 2, col_pcum, end, col_pcum],
+        'categories': [nom_feuille, 2, col_data, end, col_data],
+        'name': [nom_feuille, 2, col_tax, end, col_tax],
+        'marker': {
+            'type': 'square',
+            'border': {
+                'color': 'black'
+            },
+            'fill': {
+                'color': 'black'
+            }
+        },
+        'line': {
+            'none': True
+        }
+    })
+    return (chart)
 
 
 def decaler_graph(nom_feuille):
@@ -244,8 +342,8 @@ def decaler_graph(nom_feuille):
         decalage = decalage + 200
 
 
-def tracer_courbe_empirique(nseries, nom_feuille, lig_deb, nbligne, col_data,
-                            col_pcum):
+def tracer_courbe_empirique(workbook, nseries, nom_feuille, lig_deb, nbligne,
+                            col_data, col_pcum):
     """
     Relie points ponderes dans le graph correspdant a la loi empirique.
 
@@ -258,15 +356,33 @@ def tracer_courbe_empirique(nseries, nom_feuille, lig_deb, nbligne, col_data,
                      empiriques
     """
     nseries = nseries + 1
-    data_x = list()
-    data_y = list()
-    for y in tqdm(
-            range(lig_deb, lig_deb + nbligne),
-            desc='Getting data for Empirical law'):
-        data_x.append(Initialisation.Worksheets[nom_feuille]
-                      .Cells.get_value(y, col_data))
-        data_y.append(Initialisation.Worksheets[nom_feuille]
-                      .Cells.get_value(y, col_pcum) * 100)
-    data_nom = 'Weighted Empirical'
-    plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=0.5)
-    return (nseries)
+    chart = workbook.add_chart({
+        'type': 'scatter',
+        'subtype': 'smooth_with_markers'
+    })
+    chart.add_series({
+        'values':
+        [nom_feuille, lig_deb, col_pcum, lig_deb + nbligne, col_pcum],
+        'categories':
+        [nom_feuille, lig_deb, col_data, lig_deb + nbligne, col_data],
+        'name':
+        "Weighted Empirical",
+        'line': {
+            'color': 'red'
+        },
+        'marker': {
+            'type': 'none'
+        }
+    })
+    # data_x = list()
+    # data_y = list()
+    # for y in tqdm(
+    #         range(lig_deb, lig_deb + nbligne),
+    #         desc='Getting data for Empirical law'):
+    #     data_x.append(Initialisation.Worksheets[nom_feuille]
+    #                   .Cells.get_value(y, col_data))
+    #     data_y.append(Initialisation.Worksheets[nom_feuille]
+    #                   .Cells.get_value(y, col_pcum) * 100)
+    # data_nom = 'Weighted Empirical'
+    # plot.plot(data_x, data_y, 'k-', label=data_nom, linewidth=0.5)
+    return (nseries, chart)
