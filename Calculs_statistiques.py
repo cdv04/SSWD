@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-23T09:23:43+02:00
+# @Last modified time: 2017-05-24T19:13:45+02:00
 
 import math
 
@@ -639,7 +639,7 @@ def calcul_res(l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col_deb,
         l_hc + 1, c_hc, 'HC')
     for i in tqdm(range(0, len(pourcent)), desc="Displaying percent"):
         Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 1, c_hc + i + 1, "{:.3g}%".format(pourcent[i] * 100))
+            l_hc + 1, c_hc + i + 1, "={:.3g}".format(pourcent[i]))
     Initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 2, c_hc, 'Best-Estimate')
     Initialisation.Worksheets[nom_feuille_res].Cells.set_value(

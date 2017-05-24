@@ -10,7 +10,10 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-23T13:47:04+02:00
+# @Last modified time: 2017-05-24T18:37:53+02:00
+from os.path import splitext
+
+from pandas import ExcelWriter
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
@@ -36,8 +39,22 @@ def lance_apropos():
     frm_apropos.Show()
 
 
-def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
-          n_optim, conserv_inter, nb_taxo, val_pcat, liste_taxo, triang_ajust):
+def lance(fname,
+          data_co,
+          nom_feuille,
+          nom_colonne,
+          isp,
+          pcat,
+          dist,
+          B,
+          a,
+          n_optim,
+          conserv_inter,
+          nb_taxo,
+          val_pcat,
+          liste_taxo,
+          triang_ajust,
+          override=False):
     """
     Module de lancement de la procedure SSWD.
 
@@ -144,11 +161,13 @@ def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
     c1 = 0
     """c'est une constante definie par la sub tirage"""
     c2 = c1 + nbvar - 1
-    lig_hc = 8
+    lig_hc = 26
     """attention : il faut tenir compte de l'affichage des options"""
     col_hc = 0
     nbcol_vide = 1
     lig_data = 2
+    writer = ExcelWriter(
+        splitext(fname)[0] + (".xlsx" if override else "_sswd.xlsx"))
     """
     Calcul des indices des colonnes d'affichage des resultats dans
     nom_feuille_res
@@ -185,7 +204,6 @@ def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
                            nom_feuille_res + feuilles_res[i], True, iproc)
         i += 1
     """loi empirique"""
-    write_feuil_inter(fname, empty=True)
     if dist[0] is True:
         loi = 1
         """Calcul les valeurs correspondant a chaque tirage"""
@@ -199,7 +217,7 @@ def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
             nom_feuille_qemp, nom_feuille_pond, '', 0, 0, triang_ajust, iproc,
             nbdata)
         """Graphes de SSWD"""
-        tracer_graphique(fname, nom_feuille_res + "_emp", lig_p, lig_qbe,
+        tracer_graphique(writer, nom_feuille_res + "_emp", lig_p, lig_qbe,
                          lig_qbi, lig_qbs, col_deb, col_fin, lig_data, col_tax,
                          col_data, col_pcum, col_data_le, col_pcum_le, loi,
                          titre_graf, 0, 0, nbdata, mup, sigmap, _min, _max,
@@ -219,7 +237,7 @@ def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
             triang_ajust, iproc, nbdata)
         R2_norm, Pvalue_norm = calcul_R2(data_co, loi, mup, sigmap, _min, _max,
                                          mode, nbdata, data_c)
-        tracer_graphique(fname, nom_feuille_res + "_norm", lig_p, lig_qbe,
+        tracer_graphique(writer, nom_feuille_res + "_norm", lig_p, lig_qbe,
                          lig_qbi, lig_qbs, col_deb, col_fin, lig_data, col_tax,
                          col_data, col_pcum, col_data_le, col_pcum_le, loi,
                          titre_graf, R2_norm, Pvalue_norm, nbdata, mup, sigmap,
@@ -245,7 +263,7 @@ def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
             c_min, triang_ajust, iproc, nbdata)
         R2_triang, Pvalue_triang = calcul_R2(data_co, loi, mup, sigmap, _min,
                                              _max, mode, nbdata, data_c)
-        tracer_graphique(fname, nom_feuille_res + "_triang", lig_p, lig_qbe,
+        tracer_graphique(writer, nom_feuille_res + "_triang", lig_p, lig_qbe,
                          lig_qbi, lig_qbs, col_deb, col_fin, lig_data, col_tax,
                          col_data, col_pcum, col_data_le, col_pcum_le, loi,
                          titre_graf, R2_triang, Pvalue_triang, nbdata, mup,
@@ -256,7 +274,7 @@ def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
     for x in dist:
         if x is True:
             affichage_options(nom_feuille_res + feuilles_res[i], isp, val_pcat,
-                              liste_taxo, B, 0, 0, 18, 0, dist, nbvar, iproc,
+                              liste_taxo, B, 18, 0, 35, 0, dist, nbvar, iproc,
                               a)
         i += 1
     cellule_gras(1, 1, 1, 1)
@@ -265,5 +283,5 @@ def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
                            nom_feuille_qemp, nom_feuille_qnorm,
                            nom_feuille_qtriang, nom_feuille_sort,
                            nom_feuille_Ftriang, '', '', '')
-    write_feuil_inter(fname)
+    write_feuil_inter(writer)
     data_co = None

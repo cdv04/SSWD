@@ -11,7 +11,7 @@ Parse commande line and csv file.
 # @Project: SSWD
 # @Filename: run.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-23T11:03:44+02:00
+# @Last modified time: 2017-05-24T16:14:42+02:00
 
 import argparse
 import sys
@@ -49,7 +49,7 @@ def parse_file(filename, colnames):
         data = pandas.read_excel(filename, sheetname=None)
         # select sheetname
         data = data['chronic']
-    elif splitext(filename)[1] is '.csv':
+    elif splitext(filename)[1] == '.csv':
         data = pandas.read_csv(filename, header=0)
         if len(data.columns) == 1:
             data = pandas.read_csv(filename, sep=";", header=0)

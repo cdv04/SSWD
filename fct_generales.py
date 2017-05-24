@@ -12,13 +12,11 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-23T15:56:30+02:00
+# @Last modified time: 2017-05-24T13:40:51+02:00
 
 import operator
 import sys
-from os.path import splitext
 
-from pandas import ExcelWriter
 from tqdm import tqdm
 
 import Initialisation
@@ -430,10 +428,8 @@ def efface_feuil_inter(nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
             del Initialisation.Worksheets[name]
 
 
-def write_feuil_inter(filename="res", override=False, empty=False):
+def write_feuil_inter(writer, override=False, empty=False):
     """Save worksheet to excel files."""
-    writer = ExcelWriter(
-        splitext(filename)[0] + (".xlsx" if override else "_sswd.xlsx"))
     for x in Initialisation.Worksheets:
         if (len(Initialisation.Worksheets[x].Cells.columns) or empty) and x:
             Initialisation.Worksheets[x].Cells.sort_index(axis=1).reindex_axis(
