@@ -10,14 +10,15 @@ To python soon.
 # @Project: SSWD
 # @Filename: Lancement_sswd.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-17T15:52:25+02:00
+# @Last modified time: 2017-05-23T13:47:04+02:00
 
 from Calculs_statistiques import (calcul_ic_empirique, calcul_ic_normal,
                                   calcul_ic_triang_p, calcul_ic_triang_q,
                                   calcul_R2, calcul_res, tirage)
 from fct_generales import (affichage_options, calcul_col_res, calcul_lig_graph,
                            calcul_ref_pond, cellule_gras, ecrire_data_co,
-                           ecrire_titre, efface_feuil_inter, verif)
+                           ecrire_titre, efface_feuil_inter, verif,
+                           write_feuil_inter)
 from Graphique import tracer_graphique
 from Initialisation import initialise
 from ponderation import calcul_nbvar, calcul_ponderation, trier_collection
@@ -35,8 +36,8 @@ def lance_apropos():
     frm_apropos.Show()
 
 
-def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
-          conserv_inter, nb_taxo, val_pcat, liste_taxo, triang_ajust):
+def lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
+          n_optim, conserv_inter, nb_taxo, val_pcat, liste_taxo, triang_ajust):
     """
     Module de lancement de la procedure SSWD.
 
@@ -146,7 +147,6 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     lig_hc = 8
     """attention : il faut tenir compte de l'affichage des options"""
     col_hc = 0
-    nblig_vide = 2
     nbcol_vide = 1
     lig_data = 2
     """
@@ -161,25 +161,31 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
     (lig_p, lig_qbe, lig_qbi, lig_qbs) = calcul_lig_graph(lig_hc)
     """initialisation de ligne_tot"""
     ligne_tot = 0
-    """
-    Ecriture de data_co_feuil triees par rapport aux categories taxonomiques
-    dans nom_feuille_res
-    """
-    trier_collection(data_co, 2, 2)
-    ecrire_titre(titre_data[0], nom_feuille_res, lig_data - 1, col_data1,
-                 nb_col_co)
-    ecrire_data_co(data_co, nom_colonne, lig_data, col_data1, nom_feuille_res,
-                   True, iproc)
-    """
-    Ecriture de data_co_feuil triees par ordre croissant des concentrations
-    dans nom_feuille_res
-    """
-    trier_collection(data_co, 7, 1)
-    ecrire_titre(titre_data[1], nom_feuille_res, lig_data - 1, col_data2,
-                 nb_col_co)
-    ecrire_data_co(data_co, nom_colonne, lig_data, col_data2, nom_feuille_res,
-                   True, iproc)
+    i = 0
+    feuilles_res = ['_emp', '_norm', '_triang']
+    for x in dist:
+        if x is True:
+            """
+            Ecriture de data_co_feuil triees par rapport aux categories
+            taxonomiques dans nom_feuille_res
+            """
+            trier_collection(data_co, 2, 2)
+            ecrire_titre(titre_data[0], nom_feuille_res + feuilles_res[i],
+                         lig_data - 1, col_data1, nb_col_co)
+            ecrire_data_co(data_co, nom_colonne, lig_data, col_data1,
+                           nom_feuille_res + feuilles_res[i], True, iproc)
+            """
+            Ecriture de data_co_feuil triees par ordre croissant des
+            concentrations dans nom_feuille_res
+            """
+            trier_collection(data_co, 7, 1)
+            ecrire_titre(titre_data[1], nom_feuille_res + feuilles_res[i],
+                         lig_data - 1, col_data2, nb_col_co)
+            ecrire_data_co(data_co, nom_colonne, lig_data, col_data2,
+                           nom_feuille_res + feuilles_res[i], True, iproc)
+        i += 1
     """loi empirique"""
+    write_feuil_inter(fname, empty=True)
     if dist[0] is True:
         loi = 1
         """Calcul les valeurs correspondant a chaque tirage"""
@@ -189,17 +195,16 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
-            pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
+            pcent, pourcent, data_co, nom_colonne, nom_feuille_res + "_emp",
             nom_feuille_qemp, nom_feuille_pond, '', 0, 0, triang_ajust, iproc,
             nbdata)
         """Graphes de SSWD"""
-        tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
-                         col_deb, col_fin, lig_data, col_tax, col_data,
-                         col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
-                         0, 0, nbdata, mup, sigmap, _min, _max, mode,
-                         titre_axe, val_pcat, liste_taxo, isp, tmp, tmp, iproc,
-                         tmp)
-        lig_hc = ligne_tot + nblig_vide + 1
+        tracer_graphique(fname, nom_feuille_res + "_emp", lig_p, lig_qbe,
+                         lig_qbi, lig_qbs, col_deb, col_fin, lig_data, col_tax,
+                         col_data, col_pcum, col_data_le, col_pcum_le, loi,
+                         titre_graf, 0, 0, nbdata, mup, sigmap, _min, _max,
+                         mode, titre_axe, val_pcat, liste_taxo, isp, tmp, tmp,
+                         iproc, tmp)
         lig_p, lig_qbe, lig_qbi, lig_qbs = calcul_lig_graph(lig_hc)
     """loi normale"""
     if dist[1] is True:
@@ -209,18 +214,17 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
-            pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
+            pcent, pourcent, data_co, nom_colonne, nom_feuille_res + "_norm",
             nom_feuille_qnorm, nom_feuille_pond, nom_feuille_stat, c_mu, 0,
             triang_ajust, iproc, nbdata)
         R2_norm, Pvalue_norm = calcul_R2(data_co, loi, mup, sigmap, _min, _max,
                                          mode, nbdata, data_c)
-        tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
-                         col_deb, col_fin, lig_data, col_tax, col_data,
-                         col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
-                         R2_norm, Pvalue_norm, nbdata, mup, sigmap, _min, _max,
-                         mode, titre_axe, val_pcat, liste_taxo, isp, tmp, tmp,
-                         iproc, tmp)
-        lig_hc = ligne_tot + nblig_vide + 1
+        tracer_graphique(fname, nom_feuille_res + "_norm", lig_p, lig_qbe,
+                         lig_qbi, lig_qbs, col_deb, col_fin, lig_data, col_tax,
+                         col_data, col_pcum, col_data_le, col_pcum_le, loi,
+                         titre_graf, R2_norm, Pvalue_norm, nbdata, mup, sigmap,
+                         _min, _max, mode, titre_axe, val_pcat, liste_taxo,
+                         isp, tmp, tmp, iproc, tmp)
         lig_p, lig_qbe, lig_qbi, lig_qbs = calcul_lig_graph(lig_hc)
     """loi triangulaire"""
     if dist[2] is True:
@@ -236,24 +240,30 @@ def lance(data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a, n_optim,
         (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
             l1, c1, l2, c2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, ligne_tot, loi, titre_res,
-            pcent, pourcent, data_co, nom_colonne, nom_feuille_res,
+            pcent, pourcent, data_co, nom_colonne, nom_feuille_res + "_triang",
             nom_feuille_qtriang, nom_feuille_pond, nom_feuille_Ftriang, 0,
             c_min, triang_ajust, iproc, nbdata)
         R2_triang, Pvalue_triang = calcul_R2(data_co, loi, mup, sigmap, _min,
                                              _max, mode, nbdata, data_c)
-        tracer_graphique(nom_feuille_res, lig_p, lig_qbe, lig_qbi, lig_qbs,
-                         col_deb, col_fin, lig_data, col_tax, col_data,
-                         col_pcum, col_data_le, col_pcum_le, loi, titre_graf,
-                         R2_triang, Pvalue_triang, nbdata, mup, sigmap, _min,
-                         _max, mode, titre_axe, val_pcat, liste_taxo, isp, tmp,
-                         tmp, iproc, tmp)
+        tracer_graphique(fname, nom_feuille_res + "_triang", lig_p, lig_qbe,
+                         lig_qbi, lig_qbs, col_deb, col_fin, lig_data, col_tax,
+                         col_data, col_pcum, col_data_le, col_pcum_le, loi,
+                         titre_graf, R2_triang, Pvalue_triang, nbdata, mup,
+                         sigmap, _min, _max, mode, titre_axe, val_pcat,
+                         liste_taxo, isp, tmp, tmp, iproc, tmp)
     # decaler_graph(nom_feuille_res)
-    affichage_options(nom_feuille_res, isp, val_pcat, liste_taxo, B, 1, 1,
-                      ligne_tot + 3, 1, dist, nbvar, iproc, a)
+    i = 0
+    for x in dist:
+        if x is True:
+            affichage_options(nom_feuille_res + feuilles_res[i], isp, val_pcat,
+                              liste_taxo, B, 0, 0, 18, 0, dist, nbvar, iproc,
+                              a)
+        i += 1
     cellule_gras(1, 1, 1, 1)
     if conserv_inter is False:
         efface_feuil_inter(nom_feuille_pond, nom_feuille_stat,
                            nom_feuille_qemp, nom_feuille_qnorm,
                            nom_feuille_qtriang, nom_feuille_sort,
                            nom_feuille_Ftriang, '', '', '')
+    write_feuil_inter(fname)
     data_co = None

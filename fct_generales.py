@@ -12,10 +12,14 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: fct_generales.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-17T15:43:38+02:00
+# @Last modified time: 2017-05-23T15:56:30+02:00
 
 import operator
 import sys
+from os.path import splitext
+
+from pandas import ExcelWriter
+from tqdm import tqdm
 
 import Initialisation
 from MsgBox import MsgBox
@@ -104,11 +108,11 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
     """
     nbdata = len(data_co)
     """1. Titre des colonnes"""
-    for i in range(0, len(nom_colonne)):
+    for i in tqdm(range(0, len(nom_colonne)), desc='Setting columns title'):
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
             lig, col + i, nom_colonne[i])
     """2. Donnees"""
-    for i in range(0, nbdata):
+    for i in tqdm(range(0, nbdata), desc='Setting Data'):
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
             lig + i + 1, col, data_co[i].espece)
         Initialisation.Worksheets[nom_feuille].Cells.set_value(
@@ -145,10 +149,11 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
     nom_feuille_res et nom_feuille_pond
     """
     name_list = [
-        nom_feuille_pond, nom_feuille_stat, nom_feuille_res, nom_feuille_qemp,
-        nom_feuille_qnorm, nom_feuille_sort, nom_feuille_Ftriang,
-        nom_feuille_qtriang, nom_feuille_err_ve, nom_feuille_err_inv,
-        nom_feuille_indice
+        nom_feuille_pond, nom_feuille_stat, nom_feuille_res + "_emp",
+        nom_feuille_res + "_norm", nom_feuille_res + "_triang",
+        nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
+        nom_feuille_Ftriang, nom_feuille_qtriang, nom_feuille_err_ve,
+        nom_feuille_err_inv, nom_feuille_indice
     ]
     for ws in Initialisation.Worksheets:
         if (ws.Name == nom_feuille_res):
@@ -425,6 +430,20 @@ def efface_feuil_inter(nom_feuille_pond, nom_feuille_stat, nom_feuille_qemp,
             del Initialisation.Worksheets[name]
 
 
+def write_feuil_inter(filename="res", override=False, empty=False):
+    """Save worksheet to excel files."""
+    writer = ExcelWriter(
+        splitext(filename)[0] + (".xlsx" if override else "_sswd.xlsx"))
+    for x in Initialisation.Worksheets:
+        if (len(Initialisation.Worksheets[x].Cells.columns) or empty) and x:
+            Initialisation.Worksheets[x].Cells.sort_index(axis=1).reindex_axis(
+                range(0, (Initialisation.Worksheets[x].Cells.columns.max() + 1)
+                      if not empty else 1),
+                axis=1).to_excel(
+                    writer, sheet_name=x, index=False, header=False)
+    writer.save()
+
+
 def trier_tableau(a):
     """Trie un tableau de strings par ordre alphabetique."""
     tmp = list()
@@ -538,10 +557,12 @@ def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, l1, c3, l2,
 
     sauvegarder tries dans une nouvelle dans nom_feuille_sort
     """
-    for i in range(0, nbvar):
+    for i in tqdm(range(0, nbvar), desc='Setting columns \'RANK\''):
         Initialisation.Worksheets[nom_feuille_sort].Cells.set_value(
             0, i, "RANK" + str(i + 1))
-    for x in range(1, len(Initialisation.Worksheets[nom_feuille_stat].Cells)):
+    for x in tqdm(
+            range(1, len(Initialisation.Worksheets[nom_feuille_stat].Cells)),
+            desc="Sorting bootstrap"):
         i = 0
         for e in sorted(
                 Initialisation.Worksheets[nom_feuille_stat].Cells.ix[x, :]):
