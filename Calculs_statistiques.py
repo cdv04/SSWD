@@ -10,7 +10,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: Calculs_statistiques.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-24T19:13:45+02:00
+# @Last modified time: 2017-05-25T09:31:03+02:00
 
 import math
 
@@ -122,8 +122,8 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
             if (rang[i] == 0 or rang[i] == nbvar):
                 tmp.append(0)
             else:
-                tmp.append((pcum[rang[i] + 1] - p[i]) /
-                           (pcum[rang[i] + 1] - pcum[rang[i]]))
+                tmp.append((pcum[rang[i]] - p[i]) /
+                           (pcum[rang[i]] - pcum[rang[i] - 1]))
             set_data = None
             if rang[i] == 0:
                 set_data = Initialisation.Worksheets[
@@ -132,13 +132,12 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
                 set_data = Initialisation.Worksheets[
                     nom_feuille_sort].Cells.get_value(y, c2)
             else:
-                set_data = (
-                    Initialisation.Worksheets[nom_feuille_sort]
-                    .Cells.get_value(y, rang[i] + 1) -
-                    (Initialisation.Worksheets[nom_feuille_sort]
-                     .Cells.get_value(y, rang[i] + 1) - Initialisation.
-                     Worksheets[nom_feuille_sort].Cells.get_value(y, rang[i]))
-                    * tmp[i])
+                set_data = (Initialisation.Worksheets[nom_feuille_sort]
+                            .Cells.get_value(y, rang[i]) -
+                            (Initialisation.Worksheets[nom_feuille_sort]
+                             .Cells.get_value(y, rang[i]) -
+                             Initialisation.Worksheets[nom_feuille_sort]
+                             .Cells.get_value(y, rang[i] - 1)) * tmp[i])
             Initialisation.Worksheets[nom_feuille_qemp].Cells.set_value(
                 y, c3 + i, set_data)
 
@@ -910,12 +909,11 @@ def calculer_be_empirique(data_co, pourcent, nom_feuille, lig_deb, col_pcum,
         if (rang[i] == 0):
             HC_emp.append(data[1])
         elif (rang[i] >= nbdata):
-            HC_emp.append(data[nbdata])
+            HC_emp.append(data[nbdata - 1])
         else:
-            HC_emp.append(data[rang[i] +
-                               1] - (data[rang[i] + 1] - data[rang[i]]) *
-                          (data_co[rang[i] + 1].pcum - pourcent[i]) /
-                          (data_co[rang[i] + 1].pcum - data_co[rang[i]].pcum))
+            HC_emp.append(data[rang[i]] - (data[rang[i]] - data[rang[i] - 1]) *
+                          (data_co[rang[i]].pcum - pourcent[i]) /
+                          (data_co[rang[i]].pcum - data_co[rang[i] - 1].pcum))
 
 
 def calculer_be_normal(data_co, pourcent, HC_norm, nbdata, data):
