@@ -18,7 +18,6 @@ from common import (ischainevide, rech_l1c1, rechercher_categorie,
 from execute import lance
 from message_box import message_box
 from specific_sswd import filtre_collection_act  # , init_collection_act
-from tqdm import tqdm
 from weighting import calcul_nb_taxo
 
 
@@ -88,7 +87,7 @@ def lire_pcat(val_pcat, pcat, dim_pcat):
     """
     erreur = False
     debut = 0
-    for i in tqdm(range(0, dim_pcat), desc='Read pcat'):
+    for i in range(0, dim_pcat):
         ipos = val_pcat.find(';')
         if ipos != 0 and i == dim_pcat:
             message_box('SSWD',
@@ -125,7 +124,7 @@ def afficher_taxo(data_taxo):
     # tmp = Worksheets[nom_feuille].Range(Cells[l1, c1], Cells[l2, c2])
     tmp = np.copy(initialisation.Worksheets[nom_feuille].Cells[l1:l2, c1:c2])
     taxo = list()
-    for i in tqdm(range(0, len(taxo)), desc='Sorting taxo'):
+    for i in range(0, len(taxo)):
         taxo.append(tmp[i + 1, 1])
     taxo.sort()
     """Extraction des differentes categories taxo"""

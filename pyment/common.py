@@ -23,7 +23,6 @@ from os.path import splitext
 import initialisation
 import pandas
 from message_box import message_box
-from tqdm import tqdm
 from worksheet import Worksheet
 
 
@@ -76,11 +75,11 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
     """
     nbdata = len(data_co)
     """1. Titre des colonnes"""
-    for i in tqdm(range(0, len(nom_colonne)), desc='Setting columns title'):
+    for i in range(0, len(nom_colonne)):
         initialisation.Worksheets[nom_feuille].Cells.set_value(
             lig, col + i, nom_colonne[i])
     """2. Donnees"""
-    for i in tqdm(range(0, nbdata), desc='Setting Data'):
+    for i in range(0, nbdata):
         initialisation.Worksheets[nom_feuille].Cells.set_value(
             lig + i + 1, col, data_co[i].espece)
         initialisation.Worksheets[nom_feuille].Cells.set_value(
@@ -516,12 +515,10 @@ def trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, nbvar):
 
     sauvegarder tries dans une nouvelle dans nom_feuille_sort
     """
-    for i in tqdm(range(0, nbvar), desc='Setting columns \'RANK\''):
+    for i in range(0, nbvar):
         initialisation.Worksheets[nom_feuille_sort].Cells.set_value(
             0, i, "RANK" + str(i + 1))
-    for x in tqdm(
-            range(1, len(initialisation.Worksheets[nom_feuille_stat].Cells)),
-            desc="Sorting bootstrap"):
+    for x in range(1, len(initialisation.Worksheets[nom_feuille_stat].Cells)):
         i = 0
         for e in sorted(
                 initialisation.Worksheets[nom_feuille_stat].Cells.ix[x, :]):
@@ -543,14 +540,13 @@ def sp_opt(isp):
     return "weighted" if isp == 1 else ("unweighted" if isp == 2 else "mean")
 
 
-def parse_file(filename, colnames):
+def parse_file(filename, colnames, sheetname):
     """Parse file using pandas module."""
     if not filename:
         raise argparse.ArgumentTypeError("Filename (-f) is None.")
     if splitext(filename)[1] in ['.xls', '.xlsx']:
         data = pandas.read_excel(filename, sheetname=None)
-        # select sheetname
-        data = data['chronic']
+        data = data[sheetname]
     elif splitext(filename)[1] == '.csv':
         data = pandas.read_csv(filename, header=0)
         if len(data.columns) == 1:

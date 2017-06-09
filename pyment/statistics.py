@@ -14,26 +14,30 @@ Many function to refactor to python function.
 # @Last modified time: 2017-06-02T23:59:28+02:00
 
 import math
-import multiprocessing
+from multiprocessing import cpu_count
+from threading import RLock, Thread
 
 import initialisation
 from common import cellule_gras, compt_inf, ecrire_titre, trier_tirages_feuille
 from numpy import mean, median, percentile, std
 from numpy.random import choice, seed
 from scipy.stats import norm
-from tqdm import tqdm
+
+lock = RLock()
 
 
-def threaded_bootstrap(data, nbvar, B, pond, line_start):
+def threaded_bootstrap(data, nbvar, B, pond, line_start, nom_feuille_stat):
     """Optimized bootstrap on thread."""
     i = 1
     j = 0
-    for x in tqdm(choice(data, nbvar * B, p=pond), desc="Bootstrap"):
+    bootstrap = choice(data, nbvar * B, p=pond)
+    for x in bootstrap:
         if j == nbvar:
             j = 0
             i += 1
-        initialisation.Worksheets[nom_feuille_stat].Cells \
-            .set_value(i + line_start, j, x)
+        with lock:
+            initialisation.Worksheets[nom_feuille_stat].Cells \
+                .set_value(i + line_start, j, x)
         j += 1
 
 
@@ -59,25 +63,30 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, col_data, col_pond,
     pond = list()
     if seed_check:
         seed(42)
-    for x in tqdm(
-            range(1, len(initialisation.Worksheets[nom_feuille_pond].Cells)),
-            desc="Collecting data for bootstrap"):
+    for x in range(1, len(initialisation.Worksheets[nom_feuille_pond].Cells)):
         data.append(initialisation.Worksheets[nom_feuille_pond]
                     .Cells.get_value(x, col_data))
         pond.append(initialisation.Worksheets[nom_feuille_pond]
                     .Cells.get_value(x, col_pond))
-    for j in tqdm(range(0, nbvar), desc="Setting columns \'POINT\'"):
+    for j in range(0, nbvar):
         initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
             0, j, 'POINT ' + str(j + 1))
     """
-    thread_number = multiprocessing.cpu_count()
-    thread_list = [None * thread_number]
+    thread_number = cpu_count()
+    thread_list = [None] * thread_number
     for i in range(0, thread_number):
-        thread_list[i] = 
+        thread_list[i] = Thread(target=threaded_bootstrap,
+                                args=(data, nbvar,
+                                      int(B / thread_number), pond,
+                                      int((B / thread_number) * i),
+                                      nom_feuille_stat,))
+        thread_list[i].start()
+    for i in range(0, thread_number):
+        thread_list[i].join()
     """
     i = 1
     j = 0
-    for x in tqdm(choice(data, nbvar * B, p=pond), desc="Bootstrap"):
+    for x in choice(data, nbvar * B, p=pond):
         if j == nbvar:
             j = 0
             i += 1
@@ -112,13 +121,13 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     On calcule la probabilite cumulee empirique de chaque point tire
     sauvegarde dans pcum
     """
-    for i in tqdm(range(0, nbvar), desc="Empirical Probability Cumulated"):
+    for i in range(0, nbvar):
         pcum.append((i - a) / (nbvar + 1 - 2 * a))
     """
     On calcule le rang qu'occupe la probabilite voulues (p) au sein des
     pcum, sauvegarde dans rang
     """
-    for i in tqdm(range(0, len(p)), desc="Probability rang"):
+    for i in range(0, len(p)):
         rang.append(compt_inf(pcum, p[i]))
     """
     On trie les donnees a exploiter (issues des tirages aleatoires)
@@ -128,14 +137,14 @@ def calcul_ic_empirique(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     trier_tirages_feuille(nom_feuille_stat, nom_feuille_sort, nbvar)
     """Creation de la feuille contenant les quantiles empiriques"""
     """Ecriture des entetes de colonnes"""
-    for i in tqdm(range(0, len(p)), desc="Setting columns \'QUANT\'"):
+    for i in range(0, len(p)):
         initialisation.Worksheets[nom_feuille_qemp].Cells.set_value(
             l1 - 1, c3 + i, 'QUANT ' + str(p[i] * 100) + ' %')
     """
     Calcul des quantiles p%
     data = "RC" & c1 & ":RC" & c2
     """
-    for y in tqdm(range(1, l2 + 1), desc="Calculating quantils"):
+    for y in range(1, l2 + 1):
         tmp = list()
         for i in range(0, len(p)):
             if rang[i] == 0 or rang[i] == nbvar:
@@ -190,7 +199,7 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
         l1 - 1, c_mu, 'MEAN')
     initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
         l1 - 1, c_mu + 1, 'STDEV')
-    for i in tqdm(range(l1, l2), desc="Calculating MEAN and STDEV"):
+    for i in range(l1, l2):
         data = list()
         for j in range(c1, c2):
             data.append(
@@ -207,7 +216,7 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     stdev precedemment calcules
     """
     """Affichage dans nom_feuille_qnorm"""
-    for i in tqdm(range(0, len(p)), desc="Calculating quantils"):
+    for i in range(0, len(p)):
         initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
             l1 - 1, c3 + i, 'QUANT ' + str(p[i] * 100) + ' %')
         for x in range(l1, l2):
@@ -678,14 +687,14 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
     """
     initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 1, c_hc, 'HC')
-    for i in tqdm(range(0, len(pourcent)), desc="Displaying percent"):
+    for i in range(0, len(pourcent)):
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 1, c_hc + i + 1, "={:.3g}".format(pourcent[i]))
     initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 2, c_hc, 'Best-Estimate')
     initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 3, c_hc, 'Geo. Stand. Deviation')
-    for i in tqdm(range(0, len(pcent)), desc='Displaying centile'):
+    for i in range(0, len(pcent)):
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 4 + i, c_hc, 'Centile ' + str(pcent[i] * 100) + '%')
     nbligne_res = len(pcent) + 3 + 1
@@ -696,7 +705,7 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
     procedure SSWD ou ACT
     """
     data_c = list()
-    for i in tqdm(range(0, nbdata), desc='Getting data_c'):
+    for i in range(0, nbdata):
         data_c.append(data_co[i].data if iproc == 1 else data_co[i].act)
     if loi == 1:
         calculer_be_empirique(data_co, pourcent, HC_be, nbdata, data_c)
@@ -714,7 +723,7 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
                 data_c, nom_feuille_pond, pond_lig_deb, pond_col_deb,
                 pond_col_pcum, pourcent, HC_be, nom_colonne, nbdata)
     """Affichage HC best-estimate dans la feuille de resultats"""
-    for i in tqdm(range(0, len(pourcent)), desc='Displaying HC best-estimate'):
+    for i in range(0, len(pourcent)):
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 2, c_hc + 1 + i, 10 ** HC_be[i])
     cellule_gras()
@@ -723,7 +732,7 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
     empirique : pas de bias correction
     normal et triangulaire : bias correction
     """
-    for x in tqdm(range(0, len(pourcent)), desc='Calcul percentils'):
+    for x in range(0, len(pourcent)):
         data = list()
         for y in range(1, l2):
             data.append(initialisation.Worksheets[nom_feuille_quant]
@@ -837,7 +846,7 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
     dif = [0.0] * nbdata
 
     if loi == 2:
-        for i in tqdm(range(0, nbdata), desc="Calcul Qth/resQ/Pth/dif"):
+        for i in range(0, nbdata):
             Qth[i] = norm.ppf(data_co[i].pcum, mup, sigmap)
             resQ[i] = Qth[i] - data_c[i]
             Pth[i] = norm.cdf(data_co[i].data, mup, sigmap)
@@ -845,7 +854,7 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
             dif[i] = math.fabs(dif[i])
     if loi == 3:
         pmode = (mode - _min) / (_max - _min)
-        for i in tqdm(range(0, nbdata), desc="Calcul Qth/resQ/Pth/dif"):
+        for i in range(0, nbdata):
             if data_co[i].pcum <= pmode:
                 Qth[i] = (_min + math.sqrt(data_co[i].pcum * (_max - _min) *
                                            (mode - _min)))
@@ -881,10 +890,10 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
     effectue dans le cas de la loi log - normale)
     """
     mu = 0
-    for i in tqdm(range(0, nbdata), desc="Calcul mu"):
+    for i in range(0, nbdata):
         mu = mu + data_co[i].data * data_co[i].pond
     var_data = 0
-    for i in tqdm(range(0, nbdata), desc="Calcul var_data"):
+    for i in range(0, nbdata):
         var_data = (var_data + data_co[i].pond * (data_co[i].data - mu) ** 2.)
     var_data = var_data * nbdata / (nbdata - 1)
     """calcul variance ponderee des residus"""
@@ -936,11 +945,11 @@ def calculer_be_empirique(data_co, pourcent, HC_emp, nbdata, data):
     dans data et data_co
     """
     pcum = list()
-    for i in tqdm(range(0, nbdata), desc='Getting pcum'):
+    for i in range(0, nbdata):
         pcum.append(data_co[i].pcum)
     rang = list()
     """Calcul de HC_emp"""
-    for i in tqdm(range(0, len(pourcent)), desc='Calcul HC_emp'):
+    for i in range(0, len(pourcent)):
         rang.append(compt_inf(pcum, pourcent[i]))
         if rang[i] == 0:
             HC_emp.append(data[1])
@@ -971,13 +980,13 @@ def calculer_be_normal(data_co, pourcent, HC_norm, nbdata, data):
                  de HC
     """
     mup = 0
-    for i in tqdm(range(0, nbdata), desc="Calcul mup"):
+    for i in range(0, nbdata):
         mup = mup + data[i] * data_co[i].pond
     sigmap = 0
-    for i in tqdm(range(0, nbdata), desc="Calcul sigmap"):
+    for i in range(0, nbdata):
         sigmap = sigmap + data_co[i].pond * (data[i] - mup) ** 2
     sigmap = math.sqrt(sigmap * nbdata / (nbdata - 1))
-    for i in tqdm(range(0, len(pourcent)), desc="Calcul HC_norm"):
+    for i in range(0, len(pourcent)):
         HC_norm.append(norm.ppf(pourcent[i], mup, sigmap))
     return mup, sigmap
 
