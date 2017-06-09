@@ -1,3 +1,4 @@
+# coding=utf-8
 """Controle de l'IHM."""
 
 # !/usr/bin/env python
@@ -6,20 +7,19 @@
 # @Date:   2017-04-10T09:11:00+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
-# @Filename: Fct_ihm.py
+# @Filename: ihm_functions.py
 # @Last modified by:   gysco
 # @Last modified time: 2017-05-23T11:04:43+02:00
 
+import initialisation
 import numpy as np
-from tqdm import tqdm
-
-import Initialisation
-from fct_generales import (ischainevide, rech_l1c1, rechercher_categorie,
-                           trier_collection)
-from Lancement_sswd import lance
-from MsgBox import MsgBox
-from ponderation import calcul_nb_taxo
+from common import (ischainevide, rech_l1c1, rechercher_categorie,
+                    sort_collection)
+from execute import lance
+from message_box import message_box
 from specific_sswd import filtre_collection_act  # , init_collection_act
+from tqdm import tqdm
+from weighting import calcul_nb_taxo
 
 
 def recherche_nom_feuille(plage):
@@ -27,15 +27,15 @@ def recherche_nom_feuille(plage):
     erreur = False
     separateur = '!'
     ipos = plage.find(separateur)
-    if (ipos == 0):
-        MsgBox('SSWD',
-               'The selected range don\'t contain any worksheet\'s name!', 0)
-        erreur = True
+    if ipos == 0:
+        message_box('SSWD',
+                    'The selected range don\'t contain any worksheet\'s name!',
+                    0)
         return
     else:
         nom_feuille = plage[1:ipos]
         data_plage = plage[ipos + 1:]
-    return (nom_feuille, data_plage, erreur)
+    return nom_feuille, data_plage, erreur
 
 
 def trf_plage_cellule(nom_feuille, plage):
@@ -50,9 +50,9 @@ def trf_plage_cellule(nom_feuille, plage):
         l1, c1 = rech_l1c1(plage, 2)
         c2 = c1
         l2 = l1
-        while Initialisation.Worksheets[nom_feuille].Cells[l2, c1]:
-            l2 = l2 + 1
-        l2 = l2 - 1
+        while initialisation.Worksheets[nom_feuille].Cells[l2, c1]:
+            l2 += 1
+        l2 -= 1
         """Cas d'une selection d'une plage"""
     else:
         """
@@ -77,7 +77,7 @@ def trf_plage_cellule(nom_feuille, plage):
         #     i = i + 1
         # l2 = Worksheets[nom_feuille].Range(plage).Cells(i - 1, 1).Row
         # c2 = Worksheets[nom_feuille].Range(plage).Cells(i - 1, 1).Column"""
-    return (l1, c1, l2, c2, False)
+    return l1, c1, l2, c2, False
 
 
 def lire_pcat(val_pcat, pcat, dim_pcat):
@@ -87,29 +87,27 @@ def lire_pcat(val_pcat, pcat, dim_pcat):
     Les ranges sous forme de vecteur.
     """
     erreur = False
-    ipos = 0
     debut = 0
     for i in tqdm(range(0, dim_pcat), desc='Read pcat'):
         ipos = val_pcat.find(';')
         if ipos != 0 and i == dim_pcat:
-            erreur = True
-            MsgBox('SSWD', 'The number of weight values do not corresponds' +
-                   ' to the number of taxonomic groups!', 0)
+            message_box('SSWD',
+                        'The number of weight values do not corresponds' +
+                        ' to the number of taxonomic groups!', 0)
             return
         if ipos == 0:
             ipos = len(val_pcat) + 1
         if ipos - debut <= 0:
-            erreur = True
-            MsgBox('SSWD',
-                   'Please enter a weight for ' + 'every taxonomic group!', 0)
+            message_box('SSWD',
+                        'Please enter a weight for ' + 'every taxonomic group!',
+                        0)
             return
         pcat[i] = float(val_pcat[debut:ipos - debut])
         debut = ipos + 1
-        ipos = ipos + 1
-    return (erreur)
+    return erreur
 
 
-def afficher_taxo(data_taxo, liste_taxo, erreur):
+def afficher_taxo(data_taxo):
     """Bouton pcat enter weight values est actionne."""
     """Recherche du nom de la feuille"""
     nom_feuille, plage, erreur = recherche_nom_feuille(data_taxo)
@@ -125,7 +123,7 @@ def afficher_taxo(data_taxo, liste_taxo, erreur):
     """
     # Worksheets[nom_feuille].Activate()
     # tmp = Worksheets[nom_feuille].Range(Cells[l1, c1], Cells[l2, c2])
-    tmp = np.copy(Initialisation.Worksheets[nom_feuille].Cells[l1:l2, c1:c2])
+    tmp = np.copy(initialisation.Worksheets[nom_feuille].Cells[l1:l2, c1:c2])
     taxo = list()
     for i in tqdm(range(0, len(taxo)), desc='Sorting taxo'):
         taxo.append(tmp[i + 1, 1])
@@ -134,14 +132,13 @@ def afficher_taxo(data_taxo, liste_taxo, erreur):
     taxo_dif = rechercher_categorie(taxo)
     """Si une seule categorie taxo, pas de ponderation possible"""
     if len(taxo_dif) < 3:
-        erreur = True
-        MsgBox('SSWD', 'There is only one taxonomic group: \
+        message_box('SSWD', 'There is only one taxonomic group: \
 you cannot enter weight!', 0)
         return
     """Affichage"""
     liste_taxo = ''
     for i in range(1, len(taxo_dif) - 1):
-        if (i == len(taxo_dif) - 1):
+        if i == len(taxo_dif) - 1:
             liste_taxo += taxo_dif[i]
         else:
             liste_taxo += taxo_dif[i] + ';'
@@ -150,7 +147,7 @@ you cannot enter weight!', 0)
 def charger_parametres(fname, iproc, r_espece, r_taxo, r_concentration, r_test,
                        txt_p, opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t,
                        txt_val_b, txt_val_a, ch_nb, ch_sauve, lbl_liste,
-                       opt_bt_q, cbx_e, colnames):
+                       opt_bt_q, cbx_e, colnames, seed):
     """
     Charge les parametres receuillis par la boite de dialogue.
 
@@ -172,10 +169,10 @@ def charger_parametres(fname, iproc, r_espece, r_taxo, r_concentration, r_test,
                          nomboite) is False)
         nom_feuille, plage_x[i], erreur = recherche_nom_feuille(data)
         assert (erreur is False)
-    if (iproc == 1):
+    if iproc == 1:
         """Collection SSWD"""
         delem = ';' if len(plage_x[0].split(";")) > 1 else ','
-        Initialisation.init_collection(data_co, plage_x[0].split(delem),
+        initialisation.init_collection(data_co, plage_x[0].split(delem),
                                        plage_x[1].split(delem),
                                        plage_x[2].split(delem))
     else:
@@ -201,9 +198,9 @@ def charger_parametres(fname, iproc, r_espece, r_taxo, r_concentration, r_test,
     nom_colonne.append('Weighted Emp. Cumul. Prob.')
     check_nom_colonne(iproc, nom_colonne)
     """Type de pondération espece"""
-    isp = (cbx_e + 1) if (iproc == 1) else 1
+    isp = cbx_e if (iproc == 1) else 1
     """Pcat : pondération taxonomie"""
-    trier_collection(data_co, 2, 1)
+    sort_collection(data_co, 2, 1)
     nb_taxo = calcul_nb_taxo(data_co)
     pcat = list()
     val_pcat = txt_p
@@ -212,23 +209,22 @@ def charger_parametres(fname, iproc, r_espece, r_taxo, r_concentration, r_test,
             pcat.append(0)
     else:
         if val_pcat == '':
-            MsgBox('SSWD', 'Please enter weight values or select No weight!',
-                   0)
-            erreur = True
+            message_box('SSWD',
+                        'Please enter weight values or select No weight!',
+                        0)
             return
         assert (lire_pcat(val_pcat, pcat, nb_taxo) is False)
     """parametre de Hazen a"""
     if txt_val_a is None:
-        MsgBox('SSWD', 'You must chose a value for the Hazen parameter \
+        message_box('SSWD', 'You must chose a value for the Hazen parameter \
 between 0 and 1, strictly less than 1', 0)
-        erreur = True
         return
     a = float(txt_val_a)
     if a >= 1:
-        MsgBox('SSWD'
-               'The Hazen parameter must be included between \
-0 and 1, strictly less than 1', 0)
-        erreur = True
+        message_box('SSWD',
+                    'The Hazen parameter must be included between 0 and 1, '
+                    'strictly less than 1',
+                    0)
         return
     """Loi statistique 1:empirique, 2:normal, 3:triangulaire"""
     dist = list()
@@ -237,9 +233,10 @@ between 0 and 1, strictly less than 1', 0)
     dist.append(ch_t)
     """B"""
     if txt_val_b == '':
-        MsgBox('SSWD',
-               'You must chose a value for the number of bootstrap samples', 0)
-        erreur = True
+        message_box('SSWD',
+                    'You must chose a value for the number of bootstrap '
+                    'samples',
+                    0)
         return
     B = int(txt_val_b)
     """nbvar : nombre de données tirées"""
@@ -258,12 +255,12 @@ between 0 and 1, strictly less than 1', 0)
     si True ajustement sur quantiles, sinon sur probabilités cumulées
     """
     triang_ajust = opt_bt_q
-    lance(fname, data_co, nom_feuille, nom_colonne, isp, pcat, dist, B, a,
-          n_optim, conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust)
+    lance(fname, data_co, nom_colonne, isp, pcat, dist, B, a,
+          n_optim, conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust, seed)
 
 
 def check_nom_colonne(iproc, nom_colonne):
     """Verifie le iproc et ajoute des nom de colonnes si besoin."""
-    if (iproc == 2):
+    if iproc == 2:
         nom_colonne.append('ACT data')
         nom_colonne.append('Weighted Emp. Cumul. Prob. Acute')

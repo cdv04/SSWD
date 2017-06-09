@@ -1,23 +1,14 @@
+# coding=utf-8
 """
 Class file.
 
 This file is here to create the typing for Collection.
 """
 
-# !/usr/bin/env python
 
-# @Author: Zackary BEAUGELIN <gysco>
-# @Date:   2017-04-05T09:03:15+02:00
-# @Email:  zackary.beaugelin@epitech.eu
-# @Project: SSWD
-# @Filename: Collection.py
-# @Last modified by:   gysco
-# @Last modified time: 2017-04-28T09:51:02+02:00
-
-
-class Collection():
+class Collection:
     """
-    The types are structered as follow.
+    The types are structured as follow.
 
     "" -> String
     0.0 -> Double
@@ -26,7 +17,7 @@ class Collection():
 
     def __repr__(self):
         """Return str of class."""
-        return (self.espece + "\t" + self.taxo + "\t" + str(self.data))
+        return self.espece + "\t" + self.taxo + "\t" + str(self.data)
 
     def __init__(self, test="C", pond=1., num=1, pcum=1.):
         """Init method."""

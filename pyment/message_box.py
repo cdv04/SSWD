@@ -1,3 +1,4 @@
+# coding=utf-8
 """Alert box."""
 
 # !/usr/bin/env python
@@ -6,14 +7,14 @@
 # @Date:   2017-04-07T09:16:15+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
-# @Filename: Mbox.py
+# @Filename: message_box.py
 # @Last modified by:   gysco
 # @Last modified time: 2017-04-12T08:54:45+02:00
 
 import ctypes
 
 
-def MsgBox(title, text, style):
+def message_box(title, text, style):
     """
     Used to create alert message.
 

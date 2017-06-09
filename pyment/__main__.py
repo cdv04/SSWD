@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
+# coding=utf-8
 """
 File to execute SSWD.
 
-Parse commande line and csv file.
+Parse command line and csv file.
 """
 
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-04-27T09:39:06+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
-# @Filename: run.py
+# @Filename: __main__.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-24T16:14:42+02:00
+# @Last modified time: 2017-06-01T09:56:50+02:00
 
 import argparse
 import sys
-from os.path import splitext
 
-import pandas
-
-from Fct_ihm import charger_parametres
+import wx
+from common import parse_file
+from ihm import mainFrame
+from ihm_functions import charger_parametres
 
 
 def isp_type(x):
@@ -29,57 +30,16 @@ def isp_type(x):
     if x not in to_index:
         raise argparse.ArgumentTypeError(
             "%s has to be: m(ean)/w(eighted)/u(nweighted) for ponderation" %
-            (x, ))
-    return (to_index.index(x))
+            (x,))
+    return to_index.index(x)
 
 
 def restricted_float(x):
     """Check float hazen."""
     x = float(x)
     if x < 0.0 or x > 1.0:
-        raise argparse.ArgumentTypeError("%r not in range [0.0, 1.0]" % (x, ))
+        raise argparse.ArgumentTypeError("%r not in range [0.0, 1.0]" % (x,))
     return x
-
-
-def parse_file(filename, colnames):
-    """Parse file using pandas module."""
-    if not filename:
-        raise argparse.ArgumentTypeError("Filename (-f) is None.")
-    if splitext(filename)[1] in ['.xls', '.xlsx']:
-        data = pandas.read_excel(filename, sheetname=None)
-        # select sheetname
-        data = data['chronic']
-    elif splitext(filename)[1] == '.csv':
-        data = pandas.read_csv(filename, header=0)
-        if len(data.columns) == 1:
-            data = pandas.read_csv(filename, sep=";", header=0)
-    else:
-        raise IOError("Invalid file")
-    espece = filename + "!"
-    test = filename + "!"
-    for n in data[colnames[0]].tolist():
-        espece += str(n) + ";"
-        test += str(n) + ";"
-    taxo = filename + "!"
-    for n in data[colnames[1]].tolist():
-        taxo += str(n) + ";"
-    concentration = filename + "!"
-    for n in data[colnames[2]].tolist():
-        concentration += str(n) + ";"
-    return (espece, taxo, concentration, test)
-
-
-def get_columns(filename):
-    """Get columns for further parsing."""
-    names = list()
-    if not filename:
-        raise argparse.ArgumentTypeError("Filename (-f) is None.")
-    data = pandas.read_csv(filename, header=0)
-    if len(data.columns) == 1:
-        data = pandas.read_csv(filename, sep=";", header=0)
-    for x in data.columns:
-        names.append(str(x))
-    return (names)
 
 
 def main():
@@ -115,8 +75,15 @@ def main():
         args.pcat is None, args.pcat is not None, args.emp, args.normal,
         args.triang, args.bootstrap, args.hazen, args.nbvar, args.save,
         args.lbl_liste, args.triang and args.adjustq, args.isp, columns_name)
-    return (0)
+    return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    # sys.tracebacklimit = None
+    if len(sys.argv) > 1:
+        sys.exit(main())
+    else:
+        app = wx.App(False)
+        frame = mainFrame(None)
+        frame.Show()
+        sys.exit(app.MainLoop())
