@@ -1,13 +1,6 @@
 # coding=utf-8
 """IHM file."""
 
-# -*- coding: utf-8 -*-
-###########################################################################
-#  Python code generated with wxFormBuilder (version Sep 12 2010)
-#  http://www.wxformbuilder.org/
-#
-#  PLEASE DO "NOT" EDIT THIS FILE!
-###########################################################################
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-05-29T12:32:17+02:00
 # @Email:  zackary.beaugelin@epitech.eu
@@ -30,10 +23,10 @@ class mainFrame(wx.Frame):
 
     def __init__(self, parent):
         """__init__ of IHM."""
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title="PyME[N]T",
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title="PyME[N]T-SSWD",
                           pos=wx.DefaultPosition, size=wx.Size(-1, -1),
-                          style=wx.CAPTION | wx.CLOSE_BOX | wx.MINIMIZE_BOX |
-                                wx.TAB_TRAVERSAL)
+                          style=(wx.CAPTION | wx.CLOSE_BOX | wx.MINIMIZE_BOX |
+                                 wx.TAB_TRAVERSAL))
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.filename = None
@@ -42,7 +35,7 @@ class mainFrame(wx.Frame):
         sizer_frame.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
 
         box_file = wx.StaticBoxSizer(
-            wx.StaticBox(self, wx.ID_ANY, "File options:"), wx.VERTICAL)
+            wx.StaticBox(self, wx.ID_ANY, "File management"), wx.VERTICAL)
 
         sizer_file = wx.FlexGridSizer(3, 2, 0, 0)
         sizer_file.SetFlexibleDirection(wx.BOTH)
@@ -62,18 +55,6 @@ class mainFrame(wx.Frame):
         sizer_file.Add(self.filepicker, 0, wx.EXPAND | wx.ALIGN_CENTER_VERTICAL,
                        5)
 
-        self.txt_output = wx.StaticText(self, wx.ID_ANY, "Output file:",
-                                        wx.DefaultPosition, wx.DefaultSize, 0)
-        self.txt_output.Wrap(-1)
-        sizer_file.Add(self.txt_output, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-        self.txt_output_name = wx.StaticText(self, wx.ID_ANY, wx.EmptyString,
-                                             wx.DefaultPosition, wx.DefaultSize,
-                                             0)
-        self.txt_output_name.Wrap(-1)
-        sizer_file.Add(self.txt_output_name, 0,
-                       wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-
         self.txt_sheet = wx.StaticText(self, wx.ID_ANY, "Selected sheet:",
                                        wx.DefaultPosition, wx.DefaultSize, 0)
         self.txt_sheet.Wrap(-1)
@@ -86,12 +67,24 @@ class mainFrame(wx.Frame):
         sizer_file.Add(self.txt_sheet_name, 0,
                        wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
+        self.txt_output = wx.StaticText(self, wx.ID_ANY, "Output file:",
+                                        wx.DefaultPosition, wx.DefaultSize, 0)
+        self.txt_output.Wrap(-1)
+        sizer_file.Add(self.txt_output, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+
+        self.txt_output_name = wx.StaticText(self, wx.ID_ANY, wx.EmptyString,
+                                             wx.DefaultPosition, wx.DefaultSize,
+                                             0)
+        self.txt_output_name.Wrap(-1)
+        sizer_file.Add(self.txt_output_name, 0,
+                       wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+
         box_file.Add(sizer_file, 1, wx.EXPAND, 5)
 
         sizer_frame.Add(box_file, 1, wx.ALL | wx.EXPAND, 5)
 
         box_data = wx.StaticBoxSizer(
-            wx.StaticBox(self, wx.ID_ANY, "Select data:"), wx.VERTICAL)
+            wx.StaticBox(self, wx.ID_ANY, "Data selection"), wx.VERTICAL)
 
         sizer_data = wx.FlexGridSizer(2, 1, 0, 0)
         sizer_data.SetFlexibleDirection(wx.BOTH)
@@ -174,7 +167,7 @@ class mainFrame(wx.Frame):
         sizer_frame.Add(box_data, 1, wx.EXPAND | wx.ALL, 5)
 
         box_math = wx.StaticBoxSizer(
-            wx.StaticBox(self, wx.ID_ANY, "Calculation parameters:"),
+            wx.StaticBox(self, wx.ID_ANY, "Calculation parameters"),
             wx.VERTICAL)
 
         sizer_math = wx.FlexGridSizer(1, 2, 0, 0)
@@ -193,7 +186,8 @@ class mainFrame(wx.Frame):
         sizer_math.Add(self.radiobox_weight, 0, wx.RIGHT | wx.LEFT, 5)
 
         sizer_law = wx.StaticBoxSizer(
-            wx.StaticBox(self, wx.ID_ANY, "Distribution law:"), wx.VERTICAL)
+            wx.StaticBox(self, wx.ID_ANY, "Distribution law to fit:"),
+            wx.VERTICAL)
 
         self.checkbox_emp = wx.CheckBox(self, wx.ID_ANY, "log-empirical",
                                         wx.DefaultPosition, wx.DefaultSize, 0)
@@ -211,7 +205,7 @@ class mainFrame(wx.Frame):
         self.checkbox_triang.Enable(False)
         sizer_triang.Add(self.checkbox_triang, 0, 0, 5)
 
-        self.radio_quant = wx.RadioButton(self, wx.ID_ANY, "Quant. fiting",
+        self.radio_quant = wx.RadioButton(self, wx.ID_ANY, "Quant. fitting",
                                           wx.DefaultPosition, wx.DefaultSize, 0)
         self.radio_quant.Enable(False)
         self.radio_quant.SetValue(True)
@@ -233,7 +227,7 @@ class mainFrame(wx.Frame):
         sizer_frame.Add(box_math, 1, wx.EXPAND | wx.ALL, 5)
 
         box_option = wx.StaticBoxSizer(
-            wx.StaticBox(self, wx.ID_ANY, "Advanced option"), wx.VERTICAL)
+            wx.StaticBox(self, wx.ID_ANY, "Advanced parameters"), wx.VERTICAL)
 
         sizer_option = wx.FlexGridSizer(3, 3, 0, 0)
         sizer_option.SetFlexibleDirection(wx.BOTH)
@@ -287,7 +281,7 @@ class mainFrame(wx.Frame):
         sizer_end = wx.GridSizer(1, 2, 0, 0)
 
         self.checkbox_save = wx.CheckBox(self, wx.ID_ANY,
-                                         "Save intermediate sheets",
+                                         "Save intermediate calculation sheets",
                                          wx.DefaultPosition, wx.DefaultSize, 0)
         sizer_end.Add(self.checkbox_save, 0, wx.ALL, 5)
 
@@ -316,7 +310,6 @@ class mainFrame(wx.Frame):
         sizer_frame.Fit(self)
 
         self.Centre(wx.BOTH)
-
         # Connect Events
         self.filepicker.Bind(wx.EVT_FILEPICKER_CHANGED, self.update)
         self.checkbox_triang.Bind(wx.EVT_CHECKBOX, self.enable_radios)
@@ -359,7 +352,9 @@ class mainFrame(wx.Frame):
             self.choice_taxo.GetSelection()), self.choice_ed.GetString(
             self.choice_ed.GetSelection())]
         species, taxon, concentration, test = parse_file(self.filename,
-                                                         columns_name)
+                                                         columns_name,
+                                                         self.txt_sheet_name
+                                                         .GetLabel())
         pcat = list(self.txtc_taxo_weight.GetLineText(0))
         if not len(pcat):
             pcat = None
@@ -431,3 +426,15 @@ class mainFrame(wx.Frame):
         n_2 = int(n / 2 - 3)
         n_1 = n - n_2 - 3
         return '{0}...{1}'.format(s[:n_1], s[-n_2:])
+
+    def progress(self, species):
+        """Progress dialog."""
+        datanb = len(species.split('!')[1].split(';'))
+        i = ((1 if self.checkbox_norm.IsChecked() else 0)
+             + (1 if self.checkbox_emp.IsChecked() else 0)
+             + (1 if self.checkbox_triang.IsChecked() else 0))
+        maximum = int(
+            self.txtc_bootstrap.GetLineText(0)) * datanb * i + datanb * 100
+        from tqdm import tqdm
+        for x in tqdm(range(0, maximum)):
+            wx.Sleep(.1)

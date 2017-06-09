@@ -28,6 +28,7 @@ def init_apropos():
                                        'Distribution (SSWD) Software\nenables ' \
                                        '' \
                                        '' \
+                                       '' \
                                        'to estimate Hazardous' + \
                                        ' Concentration (HC) with confidence ' \
                                        'limits by bootstrap'
@@ -107,6 +108,7 @@ def init_ihm():
                                        'species or genus'
     frm_sswd.Lbl_Pcat.ControlTipText = 'Two approaches are proposed ' + \
                                        'regarding proportions of data of each ' \
+                                       '' \
                                        '' \
                                        '' \
                                        'taxonomic group or ' + \
