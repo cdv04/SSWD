@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Worksheet class file.
 
@@ -10,7 +11,7 @@ This class contains the full worksheets (like a Excel file).
 # @Date:   2017-04-07T08:52:22+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
-# @Filename: Worksheet.py
+# @Filename: worksheet.py
 # @Last modified by:   gysco
 # @Last modified time: 2017-05-15T14:47:02+02:00
 
@@ -23,7 +24,7 @@ class Worksheet:
     def __repr__(self):
         """Return the str."""
         ret = self.Cells.to_csv()
-        return (ret)
+        return ret
 
     def __init__(self, cells=None, name=""):
         """Initialization for cells."""

@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Initialisation de l'IHM et differentes variables.
 
@@ -10,15 +11,13 @@ Problablement inutilisable au niveau de l'IHM.
 # @Date:   2017-04-10T09:13:55+02:00
 # @Email:  zackary.beaugelin@epitech.eu
 # @Project: SSWD
-# @Filename: Initialisation.py
+# @Filename: initialisation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-19T15:43:50+02:00
+# @Last modified time: 2017-06-02T10:17:00+02:00
 
 import math
 
-from tqdm import tqdm
-
-from Collection import Collection
+from collection import Collection
 
 
 def init_apropos():
@@ -26,16 +25,25 @@ def init_apropos():
     global frm_apropos
     frm_apropos.text = 'SSWD'
     frm_apropos.Lbl_description.text = 'Species Sensitivity Weighted ' + \
-        'Distribution (SSWD) Software\nenables to estimate Hazardous' + \
-        ' Concentration (HC) with confidence limits by bootstrap'
+                                       'Distribution (SSWD) Software\nenables ' \
+                                       '' \
+                                       '' \
+                                       'to estimate Hazardous' + \
+                                       ' Concentration (HC) with confidence ' \
+                                       'limits by bootstrap'
     frm_apropos.Lbl_version.text = 'Version : 1.0'
     frm_apropos.Lbl_date.text = 'December 2003'
     frm_apropos.Lbl_dev = 'Developed by Electricite de France (EDF)\n' + \
-        'With Institut de l\'Environnement Industriel et des Risques ' + \
-        '(INERIS)\nMethodology and design: C.Duboudin - EDF\n' + \
-        'Code development: R.Aletti - Simulog and C.Duboudin\n' + \
-        'Contacts: Ph.Ciffroy - EDF (philippe.ciffroy@edf.fr)\n' + \
-        '          H.Magaud - INERIS (helene.magaud@ineris.fr)'
+                          'With Institut de l\'Environnement Industriel et ' \
+                          'des Risques ' + \
+                          '(INERIS)\nMethodology and design: C.Duboudin - ' \
+                          'EDF\n' + \
+                          'Code development: R.Aletti - Simulog and ' \
+                          'C.Duboudin\n' + \
+                          'Contacts: Ph.Ciffroy - EDF (' \
+                          'philippe.ciffroy@edf.fr)\n' + \
+                          '          H.Magaud - INERIS (' \
+                          'helene.magaud@ineris.fr)'
     frm_apropos.Cmd_Ok.text = 'Ok'
 
 
@@ -43,7 +51,7 @@ def init_ihm():
     """Initialisation pour les fonctions ihm boite de dialogue."""
     """
     Definition des options possibles du parametre espece ;
-    correspond à isp=1,2,3
+    correspond à isp=0,1,2
     """
     global frm_sswd
     sp_opt = list()
@@ -74,43 +82,60 @@ def init_ihm():
     frm_sswd.Lbl_B.text = 'Number of bootstrap samples'
     frm_sswd.Chk_nbvar.text = 'Optimized bootstrap samples size'
     frm_sswd.Lbl_a.text = 'Hazen parameter a'
-    frm_sswd.Chk_sauvegarde.text = 'Conserve the intermediate worksheets of' +\
-        ' calculation'
+    frm_sswd.Chk_sauvegarde.text = 'Conserve the intermediate worksheets of' + \
+                                   ' calculation'
     frm_sswd.Cmd_Ok.text = 'Ok'
     frm_sswd.Cmd_Annuler.text = 'Cancel'
     # Help string
-    frm_sswd.cadre_donnees.ControlTipText = 'The data must be in columns ' +\
-        'with headings; a minimum of three columns is needed'
-    frm_sswd.Lbl_espece.ControlTipText = 'Select the range or column ' +\
-        '(heading included) containing the name of the tested species ' +\
-        '(or genus)'
-    frm_sswd.Lbl_taxo.ControlTipText = 'Select the range or column ' +\
-        '(heading included) containing the taxonomic groups or trophic levels'
-    frm_sswd.Lbl_concentration.ControlTipText = 'Select the range or column' +\
-        ' (heading included) containing the ecotoxicological test\'s results'
-    frm_sswd.Lbl_pond.ControlTipText = 'Three options are proposed to ' +\
-        'account for redundant data for each species or genus'
-    frm_sswd.Lbl_Pcat.ControlTipText = 'Two approaches are proposed ' +\
-        'regarding proportions of data of each taxonomic group or ' +\
-        'trophic level'
-    frm_sswd.Opt_Pcat_nul.ControlTipText = 'If you select -No Weight-,' +\
-        ' the default weights will be the observed proportions of data in' +\
-        ' each taxonomic group or trophic level'
-    frm_sswd.Opt_Pcat_valeur.ControlTipText = 'Weights to be allocated to ' +\
-        'each taxonomic group or trophic level'
-    frm_sswd.Lbl_loi.ControlTipText = 'Select the distribution to be ' +\
-        'applied to the weighted data'
-    frm_sswd.Opt_ajust_q.ControlTipText = 'Estimation of the min, max and' +\
-        ' mode parameters by fitting the quantiles'
-    frm_sswd.Opt_ajust_p.ControlTipText = 'Estimation of the min, max and' +\
-        ' mode parameters by fitting the cumulative probabilities'
-    frm_sswd.Lbl_B.ControlTipText = 'The log-triangular distribution' +\
-        ' computational time costs is much greater than the others;' +\
-        ' to test first with few bootstrap runs'
-    frm_sswd.Chk_nbvar.ControlTipText = 'By default bootstrap draws number' +\
-        ' is the number of used data'
-    frm_sswd.Lbl_a.ControlTipText = 'The Hazen parameter have an effect on' +\
-        ' the log-empirical and the log-triangular distribution'
+    frm_sswd.cadre_donnees.ControlTipText = 'The data must be in columns ' + \
+                                            'with headings; a minimum of ' \
+                                            'three columns is needed'
+    frm_sswd.Lbl_espece.ControlTipText = 'Select the range or column ' + \
+                                         '(heading included) containing the ' \
+                                         'name of the tested species ' + \
+                                         '(or genus)'
+    frm_sswd.Lbl_taxo.ControlTipText = 'Select the range or column ' + \
+                                       '(heading included) containing the ' \
+                                       'taxonomic groups or trophic levels'
+    frm_sswd.Lbl_concentration.ControlTipText = 'Select the range or column' + \
+                                                ' (heading included) ' \
+                                                'containing the ' \
+                                                'ecotoxicological test\'s ' \
+                                                'results'
+    frm_sswd.Lbl_pond.ControlTipText = 'Three options are proposed to ' + \
+                                       'account for redundant data for each ' \
+                                       'species or genus'
+    frm_sswd.Lbl_Pcat.ControlTipText = 'Two approaches are proposed ' + \
+                                       'regarding proportions of data of each ' \
+                                       '' \
+                                       '' \
+                                       'taxonomic group or ' + \
+                                       'trophic level'
+    frm_sswd.Opt_Pcat_nul.ControlTipText = 'If you select -No Weight-,' + \
+                                           ' the default weights will be the ' \
+                                           'observed proportions of data in' + \
+                                           ' each taxonomic group or trophic ' \
+                                           'level'
+    frm_sswd.Opt_Pcat_valeur.ControlTipText = 'Weights to be allocated to ' + \
+                                              'each taxonomic group or ' \
+                                              'trophic level'
+    frm_sswd.Lbl_loi.ControlTipText = 'Select the distribution to be ' + \
+                                      'applied to the weighted data'
+    frm_sswd.Opt_ajust_q.ControlTipText = 'Estimation of the min, max and' + \
+                                          ' mode parameters by fitting the ' \
+                                          'quantiles'
+    frm_sswd.Opt_ajust_p.ControlTipText = 'Estimation of the min, max and' + \
+                                          ' mode parameters by fitting the ' \
+                                          'cumulative probabilities'
+    frm_sswd.Lbl_B.ControlTipText = 'The log-triangular distribution' + \
+                                    ' computational time costs is much ' \
+                                    'greater than the others;' + \
+                                    ' to test first with few bootstrap runs'
+    frm_sswd.Chk_nbvar.ControlTipText = 'By default bootstrap draws number' + \
+                                        ' is the number of used data'
+    frm_sswd.Lbl_a.ControlTipText = 'The Hazen parameter have an effect on' + \
+                                    ' the log-empirical and the ' \
+                                    'log-triangular distribution'
     """Options par defaut"""
     frm_sswd.Txt_B.text = 1000
     frm_sswd.Txt_a.text = 0.5
@@ -136,7 +161,7 @@ def init_collection(data_co, species, taxo, data):
 
     Creation de la collection data_co
     """
-    for i in tqdm(range(0, len(species)), desc="Creating data_co"):
+    for i in range(0, len(species)):
         if data[i]:
             line = Collection()
             line.espece = species[i]
