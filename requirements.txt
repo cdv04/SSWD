@@ -1,4 +1,15 @@
+@Author: Zackary BEAUGELIN <gysco>
+@Date:   2017-06-09T13:31:41+02:00
+@Email:  zackary.beaugelin@epitech.eu
+@Project: SSWD
+@Filename: requirements.txt
+@Last modified by:   gysco
+@Last modified time: 2017-06-10T11:08:36+02:00
+
+
+
 numpy
 scipy
 pandas
 wxpython
+pyinstaller

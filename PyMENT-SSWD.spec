@@ -25,8 +25,8 @@ exe = EXE(pyz,
           debug=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False , icon='pyment.icns')
 app = BUNDLE(exe,
              name='PyMENT-SSWD.app',
-             icon=None,
+             icon='pyment.icns',
              bundle_identifier='fr.irsn.pyment.sswd')
