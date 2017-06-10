@@ -1,0 +1,13 @@
+# @Author: Zackary BEAUGELIN <gysco>
+# @Date:   2017-06-10T11:06:08+02:00
+# @Email:  zackary.beaugelin@epitech.eu
+# @Project: SSWD
+# @Filename: circle.yml
+# @Last modified by:   gysco
+# @Last modified time: 2017-06-10T11:06:45+02:00
+
+
+
+machine:
+  python:
+    version: 3.5.1

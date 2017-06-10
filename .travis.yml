@@ -1,0 +1,15 @@
+# @Author: Zackary BEAUGELIN <gysco>
+# @Date:   2017-06-10T11:07:43+02:00
+# @Email:  zackary.beaugelin@epitech.eu
+# @Project: SSWD
+# @Filename: .travis.yml
+# @Last modified by:   gysco
+# @Last modified time: 2017-06-10T11:09:14+02:00
+
+language: python
+python:
+  - "3.5"
+# command to install dependencies
+install: "pip install -r requirements.txt"
+# command to run tests
+script: pyinstaller -F pyment/__main__.py -n PyMENT-SSWD -w
