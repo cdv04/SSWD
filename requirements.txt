@@ -3,3 +3,6 @@ scipy
 pandas
 wxpython
 pyinstaller
+xlrd
+openpyxl
+xlsxwriter
