@@ -24,7 +24,6 @@ addons:
     - freeglut3-dev
     - libnotify-dev
 install:
-  - "pip install --upgrade --pre --trusted-host wxpython.org -vvv -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix"
   - "pip install -r requirements.txt"
 # command to run tests
 script: pyinstaller -F pyment/__main__.py -n PyMENT-SSWD -w
