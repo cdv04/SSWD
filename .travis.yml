@@ -23,6 +23,7 @@ addons:
     - freeglut3
     - freeglut3-dev
     - libnotify-dev
+    - wx-common
 install:
   - "pip install -r requirements.txt"
 # command to run tests
