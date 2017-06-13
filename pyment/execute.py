@@ -11,19 +11,20 @@ To python soon.
 # @Project: SSWD
 # @Filename: execute.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-02T23:56:08+02:00
+# @Last modified time: 2017-06-13T14:44:09+02:00
 
 from os.path import splitext
-from statistics import (calcul_R2, calcul_ic_empirique, calcul_ic_normal,
-                        calcul_ic_triang_p, calcul_ic_triang_q, calcul_res,
-                        tirage)
+from statistics import (calcul_ic_empirique, calcul_ic_normal,
+                        calcul_ic_triang_p, calcul_ic_triang_q, calcul_R2,
+                        calcul_res, tirage)
+
+from pandas import ExcelWriter
 
 from charts import draw_chart
 from common import (affichage_options, calcul_col_res, calcul_lig_graph,
-                    calcul_ref_pond, ecrire_data_co,
-                    ecrire_titre, efface_feuil_inter, verif, write_feuil_inter)
+                    calcul_ref_pond, ecrire_data_co, ecrire_titre,
+                    efface_feuil_inter, verif, write_feuil_inter)
 from initialisation import initialise
-from pandas import ExcelWriter
 from weighting import calcul_nbvar, calcul_ponderation, sort_collection
 
 
@@ -105,7 +106,6 @@ def lance(fname,
     # Application.ScreenUpdating = False
     """Valeurs specifique a la procedure SSWD"""
     iproc = 1
-    nb_col_co = 5
     ind_tax = 2
     ind_data = 3
     ind_pond = 4
@@ -141,7 +141,7 @@ def lance(fname,
     nbvar = calcul_nbvar(n_optim, data_co, pcat)
     (pond_lig_deb, pond_lig_fin, pond_col_data, pond_col_pond,
      pond_col_pcum, pond_col_data_act) = calcul_ref_pond(
-        pond_col, pond_lig, ind_data, ind_pond, ind_pcum, nbdata, tmp)
+         pond_col, pond_lig, ind_data, ind_pond, ind_pcum, nbdata, tmp)
     tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, pond_col_data,
            pond_col_pond, seed)
     """
@@ -165,7 +165,7 @@ def lance(fname,
     """attention : il faut tenir compte de l'affichage des options"""
     col_hc = 0
     nbcol_vide = 1
-    lig_data = 2
+    lig_data = 1
     writer = ExcelWriter(
         splitext(fname)[0] + (".xlsx" if override else "_sswd.xlsx"))
     """
@@ -177,7 +177,7 @@ def lance(fname,
      col_pcum_a) = calcul_col_res(col_hc, nbcol_vide, pourcent, dist, ind_tax,
                                   ind_data, ind_pcum, nom_colonne, tmp, tmp)
     """Calcul des indices des lignes pour les graphes de nom_feuille_res"""
-    (lig_p, lig_qbe, lig_qbi, lig_qbs) = calcul_lig_graph(lig_hc)
+    lig_p, lig_qbe, lig_qbi, lig_qbs = calcul_lig_graph(lig_hc)
     """initialisation de ligne_tot"""
     i = 0
     feuilles_res = ['_emp', '_norm', '_triang']

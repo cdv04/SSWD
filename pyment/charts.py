@@ -10,11 +10,12 @@ Module permettant la mise ne place des graphiques.
 # @Project: SSWD
 # @Filename: charts.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-02T10:16:16+02:00
+# @Last modified time: 2017-06-13T14:44:46+02:00
+
+from pandas import ExcelWriter
 
 import initialisation
 from common import sp_opt
-from pandas import ExcelWriter
 
 
 def draw_chart(writer: type(ExcelWriter),
@@ -86,11 +87,16 @@ def draw_chart(writer: type(ExcelWriter),
     workbook = writer.book
     initialisation.Worksheets[nom_feuille].Cells.sort_index(
         axis=1).reindex_axis(
-        range(0,
-              initialisation.Worksheets[nom_feuille].Cells.columns.max() +
-              1),
-        axis=1).to_excel(
-        writer, sheet_name=nom_feuille, index=False, header=False)
+            range(0,
+                  initialisation.Worksheets[nom_feuille].Cells.columns.max() +
+                  1),
+            axis=1).sort_index(axis=0).reindex_axis(
+                range(
+                    0,
+                    (initialisation.Worksheets[nom_feuille].Cells.index.max() +
+                     1)),
+                axis=0).to_excel(
+                    writer, sheet_name=nom_feuille, index=False, header=False)
     worksheet = writer.sheets[nom_feuille]
     """Ajout de la serie Mediane"""
     if loi != 1:
@@ -99,10 +105,9 @@ def draw_chart(writer: type(ExcelWriter),
             'subtype': 'smooth_with_markers'
         })
         chart.add_series({
-            'values': [nom_feuille, lig_p - 1, col_deb, lig_p - 1, col_fin],
-            'categories':
-                [nom_feuille, lig_qbe - 1, col_deb, lig_qbe - 1, col_fin],
-            'name': [nom_feuille, lig_qbe - 1, col_deb - 1],
+            'values': [nom_feuille, lig_p, col_deb, lig_p, col_fin],
+            'categories': [nom_feuille, lig_qbe, col_deb, lig_qbe, col_fin],
+            'name': [nom_feuille, lig_qbe, col_deb - 1],
             'line': {
                 'color': 'red'
             },
@@ -114,17 +119,15 @@ def draw_chart(writer: type(ExcelWriter),
     # TODO modifer en loi log avec range 0, 100
     else:
         chart = tracer_courbe_empirique(
-            workbook, nom_feuille, ligne_data + 1, nb_ligne_data,
-            col_data_le,
+            workbook, nom_feuille, ligne_data + 1, nb_ligne_data, col_data_le,
             col_pcum_le) if iproc == 1 else tracer_courbe_empirique(
-            workbook, nom_feuille, ligne_data + 1, nb_ligne_data,
-            col_data_act_le, col_pcum_le)
+                workbook, nom_feuille, ligne_data + 1, nb_ligne_data,
+                col_data_act_le, col_pcum_le)
     """Ajout de la serie quantile borne inf"""
     chart.add_series({
-        'values': [nom_feuille, lig_p - 1, col_deb, lig_p - 1, col_fin],
-        'categories':
-            [nom_feuille, lig_qbi - 1, col_deb, lig_qbi - 1, col_fin],
-        'name': [nom_feuille, lig_qbi - 1, col_deb - 1],
+        'values': [nom_feuille, lig_p, col_deb, lig_p, col_fin],
+        'categories': [nom_feuille, lig_qbi, col_deb, lig_qbi, col_fin],
+        'name': [nom_feuille, lig_qbi, col_deb - 1],
         'line': {
             'color': 'black',
             'dash_type': 'dash'
@@ -135,10 +138,9 @@ def draw_chart(writer: type(ExcelWriter),
     })
     """Ajout de la serie quantile borne superieure"""
     chart.add_series({
-        'values': [nom_feuille, lig_p - 1, col_deb, lig_p - 1, col_fin],
-        'categories':
-            [nom_feuille, lig_qbs - 1, col_deb, lig_qbs - 1, col_fin],
-        'name': [nom_feuille, lig_qbs - 1, col_deb - 1],
+        'values': [nom_feuille, lig_p, col_deb, lig_p, col_fin],
+        'categories': [nom_feuille, lig_qbs, col_deb, lig_qbs, col_fin],
+        'name': [nom_feuille, lig_qbs, col_deb - 1],
         'line': {
             'color': 'black',
             'dash_type': 'dash'
@@ -198,15 +200,17 @@ def draw_chart(writer: type(ExcelWriter),
                                 'height': 40})
         worksheet.insert_textbox(
             'M3', ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(mup, sigmap))
-            if loi == 2 else (
-                'wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
-                    _min, _max, mode)), {'width': 128,
-                                         'height': 40})
+            if loi == 2 else
+            ('wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
+                _min, _max, mode)), {'width': 128,
+                                     'height': 40})
 
 
-def add_species_series(chart: type(ExcelWriter.book), worksheet_name: str,
+def add_species_series(chart: type(ExcelWriter.book),
+                       worksheet_name: str,
                        col_tax: int,
-                       col_data: int, col_pcum: int) -> type(ExcelWriter.book):
+                       col_data: int,
+                       col_pcum: int) -> type(ExcelWriter.book):
     """
     Add data by species.
 
@@ -217,11 +221,13 @@ def add_species_series(chart: type(ExcelWriter.book), worksheet_name: str,
     :param col_pcum: cumulative weighted probability column
     """
     end = len(
-        list(initialisation.Worksheets[worksheet_name].Cells.ix[3:, col_tax]))
+        list(initialisation.Worksheets[worksheet_name].Cells.ix[2:, col_tax]
+             .dropna()))
     chart.add_series({
-        'values': [worksheet_name, 2, col_pcum, end, col_pcum],
-        'categories': [worksheet_name, 2, col_data, end, col_data],
-        'name': [worksheet_name, 2, col_tax, end, col_tax],
+        'values': [worksheet_name, 2, col_pcum, 2 + end, col_pcum],
+        'categories': [worksheet_name, 2, col_data, 2 + end, col_data],
+        'name':
+        'Data observed',
         'marker': {
             'type': 'square',
             'border': {
@@ -250,8 +256,8 @@ def decaler_graph(nom_feuille: str):
         decalage += 200
 
 
-def tracer_courbe_empirique(workbook, nom_feuille, lig_deb, nbligne,
-                            col_data, col_pcum):
+def tracer_courbe_empirique(workbook, nom_feuille, lig_deb, nbligne, col_data,
+                            col_pcum):
     """
     Relie points ponderes dans le graph correspdant a la loi empirique.
 
@@ -269,12 +275,16 @@ def tracer_courbe_empirique(workbook, nom_feuille, lig_deb, nbligne,
     })
     chart.add_series({
         'values':
-            [nom_feuille, lig_deb, col_pcum, lig_deb + nbligne, col_pcum],
+        [nom_feuille, lig_deb, col_pcum, lig_deb + nbligne, col_pcum],
         'categories':
-            [nom_feuille, lig_deb, col_data, lig_deb + nbligne, col_data],
+        [nom_feuille, lig_deb, col_data, lig_deb + nbligne, col_data],
         'name':
-            "Weighted Empirical",
-        'line': {'color': 'red'},
-        'marker': {'type': 'none'}
+        "Weighted Empirical",
+        'line': {
+            'color': 'red'
+        },
+        'marker': {
+            'type': 'none'
+        }
     })
     return chart
