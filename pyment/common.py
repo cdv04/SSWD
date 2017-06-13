@@ -13,15 +13,16 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: common.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-24T13:40:51+02:00
+# @Last modified time: 2017-06-13T14:21:20+02:00
 
 import argparse
 import operator
 import sys
 from os.path import splitext
 
-import initialisation
 import pandas
+
+import initialisation
 from message_box import message_box
 from worksheet import Worksheet
 
@@ -39,7 +40,8 @@ def sort_collection(this_collection, item, order):
         "pcum_a"
     ]
     if item - 1 == 1:
-        this_collection.sort(key=operator.attrgetter(tmp_list[3]), reverse=True)
+        this_collection.sort(
+            key=operator.attrgetter(tmp_list[3]), reverse=True)
     this_collection.sort(
         key=operator.attrgetter(tmp_list[item - 1]),
         reverse=(True if order == 0 else False))
@@ -87,7 +89,7 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
         if iproc == 2:
             if invlog is True:
                 initialisation.Worksheets[nom_feuille].Cells.set_value(
-                    lig + i + 1, col + 5, 10 ** data_co[i].act)
+                    lig + i + 1, col + 5, 10**data_co[i].act)
             else:
                 initialisation.Worksheets[nom_feuille].Cells.set_value(
                     lig + i + 1, col + 5, data_co[i].act)
@@ -95,7 +97,7 @@ def ecrire_data_co(data_co, nom_colonne, lig, col, nom_feuille, invlog, iproc):
                 lig + i + 1, col + 6, data_co[i].pcum_a)
         if invlog is True:
             initialisation.Worksheets[nom_feuille].Cells.set_value(
-                lig + i + 1, col + 2, 10 ** data_co[i].data)
+                lig + i + 1, col + 2, 10**data_co[i].data)
         else:
             initialisation.Worksheets[nom_feuille].Cells.set_value(
                 lig + i + 1, col + 2, data_co[i].data)
@@ -117,8 +119,7 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
     """
     name_list = [
         nom_feuille_pond, nom_feuille_stat, nom_feuille_res + "_emp",
-                                            nom_feuille_res + "_norm",
-                                            nom_feuille_res + "_triang",
+        nom_feuille_res + "_norm", nom_feuille_res + "_triang",
         nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
         nom_feuille_Ftriang, nom_feuille_qtriang, nom_feuille_err_ve,
         nom_feuille_err_inv, nom_feuille_indice
@@ -126,7 +127,7 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
     for ws in initialisation.Worksheets:
         if ws.Name == nom_feuille_res:
             rep = message_box('Attention...', 'Result\'s worksheet already '
-                                              'exists!\
+                              'exists!\
                           If you continue, this one will be destroyed.\
                           Would you like to go on?\n\
                           If you want to keep this previous results,\
@@ -397,11 +398,21 @@ def write_feuil_inter(writer, empty=False):
     """Save worksheet to excel files."""
     for x in initialisation.Worksheets:
         if (len(initialisation.Worksheets[x].Cells.columns) or empty) and x:
-            initialisation.Worksheets[x].Cells.sort_index(axis=1).reindex_axis(
-                range(0, (initialisation.Worksheets[x].Cells.columns.max() + 1)
-                if not empty else 1),
-                axis=1).to_excel(
-                writer, sheet_name=x, index=False, header=False)
+            df = initialisation.Worksheets[x].Cells.sort_index(
+                axis=1).reindex_axis(
+                    range(
+                        0,
+                        (initialisation.Worksheets[x].Cells.columns.max() + 1)
+                        if not empty else 1),
+                    axis=1)
+            if (len(initialisation.Worksheets[x].Cells.index) <
+                    initialisation.Worksheets[x].Cells.index.max()):
+                df = df.sort_index(axis=0).reindex_axis(
+                    range(0,
+                          (initialisation.Worksheets[x].Cells.index.max() + 1)
+                          if not empty else 1),
+                    axis=0)
+            df.to_excel(writer, sheet_name=x, index=False, header=False)
     writer.save()
 
 

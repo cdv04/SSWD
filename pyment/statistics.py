@@ -11,17 +11,18 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: statistics.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-02T23:59:28+02:00
+# @Last modified time: 2017-06-13T13:46:21+02:00
 
 import math
 from multiprocessing import cpu_count
 from threading import RLock, Thread
 
-import initialisation
-from common import cellule_gras, compt_inf, ecrire_titre, trier_tirages_feuille
 from numpy import mean, median, percentile, std
 from numpy.random import choice, seed
 from scipy.stats import norm
+
+import initialisation
+from common import cellule_gras, compt_inf, ecrire_titre, trier_tirages_feuille
 
 lock = RLock()
 
@@ -199,7 +200,7 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
         l1 - 1, c_mu, 'MEAN')
     initialisation.Worksheets[nom_feuille_stat].Cells.set_value(
         l1 - 1, c_mu + 1, 'STDEV')
-    for i in range(l1, l2):
+    for i in range(l1, l2 + 1):
         data = list()
         for j in range(c1, c2):
             data.append(
@@ -219,15 +220,15 @@ def calcul_ic_normal(l1, c1, l2, c2, c3, p, nom_feuille_stat,
     for i in range(0, len(p)):
         initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
             l1 - 1, c3 + i, 'QUANT ' + str(p[i] * 100) + ' %')
-        for x in range(l1, l2):
+        for x in range(l1, l2 + 1):
             initialisation.Worksheets[nom_feuille_qnorm].Cells.set_value(
                 x, c3 + i,
                 norm.ppf(
                     p[i],
                     loc=initialisation.Worksheets[nom_feuille_stat]
-                        .Cells.get_value(x, c_mu),
+                    .Cells.get_value(x, c_mu),
                     scale=initialisation.Worksheets[nom_feuille_stat]
-                        .Cells.get_value(x, c_mu + 1)))
+                    .Cells.get_value(x, c_mu + 1)))
     return c_mu
 
 
@@ -387,19 +388,10 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
         # c_min + 2)))
         # SolverSolve(UserFinish=True)
         initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_pmode] = (
-                                                                               initialisation.Worksheets[
-                                                                                   nom_feuille_Ftriang].Cells[
-                                                                                   i, c_mode] -
-                                                                               initialisation.Worksheets[
-                                                                                   nom_feuille_Ftriang].Cells[
-                                                                                   i, c_min]
-                                                                           ) / (
-                                                                               initialisation.Worksheets[
-                                                                                   nom_feuille_Ftriang].Cells[
-                                                                                   i, c_max] -
-                                                                               initialisation.Worksheets[
-                                                                                   nom_feuille_Ftriang].Cells[
-                                                                                   i, c_min])
+            initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] -
+            initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_min]
+        ) / (initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_max] -
+             initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_min])
     initialisation.Worksheets[nom_feuille_Ftriang].Cells(1, 1).Select()
     """
     Calcul des quantiles correspondant a la loi triangulaire dont les
@@ -412,11 +404,11 @@ def calcul_ic_triang_p(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
             l1 - 1, c3 + i - 1] = 'QUANT ' + str(p[i] * 100) + ' %'
         initialisation.Worksheets[nom_feuille_qtriang].Cells[
             l1, c3 + i - 1].FormulaR1C1 = (
-            '=IF(' + p[i] + '<=' + ref + c_pmode + ',' + ref + c_min +
-            '+SQRT(' + p[i] + '*(' + ref + c_max + '-' + ref + c_min +
-            ')*(' + ref + c_mode + '-' + ref + c_min + ')), ' + ref + c_max
-            + '-SQRT((' + 1 - p[i] + ')*(' + ref + c_max + '-' + ref +
-            c_min + ')*(' + ref + c_max + '-' + ref + c_mode + ')))')
+                '=IF(' + p[i] + '<=' + ref + c_pmode + ',' + ref + c_min +
+                '+SQRT(' + p[i] + '*(' + ref + c_max + '-' + ref + c_min +
+                ')*(' + ref + c_mode + '-' + ref + c_min + ')), ' + ref + c_max
+                + '-SQRT((' + 1 - p[i] + ')*(' + ref + c_max + '-' + ref +
+                c_min + ')*(' + ref + c_max + '-' + ref + c_mode + ')))')
     # Range(
     #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1, c3),
     #     Initialisation.Worksheets(nom_feuille_qtriang).Cells(l1,
@@ -505,14 +497,10 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
                                                                           c3]
         initialisation.Worksheets[nom_feuille_Ftriang].Cells[
             i, c_max] = initialisation.Worksheets[nom_feuille_sort].Cells[
-            i, c3 + nbvar - 1]
+                i, c3 + nbvar - 1]
         initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_mode] = (
-                                                                              initialisation.Worksheets[
-                                                                                  nom_feuille_Ftriang].Cells[
-                                                                                  i, c_min] +
-                                                                              initialisation.Worksheets[
-                                                                                  nom_feuille_Ftriang].Cells[
-                                                                                  i, c_max]) / 2
+            initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_min] +
+            initialisation.Worksheets[nom_feuille_Ftriang].Cells[i, c_max]) / 2
     # Initialisation.Worksheets[nom_feuille_Ftriang].Cells[l1,
     # c_pmode].FormulaR1C1 = (
     #     '=(' + ref + c_mode + '-' + ref + c_min + ')/(' + ref + c_max + '-' +
@@ -680,7 +668,7 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
     mup = 0
     sigmap = 0
     """Ecriture du titre"""
-    ecrire_titre(titre[loi], nom_feuille_res, l_hc, c_hc)
+    ecrire_titre(titre[loi - 1], nom_feuille_res, l_hc, c_hc)
     """
     Affichage titre des lignes du tableau HC et Calcul ecart type
     de HC
@@ -725,7 +713,7 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
     """Affichage HC best-estimate dans la feuille de resultats"""
     for i in range(0, len(pourcent)):
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 2, c_hc + 1 + i, 10 ** HC_be[i])
+            l_hc + 2, c_hc + 1 + i, 10**HC_be[i])
     cellule_gras()
     """
     calcul percentiles intervalles de confiance :
@@ -738,17 +726,17 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
             data.append(initialisation.Worksheets[nom_feuille_quant]
                         .Cells.get_value(y, x))
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 3, c_hc + 1 + x, 10 ** std(data))
+            l_hc + 3, c_hc + 1 + x, 10**std(data))
         if loi == 1:
             for i in range(0, len(pcent)):
                 initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-                    l_hc + 4 + i, c_hc + 1 + x, 10 ** percentile(
+                    l_hc + 4 + i, c_hc + 1 + x, 10**percentile(
                         data, pcent[i] * 100))
         else:
             for i in range(0, len(pcent)):
                 initialisation.Worksheets[nom_feuille_res].Cells.set_value(
                     l_hc + 4 + i, c_hc + 1 + x,
-                    (10 ** (percentile(data, pcent[i] * 100) - median(data)) *
+                    (10**(percentile(data, pcent[i] * 100) - median(data)) *
                      initialisation.Worksheets[nom_feuille_res]
                      .Cells.get_value(l_hc + 2, c_hc + 1 + x)))
     """Infos supplementaires suivant les distributions"""
@@ -766,22 +754,22 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 1, c_hc + len(pourcent) + 3, 'GWSD')
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 2, c_hc + len(pourcent) + 2, 10 ** mup)
+            l_hc + 2, c_hc + len(pourcent) + 2, 10**mup)
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 2, c_hc + len(pourcent) + 3, 10 ** sigmap)
+            l_hc + 2, c_hc + len(pourcent) + 3, 10**sigmap)
         for x in [nbvar + 1, nbvar + 2]:
             for y in range(l1, l2):
                 data.append(initialisation.Worksheets[nom_feuille]
                             .Cells.get_value(y, x))
             initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-                l_hc + 3, c_hc + len(pourcent) + 1 + x - nbvar, 10 ** std(data))
+                l_hc + 3, c_hc + len(pourcent) + 1 + x - nbvar, 10**std(data))
             for i in range(0, len(pcent)):
                 initialisation.Worksheets[nom_feuille_res].Cells.set_value(
                     l_hc + 4 + i, c_hc + len(pourcent) + 1 + x - nbvar,
-                    (10 ** (percentile(data, pcent[i] * 100) - median(data)) *
+                    (10**(percentile(data, pcent[i] * 100) - median(data)) *
                      initialisation.Worksheets[
                          nom_feuille_res].Cells.get_value(
-                         l_hc + 2, c_hc + len(pourcent) + 1 + x - nbvar)))
+                             l_hc + 2, c_hc + len(pourcent) + 1 + x - nbvar)))
     if loi == 3:
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 2, c_hc + len(pourcent) + 1, 'Best-Estimate')
@@ -798,24 +786,24 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 1, c_hc + len(pourcent) + 4, 'GWMode')
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 2, c_hc + len(pourcent) + 2, 10 ** _min)
+            l_hc + 2, c_hc + len(pourcent) + 2, 10**_min)
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 2, c_hc + len(pourcent) + 3, 10 ** _max)
+            l_hc + 2, c_hc + len(pourcent) + 3, 10**_max)
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 2, c_hc + len(pourcent) + 4, 10 ** mode)
+            l_hc + 2, c_hc + len(pourcent) + 4, 10**mode)
         for x in [c_min, c_min + 1, c_min + 2]:
             for y in range(l1, l2):
                 data.append(initialisation.Worksheets[nom_feuille]
                             .Cells.get_value(y, x))
             initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-                l_hc + 3, c_hc + len(pourcent) + 1 + x - c_min, 10 ** std(data))
+                l_hc + 3, c_hc + len(pourcent) + 1 + x - c_min, 10**std(data))
             for i in range(0, len(pcent)):
                 initialisation.Worksheets[nom_feuille_res].Cells.set_value(
                     l_hc + 4 + i, c_hc + len(pourcent) + 1 + x - c_min,
-                    (10 ** (percentile(data, pcent[i] * 100) - median(data)) *
+                    (10**(percentile(data, pcent[i] * 100) - median(data)) *
                      initialisation.Worksheets[
                          nom_feuille_res].Cells.get_value(
-                         l_hc + 2, c_hc + len(pourcent) + 2 + x - c_min)))
+                             l_hc + 2, c_hc + len(pourcent) + 2 + x - c_min)))
     return mup, sigmap, _min, _max, mode, data_c
 
 
@@ -894,7 +882,7 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
         mu = mu + data_co[i].data * data_co[i].pond
     var_data = 0
     for i in range(0, nbdata):
-        var_data = (var_data + data_co[i].pond * (data_co[i].data - mu) ** 2.)
+        var_data = (var_data + data_co[i].pond * (data_co[i].data - mu)**2.)
     var_data = var_data * nbdata / (nbdata - 1)
     """calcul variance ponderee des residus"""
     mu = 0
@@ -902,7 +890,7 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
         mu += resQ[i] * data_co[i].pond
     var_resQ = 0
     for i in range(0, nbdata):
-        var_resQ += data_co[i].pond * (resQ[i] - mu) ** 2.
+        var_resQ += data_co[i].pond * (resQ[i] - mu)**2.
     var_resQ = var_resQ * nbdata / (nbdata - 1)
     """calcul R2"""
     R2 = 1 - var_resQ / var_data
@@ -913,9 +901,9 @@ def calcul_R2(data_co, loi, mup, sigmap, _min, _max, mode, nbdata, data_c):
         Pvalue = 0
     else:
         if n > 100:
-            KS *= (n / 100) ** 0.49
+            KS *= (n / 100)**0.49
             n = 100
-        Pvalue = math.exp(-7.01256 * (KS ** 2) * (n + 2.78019) +
+        Pvalue = math.exp(-7.01256 * (KS**2) * (n + 2.78019) +
                           2.99587 * KS * math.sqrt(n + 2.78019) - 0.122119 +
                           0.974598 / math.sqrt(n) + 1.67997 / n)
     if Pvalue > 0.1:
@@ -984,7 +972,7 @@ def calculer_be_normal(data_co, pourcent, HC_norm, nbdata, data):
         mup = mup + data[i] * data_co[i].pond
     sigmap = 0
     for i in range(0, nbdata):
-        sigmap = sigmap + data_co[i].pond * (data[i] - mup) ** 2
+        sigmap = sigmap + data_co[i].pond * (data[i] - mup)**2
     sigmap = math.sqrt(sigmap * nbdata / (nbdata - 1))
     for i in range(0, len(pourcent)):
         HC_norm.append(norm.ppf(pourcent[i], mup, sigmap))
