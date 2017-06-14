@@ -190,16 +190,16 @@ def draw_chart(writer: type(ExcelWriter),
     })
     chart.set_size({'width': 896, 'height': 500})
     chart.set_legend({'position': 'bottom'})
-    worksheet.insert_chart('A1', chart)
+    worksheet.insert_chart('D1', chart)
     """
     Ajoute une zone de texte avec les valeurs de r2, Pttest, GWM et GWSD
     """
     if loi > 1:
-        worksheet.insert_textbox('M1', 'R² = {:.4f}\nKSpvalue = {:.3f}'.format(
+        worksheet.insert_textbox('P1', 'R² = {:.4f}\nKSpvalue = {:.3f}'.format(
             r2, weight_value), {'width': 128,
                                 'height': 40})
         worksheet.insert_textbox(
-            'M3', ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(mup, sigmap))
+            'P3', ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(mup, sigmap))
             if loi == 2 else
             ('wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
                 _min, _max, mode)), {'width': 128,
