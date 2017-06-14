@@ -33,7 +33,6 @@ If you want to read about using PyME[N]T-SSWD or contributing to the development
 ### Prerequisites
 
 #### Building from sources
-- SSWD Excel macro 
 - Python 3
 
 Install dependencies for your version of python by running:
