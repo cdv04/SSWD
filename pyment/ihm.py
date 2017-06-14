@@ -9,7 +9,7 @@
 # @Last modified by:   gysco
 # @Last modified time: 2017-06-01T16:22:31+02:00
 
-from os.path import basename, splitext
+from os.path import basename, dirname, join, splitext
 from sys import exit as sysexit
 
 import wx
@@ -351,10 +351,10 @@ class mainFrame(wx.Frame):
             self.choice_specie.GetSelection()), self.choice_taxo.GetString(
             self.choice_taxo.GetSelection()), self.choice_ed.GetString(
             self.choice_ed.GetSelection())]
+        output = join(dirname(self.filename), self.txt_output_name.GetLabel())
         species, taxon, concentration, test = parse_file(self.filename,
                                                          columns_name,
-                                                         self.txt_sheet_name
-                                                         .GetLabel())
+                                                         self.txt_sheet_name.GetLabel())
         pcat = list(self.txtc_taxo_weight.GetLineText(0))
         if not len(pcat):
             pcat = None
@@ -370,10 +370,10 @@ class mainFrame(wx.Frame):
         isp = self.radiobox_weight.GetSelection()
         seed = (self.radiobox_seed.GetSelection() == 0)
         charger_parametres(
-            self.filename, 1, species, taxon, concentration, test,
-            pcat, pcat is None, pcat is not None, emp, normal, triang,
-            bootstrap, hazen, nbvar, save, lbl_list, triang and adjustq, isp,
-            columns_name, seed)
+            self.filename, output , 1, species, taxon,
+            concentration, test, pcat, pcat is None, pcat is not None, emp,
+            normal, triang, bootstrap, hazen, nbvar, save, lbl_list,
+            triang and adjustq, isp, columns_name, seed)
 
     def update(self, event):
         """Update IHM on file load."""
@@ -406,7 +406,8 @@ class mainFrame(wx.Frame):
         else:
             raise IOError("Invalid file")
         self.txt_output_name.SetLabel(
-            basename(splitext(self.filename)[0] + "_sswd.xlsx")
+            basename(splitext(self.filename)[0] + (("_"
+                     + self.txt_sheet_name.GetLabel()) if self.txt_sheet_name.GetLabel() else "" ) + "_sswd.xlsx")
             if self.filename else "")
         self.choice_taxo.SetItems(data.columns)
         self.choice_specie.SetItems(data.columns)

@@ -143,8 +143,8 @@ you cannot enter weight!', 0)
             liste_taxo += taxo_dif[i] + ';'
 
 
-def charger_parametres(fname, iproc, r_espece, r_taxo, r_concentration, r_test,
-                       txt_p, opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t,
+def charger_parametres(fname, output, iproc, r_espece, r_taxo, r_concentration,
+                       r_test, txt_p, opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t,
                        txt_val_b, txt_val_a, ch_nb, ch_sauve, lbl_liste,
                        opt_bt_q, cbx_e, colnames, seed):
     """
@@ -254,7 +254,7 @@ between 0 and 1, strictly less than 1', 0)
     si True ajustement sur quantiles, sinon sur probabilités cumulées
     """
     triang_ajust = opt_bt_q
-    lance(fname, data_co, nom_colonne, isp, pcat, dist, B, a,
+    lance(fname, output, data_co, nom_colonne, isp, pcat, dist, B, a,
           n_optim, conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust, seed)
 
 

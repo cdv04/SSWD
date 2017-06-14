@@ -41,6 +41,7 @@ def lance_apropos():
 
 
 def lance(fname,
+          output,
           data_co,
           nom_colonne,
           isp,
@@ -166,8 +167,7 @@ def lance(fname,
     col_hc = 0
     nbcol_vide = 1
     lig_data = 1
-    writer = ExcelWriter(
-        splitext(fname)[0] + (".xlsx" if override else "_sswd.xlsx"))
+    writer = ExcelWriter(output)
     """
     Calcul des indices des colonnes d'affichage des resultats dans
     nom_feuille_res
