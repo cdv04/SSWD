@@ -12,12 +12,13 @@ Parse command line and csv file.
 # @Project: SSWD
 # @Filename: __main__.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-01T09:56:50+02:00
+# @Last modified time: 2017-06-16T11:18:42+02:00
 
 import argparse
 import sys
 
 import wx
+
 from common import parse_file
 from ihm import mainFrame
 from ihm_functions import charger_parametres
@@ -30,7 +31,7 @@ def isp_type(x):
     if x not in to_index:
         raise argparse.ArgumentTypeError(
             "%s has to be: m(ean)/w(eighted)/u(nweighted) for ponderation" %
-            (x,))
+            (x, ))
     return to_index.index(x)
 
 
@@ -38,7 +39,7 @@ def restricted_float(x):
     """Check float hazen."""
     x = float(x)
     if x < 0.0 or x > 1.0:
-        raise argparse.ArgumentTypeError("%r not in range [0.0, 1.0]" % (x,))
+        raise argparse.ArgumentTypeError("%r not in range [0.0, 1.0]" % (x, ))
     return x
 
 

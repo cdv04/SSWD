@@ -9,7 +9,7 @@
 # @Project: SSWD
 # @Filename: weighting.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-19T11:22:51+02:00
+# @Last modified time: 2017-06-16T11:40:05+02:00
 
 from common import sort_collection
 

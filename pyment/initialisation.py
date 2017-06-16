@@ -13,7 +13,7 @@ Problablement inutilisable au niveau de l'IHM.
 # @Project: SSWD
 # @Filename: initialisation.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-02T10:17:00+02:00
+# @Last modified time: 2017-06-16T11:35:23+02:00
 
 import math
 
@@ -24,27 +24,19 @@ def init_apropos():
     """Definit le texte de la boite A propos. Specifique SSWD."""
     global frm_apropos
     frm_apropos.text = 'SSWD'
-    frm_apropos.Lbl_description.text = 'Species Sensitivity Weighted ' + \
-                                       'Distribution (SSWD) Software\nenables ' \
-                                       '' \
-                                       '' \
-                                       '' \
-                                       'to estimate Hazardous' + \
-                                       ' Concentration (HC) with confidence ' \
-                                       'limits by bootstrap'
+    frm_apropos.Lbl_description.text = (
+        'Species Sensitivity Weighted ' + 'Distribution (SSWD) Software\n' +
+        'enables to estimate Hazardous' +
+        ' Concentration (HC) with confidence ' + 'limits by bootstrap')
     frm_apropos.Lbl_version.text = 'Version : 1.0'
     frm_apropos.Lbl_date.text = 'December 2003'
-    frm_apropos.Lbl_dev = 'Developed by Electricite de France (EDF)\n' + \
-                          'With Institut de l\'Environnement Industriel et ' \
-                          'des Risques ' + \
-                          '(INERIS)\nMethodology and design: C.Duboudin - ' \
-                          'EDF\n' + \
-                          'Code development: R.Aletti - Simulog and ' \
-                          'C.Duboudin\n' + \
-                          'Contacts: Ph.Ciffroy - EDF (' \
-                          'philippe.ciffroy@edf.fr)\n' + \
-                          '          H.Magaud - INERIS (' \
-                          'helene.magaud@ineris.fr)'
+    frm_apropos.Lbl_dev = (
+        'Developed by Electricite de France (EDF)\n' +
+        'With Institut de l\'Environnement Industriel et des Risques ' +
+        '(INERIS)\nMethodology and design: C.Duboudin - EDF\n' +
+        'Code development: R.Aletti - Simulog and C.Duboudin\n' +
+        'Contacts: Ph.Ciffroy - EDF (philippe.ciffroy@edf.fr)\n' +
+        '          H.Magaud - INERIS (helene.magaud@ineris.fr)')
     frm_apropos.Cmd_Ok.text = 'Ok'
 
 
@@ -83,41 +75,34 @@ def init_ihm():
     frm_sswd.Lbl_B.text = 'Number of bootstrap samples'
     frm_sswd.Chk_nbvar.text = 'Optimized bootstrap samples size'
     frm_sswd.Lbl_a.text = 'Hazen parameter a'
-    frm_sswd.Chk_sauvegarde.text = 'Conserve the intermediate worksheets of' + \
-                                   ' calculation'
+    frm_sswd.Chk_sauvegarde.text = (
+        'Conserve the intermediate worksheets of calculation')
     frm_sswd.Cmd_Ok.text = 'Ok'
     frm_sswd.Cmd_Annuler.text = 'Cancel'
     # Help string
-    frm_sswd.cadre_donnees.ControlTipText = 'The data must be in columns ' + \
-                                            'with headings; a minimum of ' \
-                                            'three columns is needed'
-    frm_sswd.Lbl_espece.ControlTipText = 'Select the range or column ' + \
-                                         '(heading included) containing the ' \
-                                         'name of the tested species ' + \
-                                         '(or genus)'
-    frm_sswd.Lbl_taxo.ControlTipText = 'Select the range or column ' + \
-                                       '(heading included) containing the ' \
-                                       'taxonomic groups or trophic levels'
-    frm_sswd.Lbl_concentration.ControlTipText = 'Select the range or column' + \
-                                                ' (heading included) ' \
-                                                'containing the ' \
-                                                'ecotoxicological test\'s ' \
-                                                'results'
-    frm_sswd.Lbl_pond.ControlTipText = 'Three options are proposed to ' + \
-                                       'account for redundant data for each ' \
-                                       'species or genus'
-    frm_sswd.Lbl_Pcat.ControlTipText = 'Two approaches are proposed ' + \
-                                       'regarding proportions of data of each ' \
-                                       '' \
-                                       '' \
-                                       '' \
-                                       'taxonomic group or ' + \
-                                       'trophic level'
-    frm_sswd.Opt_Pcat_nul.ControlTipText = 'If you select -No Weight-,' + \
-                                           ' the default weights will be the ' \
-                                           'observed proportions of data in' + \
-                                           ' each taxonomic group or trophic ' \
-                                           'level'
+    frm_sswd.cadre_donnees.ControlTipText = (
+        'The data must be in columns with headings; a minimum of ' +
+        'three columns is needed')
+    frm_sswd.Lbl_espece.ControlTipText = (
+        'Select the range or column (heading included) containing the ' +
+        'name of the tested species (or genus)')
+    frm_sswd.Lbl_taxo.ControlTipText = (
+        'Select the range or column (heading included) containing the ' +
+        'taxonomic groups or trophic levels')
+    frm_sswd.Lbl_concentration.ControlTipText = (
+        'Select the range or column (heading included) containing' +
+        ' the ecotoxicological test\'s results')
+    frm_sswd.Lbl_pond.ControlTipText = (
+        'Three options are proposed to ' +
+        'account for redundant data for each species or genus')
+    frm_sswd.Lbl_Pcat.ControlTipText = (
+        'Two approaches are proposed ' +
+        'regarding proportions of data of each taxonomic group or ' +
+        'trophic level')
+    frm_sswd.Opt_Pcat_nul.ControlTipText = (
+        'If you select -No Weight-, the default weights will be the ' +
+        'observed proportions of data in each taxonomic group or trophic ' +
+        'level')
     frm_sswd.Opt_Pcat_valeur.ControlTipText = 'Weights to be allocated to ' + \
                                               'each taxonomic group or ' \
                                               'trophic level'
