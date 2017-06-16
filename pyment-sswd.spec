@@ -21,8 +21,8 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='pyment-sswd',
+          name='pyment-sswd_win32',
           debug=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False , icon='rsrc\\img\\pyment.ico' )
