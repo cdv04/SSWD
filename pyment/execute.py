@@ -11,19 +11,20 @@ To python soon.
 # @Project: SSWD
 # @Filename: execute.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-13T14:44:09+02:00
+# @Last modified time: 2017-06-16T11:26:02+02:00
 
-from os.path import splitext
-from statistics import (calcul_ic_empirique, calcul_ic_normal,
-                        calcul_ic_triang_p, calcul_ic_triang_q, calcul_R2,
-                        calcul_res, tirage)
+from statistics import (
+    calcul_ic_empirique, calcul_ic_normal, calcul_ic_triang_p,
+    calcul_ic_triang_q, calcul_R2, calcul_res, tirage
+)
 
 from pandas import ExcelWriter
 
 from charts import draw_chart
-from common import (affichage_options, calcul_col_res, calcul_lig_graph,
-                    calcul_ref_pond, ecrire_data_co, ecrire_titre,
-                    efface_feuil_inter, verif, write_feuil_inter)
+from common import (
+    affichage_options, calcul_col_res, calcul_lig_graph, calcul_ref_pond,
+    ecrire_data_co, ecrire_titre, efface_feuil_inter, verif, write_feuil_inter
+)
 from initialisation import initialise
 from weighting import calcul_nbvar, calcul_ponderation, sort_collection
 
@@ -209,7 +210,7 @@ def lance(fname,
         calcul_ic_empirique(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                             nom_feuille_qemp, nom_feuille_sort, nbvar, a)
         """Calcul des valeurs best-estimates et affichage des resultats"""
-        (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
+        mup, sigmap, _min, _max, mode, data_c = calcul_res(
             l1, l2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, loi, titre_res, pcent,
             pourcent, data_co, nom_colonne, nom_feuille_res + "_emp",
@@ -227,7 +228,7 @@ def lance(fname,
         loi = 2
         calcul_ic_normal(l1, c1, l2, c2, c1, pourcent, nom_feuille_stat,
                          nom_feuille_qnorm)
-        (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
+        mup, sigmap, _min, _max, mode, data_c = calcul_res(
             l1, l2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, loi, titre_res, pcent,
             pourcent, data_co, nom_colonne, nom_feuille_res + "_norm",
@@ -252,7 +253,7 @@ def lance(fname,
             c_min = calcul_ic_triang_p(
                 l1, c1, l2, c2, c1, nbvar, a, pourcent, nom_feuille_stat,
                 nom_feuille_sort, nom_feuille_Ftriang, nom_feuille_qtriang)
-        (mup, sigmap, _min, _max, mode, data_c) = calcul_res(
+        mup, sigmap, _min, _max, mode, data_c = calcul_res(
             l1, l2, ind_hc, pond_lig_deb, pond_col, pond_col_data,
             pond_col_pcum, lig_hc, col_hc, nbvar, loi, titre_res, pcent,
             pourcent, data_co, nom_colonne, nom_feuille_res + "_triang",
@@ -270,6 +271,9 @@ def lance(fname,
     i = 0
     for x in dist:
         if x is True:
+            affichage_options(nom_feuille_res + feuilles_res[i], isp, val_pcat,
+                              liste_taxo, B, 18, 0, 35, 0, dist, nbvar, iproc,
+                              a)
             affichage_options(nom_feuille_res + feuilles_res[i], isp, val_pcat,
                               liste_taxo, B, 18, 0, 35, 0, dist, nbvar, iproc,
                               a)

@@ -9,12 +9,14 @@
 # @Project: SSWD
 # @Filename: ihm_functions.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-05-23T11:04:43+02:00
+# @Last modified time: 2017-06-16T11:26:09+02:00
+
+import numpy as np
 
 import initialisation
-import numpy as np
-from common import (ischainevide, rech_l1c1, rechercher_categorie,
-                    sort_collection)
+from common import (
+    ischainevide, rech_l1c1, rechercher_categorie, sort_collection
+)
 from execute import lance
 from message_box import message_box
 from specific_sswd import filtre_collection_act  # , init_collection_act
@@ -97,9 +99,9 @@ def lire_pcat(val_pcat, pcat, dim_pcat):
         if ipos == 0:
             ipos = len(val_pcat) + 1
         if ipos - debut <= 0:
-            message_box('SSWD',
-                        'Please enter a weight for ' + 'every taxonomic group!',
-                        0)
+            message_box(
+                'SSWD',
+                'Please enter a weight for ' + 'every taxonomic group!', 0)
             return
         pcat[i] = float(val_pcat[debut:ipos - debut])
         debut = ipos + 1
@@ -163,9 +165,9 @@ def charger_parametres(fname, output, iproc, r_espece, r_taxo, r_concentration,
     ]
     for i in range(0, len(r_x)):
         data = r_x[i]
-        assert (
-            ischainevide(data, 'Select the range or the column of ' + str_x[i],
-                         nomboite) is False)
+        assert (ischainevide(
+            data, 'Select the range or the column of ' + str_x[i], nomboite) is
+                False)
         nom_feuille, plage_x[i], erreur = recherche_nom_feuille(data)
         assert (erreur is False)
     if iproc == 1:
@@ -209,8 +211,7 @@ def charger_parametres(fname, output, iproc, r_espece, r_taxo, r_concentration,
     else:
         if val_pcat == '':
             message_box('SSWD',
-                        'Please enter weight values or select No weight!',
-                        0)
+                        'Please enter weight values or select No weight!', 0)
             return
         assert (lire_pcat(val_pcat, pcat, nb_taxo) is False)
     """parametre de Hazen a"""
@@ -222,8 +223,7 @@ between 0 and 1, strictly less than 1', 0)
     if a >= 1:
         message_box('SSWD',
                     'The Hazen parameter must be included between 0 and 1, '
-                    'strictly less than 1',
-                    0)
+                    'strictly less than 1', 0)
         return
     """Loi statistique 1:empirique, 2:normal, 3:triangulaire"""
     dist = list()
@@ -234,8 +234,7 @@ between 0 and 1, strictly less than 1', 0)
     if txt_val_b == '':
         message_box('SSWD',
                     'You must chose a value for the number of bootstrap '
-                    'samples',
-                    0)
+                    'samples', 0)
         return
     B = int(txt_val_b)
     """nbvar : nombre de données tirées"""
@@ -254,8 +253,8 @@ between 0 and 1, strictly less than 1', 0)
     si True ajustement sur quantiles, sinon sur probabilités cumulées
     """
     triang_ajust = opt_bt_q
-    lance(fname, output, data_co, nom_colonne, isp, pcat, dist, B, a,
-          n_optim, conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust, seed)
+    lance(fname, output, data_co, nom_colonne, isp, pcat, dist, B, a, n_optim,
+          conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust, seed)
 
 
 def check_nom_colonne(iproc, nom_colonne):

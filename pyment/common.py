@@ -13,7 +13,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: common.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-13T14:21:20+02:00
+# @Last modified time: 2017-06-16T11:21:53+02:00
 
 import argparse
 import operator
@@ -228,9 +228,7 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
     if iproc == 2:
         i = 1
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i, col_s, 'ACT=Acute to\
- Chronic Transformation')
-
+            lig_s + i, col_s, 'ACT=Acute to Chronic Transformation')
     else:
         i = 0
     initialisation.Worksheets[nom_feuille].Cells.set_value(
@@ -242,56 +240,55 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
     i += 4
     if dist[1] is True or dist[2] is True:
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i, col_s, 'R_=Multiple R-square on \
-the empirical quantiles')
-
+            lig_s + i, col_s,
+            'R_=Multiple R-square on the empirical quantiles')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 1, col_s, 'KSpvalue=pvalue of the Kolmogorov-Smirnov \
-goodness of fit test (with Dallal-Wilkinson approximation)')
-
+            lig_s + i + 1, col_s,
+            'KSpvalue=pvalue of the Kolmogorov-Smirnov goodness of fit ' +
+            'test (with Dallal-Wilkinson approximation)')
         i += 2
-    if dist[2] is True:
+    if dist[1] is True:
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i, col_s, 'GWM=Geometric Weighted Mean of the log-normal \
-            distribution')
-
+            lig_s + i, col_s,
+            'GWM=Geometric Weighted Mean of the log-normal distribution')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 1, col_s, 'GWSD=Geometric Weighted Standard Deviation\
- of the log-normal distribution')
-
+            lig_s + i + 1, col_s,
+            'GWSD=Geometric Weighted Standard Deviation of the log-normal' +
+            'distribution')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 2, col_s, 'wm.lg=Weighted Mean of the log-normal \
- distribution of the data (log10)')
-
+            lig_s + i + 2, col_s,
+            'wm.lg=Weighted Mean of the log-normal distribution of the data' +
+            ' (log10)')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 3, col_s, 'wsd.lg=Weighted Standard Deviation of the\
- log-normal distribution of the data (log10)')
-
+            lig_s + i + 3, col_s,
+            'wsd.lg=Weighted Standard Deviation of the log-normal' +
+            'distribution of the data (log10)')
         i += 4
     if dist[2] is True:
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i, col_s, 'GWMin=Geometric Min parameter of the Weighted \
-log-triangular distribution')
-
+            lig_s + i, col_s,
+            'GWMin=Geometric Min parameter of the Weighted log-triangular' +
+            ' distribution')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 1, col_s, 'GWMax=Geometric Max parameter of the \
-Weighted log-triangular distribution')
-
+            lig_s + i + 1, col_s,
+            'GWMax=Geometric Max parameter of the Weighted log-triangular' +
+            ' distribution')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 2, col_s, 'GWMode=Geometric Mode parameter of the \
-Weighted log-triangular distribution')
-
+            lig_s + i + 2, col_s,
+            'GWMode=Geometric Mode parameter of the Weighted log-triangular' +
+            ' distribution')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 3, col_s, 'wmin.lg=Min parameter of the Weighted \
-log-triangular distribution (log10)')
-
+            lig_s + i + 3, col_s,
+            'wmin.lg=Min parameter of the Weighted log-triangular' +
+            ' distribution (log10)')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 4, col_s, 'wmax.lg=Max parameter of the Weighted \
-log-triangular distribution (log10)')
-
+            lig_s + i + 4, col_s,
+            'wmax.lg=Max parameter of the Weighted log-triangular' +
+            ' distribution (log10)')
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig_s + i + 5, col_s, 'wmode.lg=Mode parameter of the Weighted \
-log-triangular distribution (log10)')
+            lig_s + i + 5, col_s,
+            'wmode.lg=Mode parameter of the Weighted log-triangular' +
+            ' distribution (log10)')
 
 
 def calcul_col_res(c_hc, nbcol_vide, pourcent, dist, ind_tax, ind_data,
@@ -326,12 +323,7 @@ def calcul_col_res(c_hc, nbcol_vide, pourcent, dist, ind_tax, ind_data,
                      empirique dans data_co_feuil
     """
     # l'affichage des parametres mu et sig et/ou min, max, mode
-    if dist[2] is True:
-        nbcol = 4
-    elif dist[1] is True:
-        nbcol = 3
-    else:
-        nbcol = 0
+    nbcol = 4 if dist[2] else 3
     col_data1 = c_hc + len(pourcent) + nbcol_vide + nbcol + 1
     col_data2 = col_data1 + len(nom_colonne) + nbcol_vide
     col_deb = c_hc + 1

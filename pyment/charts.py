@@ -1,8 +1,5 @@
 # coding=utf-8
-"""
-Module permettant la mise ne place des graphiques.
-
-"""
+"""Charts drawing module."""
 
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-04-12T09:13:56+02:00
@@ -10,45 +7,17 @@ Module permettant la mise ne place des graphiques.
 # @Project: SSWD
 # @Filename: charts.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-13T14:44:46+02:00
-
-from pandas import ExcelWriter
+# @Last modified time: 2017-06-16T11:25:23+02:00
 
 import initialisation
 from common import sp_opt
 
 
-def draw_chart(writer: type(ExcelWriter),
-               nom_feuille: str,
-               lig_p: int,
-               lig_qbe: int,
-               lig_qbi: int,
-               lig_qbs: int,
-               col_deb: int,
-               col_fin: int,
-               ligne_data: int,
-               col_tax: int,
-               col_data: int,
-               col_pcum: int,
-               col_data_le: int,
-               col_pcum_le: int,
-               loi: int,
-               titre_graf: str,
-               r2: float,
-               weight_value: float,
-               nb_ligne_data: int,
-               mup: float,
-               sigmap: float,
-               _min: float,
-               _max: float,
-               mode: float,
-               titre_axe: list,
-               val_pcat: list,
-               liste_taxo: list,
-               isp: int,
-               col_data_act: int,
-               col_data_act_le: object,
-               iproc: int):
+def draw_chart(writer, nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
+               col_fin, ligne_data, col_tax, col_data, col_pcum, col_data_le,
+               col_pcum_le, loi, titre_graf, r2, weight_value, nb_ligne_data,
+               mup, sigmap, _min, _max, mode, titre_axe, val_pcat, liste_taxo,
+               isp, col_data_act, col_data_act_le, iproc):
     """
     Draw charts (median, percentile 5%, percentile 95% & data).
 
@@ -206,11 +175,7 @@ def draw_chart(writer: type(ExcelWriter),
                                      'height': 40})
 
 
-def add_species_series(chart: type(ExcelWriter.book),
-                       worksheet_name: str,
-                       col_tax: int,
-                       col_data: int,
-                       col_pcum: int) -> type(ExcelWriter.book):
+def add_species_series(chart, worksheet_name, col_tax, col_data, col_pcum):
     """
     Add data by species.
 
@@ -244,7 +209,7 @@ def add_species_series(chart: type(ExcelWriter.book),
     return chart
 
 
-def decaler_graph(nom_feuille: str):
+def decaler_graph(nom_feuille):
     """
     Modifie la position des graphiques contenus dans une feuille.
 

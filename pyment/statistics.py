@@ -11,7 +11,7 @@ Many function to refactor to python function.
 # @Project: SSWD
 # @Filename: statistics.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-13T13:46:21+02:00
+# @Last modified time: 2017-06-16T11:39:51+02:00
 
 import math
 from multiprocessing import cpu_count
@@ -505,11 +505,12 @@ def calcul_ic_triang_q(l1, c1, l2, c2, c3, nbvar, a, p, nom_feuille_stat,
     # c_pmode].FormulaR1C1 = (
     #     '=(' + ref + c_mode + '-' + ref + c_min + ')/(' + ref + c_max + '-' +
     #     ref + c_min + ')')
-    # Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode).Select()
+    # Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode)
+    #   .Select()
     # Selection.AutoFill(
     #     Destination=Range(
-    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode),
-    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l2,
+    #         Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l1, c_pmode)
+    #         ,Initialisation.Worksheets(nom_feuille_Ftriang).Cells(l2,
     # c_pmode)),
     #     Type=xlFillDefault)
     """
@@ -685,7 +686,6 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
     for i in range(0, len(pcent)):
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 4 + i, c_hc, 'Centile ' + str(pcent[i] * 100) + '%')
-    nbligne_res = len(pcent) + 3 + 1
     HC_be = list()
     """
     Calcul HC best-estimate : different suivant la loi
@@ -701,15 +701,13 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
         mup, sigmap = calculer_be_normal(data_co, pourcent, HC_be, nbdata,
                                          data_c)
     elif loi == 3:
-        if triang_ajust is True:
-            _min, _max, mode = calculer_be_triang_q(
-                data_c, nom_feuille_pond, pond_lig_deb, pond_col_deb,
-                pond_col_data, pond_col_pcum, pourcent, HC_be, nom_colonne,
-                nbdata)
-        else:
-            _min, _max, mode = calculer_be_triang_p(
-                data_c, nom_feuille_pond, pond_lig_deb, pond_col_deb,
-                pond_col_pcum, pourcent, HC_be, nom_colonne, nbdata)
+        _min, _max, mode = (calculer_be_triang_q(
+            data_c, nom_feuille_pond, pond_lig_deb, pond_col_deb,
+            pond_col_data, pond_col_pcum, pourcent, HC_be, nom_colonne, nbdata)
+                            if triang_ajust is True else calculer_be_triang_p(
+                                data_c, nom_feuille_pond, pond_lig_deb,
+                                pond_col_deb, pond_col_pcum, pourcent, HC_be,
+                                nom_colonne, nbdata))
     """Affichage HC best-estimate dans la feuille de resultats"""
     for i in range(0, len(pourcent)):
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
@@ -1026,8 +1024,8 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_pcum,
     # Address(False, False, xlR1C1, RelativeTo= Cells(lig_deb, col))
     # data = nom_feuille + '!' + data
     """Formule correspondant à la probabilite cumulee triangulaire"""
-    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 = (
-    #     '=IF(' + data + '<=cmin,0,IF(' + data + '<= cmode ,((' + data +
+    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 =
+    #     ('=IF(' + data + '<=cmin,0,IF(' + data + '<= cmode ,((' + data +
     #     '-cmin)^2)/((cmax - cmin) * (cmode - cmin))  ,IF(' + data +
     #     '<= cmax ,1-((' + data +
     #     '- cmax)^2)/ ((cmax - cmin) * (cmax - cmode)),1)))')
@@ -1054,8 +1052,8 @@ def calculer_be_triang_p(data_c, nom_feuille, lig_deb, col_deb, col_pcum,
     #     1].FormulaR1C1 = '=SUMXMY2(' + dataP + ',' + dataF + ')'
     # SolverOk(SetCell=Initialisation.Worksheets[nom_feuille].Cells(lig_deb +
     #  3, col + 1),
-    # MaxMinVal=2, ValueOf='0', ByChange=Initialisation.Worksheets[nom_feuille].
-    # Range(Cells(lig_deb, col + 1), Cells(lig_deb + 2, col + 1)))
+    # MaxMinVal=2, ValueOf='0', ByChange=Initialisation.Worksheets[nom_feuille]
+    # .Range(Cells(lig_deb, col + 1), Cells(lig_deb + 2, col + 1)))
     # SolverSolve(UserFinish=True)
     """
     On rapatrie min, max, mode dans programme et on calcule HC_triang
@@ -1135,8 +1133,8 @@ def calculer_be_triang_q(data_c, nom_feuille, lig_deb, col_deb, col_data,
     # Address(False, False, xlR1C1, RelativeTo= Cells(lig_deb, col))
     # data = nom_feuille + '!' + data
     """Formule correspondant aux quantiles de la loi triangulaire"""
-    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 = (
-    #     '=IF(' + data + '<=cpmode,cmin+SQRT(' + data +
+    # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].FormulaR1C1 =
+    #     ('=IF(' + data + '<=cpmode,cmin+SQRT(' + data +
     #     '*(cmax - cmin) * (cmode - cmin)),cmax -SQRT((1-' + data +
     #     ')*(cmax - cmin) * (cmax - cmode)))')
     # Initialisation.Worksheets[nom_feuille].Cells[lig_deb, col].Select()

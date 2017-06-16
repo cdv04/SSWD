@@ -1,3 +1,11 @@
+# @Author: Zackary BEAUGELIN <gysco>
+# @Date:   2017-06-10T14:33:29+02:00
+# @Email:  zackary.b@live.fr
+# @Project: PyMENT-SSWD
+# @Filename: collection.py
+# @Last modified by:   gysco
+# @Last modified time: 2017-06-16T11:19:21+02:00
+
 # coding=utf-8
 """
 Class file.
