@@ -9,7 +9,7 @@
 # @Project: SSWD
 # @Filename: ihm_functions.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-16T11:26:09+02:00
+# @Last modified time: 2017-06-19T09:35:37+02:00
 
 import numpy as np
 
@@ -143,6 +143,7 @@ you cannot enter weight!', 0)
             liste_taxo += taxo_dif[i]
         else:
             liste_taxo += taxo_dif[i] + ';'
+    return liste_taxo
 
 
 def charger_parametres(fname, output, iproc, r_espece, r_taxo, r_concentration,

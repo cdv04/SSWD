@@ -13,7 +13,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: common.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-16T11:21:53+02:00
+# @Last modified time: 2017-06-19T12:37:48+02:00
 
 import argparse
 import operator

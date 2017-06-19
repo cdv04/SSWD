@@ -11,7 +11,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: execute.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-16T11:26:02+02:00
+# @Last modified time: 2017-06-17T11:56:10+02:00
 
 from statistics import (
     calcul_ic_empirique, calcul_ic_normal, calcul_ic_triang_p,
@@ -271,9 +271,6 @@ def lance(fname,
     i = 0
     for x in dist:
         if x is True:
-            affichage_options(nom_feuille_res + feuilles_res[i], isp, val_pcat,
-                              liste_taxo, B, 18, 0, 35, 0, dist, nbvar, iproc,
-                              a)
             affichage_options(nom_feuille_res + feuilles_res[i], isp, val_pcat,
                               liste_taxo, B, 18, 0, 35, 0, dist, nbvar, iproc,
                               a)
