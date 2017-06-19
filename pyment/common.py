@@ -13,7 +13,7 @@ A inclure dans la quasi totatilite des autres.
 # @Project: SSWD
 # @Filename: common.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-19T12:37:48+02:00
+# @Last modified time: 2017-06-19T16:15:43+02:00
 
 import argparse
 import operator
@@ -122,7 +122,7 @@ def verif(nom_feuille_pond, nom_feuille_stat, nom_feuille_res,
         nom_feuille_res + "_norm", nom_feuille_res + "_triang",
         nom_feuille_qemp, nom_feuille_qnorm, nom_feuille_sort,
         nom_feuille_Ftriang, nom_feuille_qtriang, nom_feuille_err_ve,
-        nom_feuille_err_inv, nom_feuille_indice
+        nom_feuille_err_inv, nom_feuille_indice, "read_me"
     ]
     for ws in initialisation.Worksheets:
         if ws.Name == nom_feuille_res:

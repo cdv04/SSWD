@@ -7,7 +7,7 @@
 # @Project: SSWD
 # @Filename: ihm.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-19T12:41:22+02:00
+# @Last modified time: 2017-06-19T13:42:13+02:00
 
 from os.path import basename, dirname, join, splitext
 from sys import exit as sysexit
@@ -520,10 +520,11 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
             self.filename, columns_name,
             self.choice_sheet_name.GetStringSelection())
         pcat = list()
-        for x in range(0, self.taxo_nb):
-            pcat.append(float(self.grid_taxo.GetCellValue(x, 0)))
         if (not len(pcat)) or (self.radiobox_taxo.GetSelection() == 0):
             pcat = None
+        else:
+            for x in range(0, self.grid_taxo.GetNumberRows()):
+                pcat.append(float(self.grid_taxo.GetCellValue(x, 0)))
         normal = self.checkbox_norm.IsChecked()
         emp = self.checkbox_emp.IsChecked()
         triang = self.checkbox_triang.IsChecked()

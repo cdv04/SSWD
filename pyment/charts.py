@@ -7,7 +7,7 @@
 # @Project: SSWD
 # @Filename: charts.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-16T11:25:23+02:00
+# @Last modified time: 2017-06-19T14:17:33+02:00
 
 import initialisation
 from common import sp_opt
@@ -159,7 +159,7 @@ def draw_chart(writer, nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     })
     chart.set_size({'width': 896, 'height': 500})
     chart.set_legend({'position': 'bottom'})
-    worksheet.insert_chart('D1', chart)
+    worksheet.insert_chart('A1', chart)
     """
     Ajoute une zone de texte avec les valeurs de r2, Pttest, GWM et GWSD
     """
