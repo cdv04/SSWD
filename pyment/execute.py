@@ -11,7 +11,7 @@ To python soon.
 # @Project: SSWD
 # @Filename: execute.py
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-17T11:56:10+02:00
+# @Last modified time: 2017-06-19T16:15:30+02:00
 
 from statistics import (
     calcul_ic_empirique, calcul_ic_normal, calcul_ic_triang_p,
@@ -268,13 +268,8 @@ def lance(fname,
                    _min, _max, mode, titre_axe, val_pcat, liste_taxo, isp, tmp,
                    tmp, iproc)
     # decaler_graph(nom_feuille_res)
-    i = 0
-    for x in dist:
-        if x is True:
-            affichage_options(nom_feuille_res + feuilles_res[i], isp, val_pcat,
-                              liste_taxo, B, 18, 0, 35, 0, dist, nbvar, iproc,
-                              a)
-        i += 1
+    affichage_options("read_me", isp, val_pcat, liste_taxo, B, 0, 0, 6, 0,
+                      dist, nbvar, iproc, a)
     # cellule_gras()
     if conserv_inter is False:
         efface_feuil_inter(nom_feuille_pond, nom_feuille_stat,
