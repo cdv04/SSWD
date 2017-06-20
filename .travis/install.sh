@@ -4,14 +4,14 @@
 # @Project: PyMENT-SSWD
 # @Filename: install.sh
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-20T13:55:45+02:00
+# @Last modified time: 2017-06-20T15:01:36+02:00
 
 #!/bin/bash
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   brew install wxmac wxpython
 else
-  apt-get install ibwebkitgtk-dev, libjpeg-dev, libtiff-dev, libgtk2.0-dev, libsdl1.2-dev, libgstreamer-plugins-base0.10-dev, freeglut3, freeglut3-dev, libnotify-dev, wx-common
+  sudo apt-get install ibwebkitgtk-dev libjpeg-dev libtiff-dev libgtk2.0-dev libsdl1.2-dev libgstreamer-plugins-base0.10-dev freeglut3 freeglut3-dev libnotify-dev wx-common
 fi
 pip install -r requirements.txt
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
@@ -20,5 +20,5 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   zip -r dist/pyment-sswd_mac.zip dist/mac/pyment-sswd_mac.app
 else
   pyinstaller pyment/__main__.py -w -n pyment-sswd_unix --distpath=./dist/unix
-  tar -xcvf dist/pyment-sswd_unix.tar.gz dist/unix/
+  tar -czvf dist/pyment-sswd_unix.tar.gz dist/unix/
 fi
