@@ -1,3 +1,13 @@
+# @Author: Zackary BEAUGELIN <gysco>
+# @Date:   2017-06-20T13:12:30+02:00
+# @Email:  zackary.b@live.fr
+# @Project: PyMENT-SSWD
+# @Filename: appveyor.yml
+# @Last modified by:   gysco
+# @Last modified time: 2017-06-20T13:59:57+02:00
+
+
+
 environment:
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
@@ -32,8 +42,22 @@ install:
   - ps: if (-not(Test-Path($env:PYTHON))) { & appveyor\install.ps1 }
 
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "cd C:\\projects\\sswd"
   - "pip install --disable-pip-version-check --user --upgrade pip"
   - "pip install -r requirements.txt; pip32 install -r requirements.txt"
 
 build_script:
   - "IF /I %PYTHON% == 'C:\\Python35' (pyinstaller pyment-sswd_win.spec -n pyment-sswd_win32) ELSE (pyinstaller pyment-sswd_win.spec -n pyment-sswd_win_amd64)"
+
+deploy:
+  release: pyment-sswd-$(appveyor_repo_tag_name)
+  description: 'Release description'
+  provider: GitHub
+  auth_token:
+    secure: vNHBbIHk3IgAYPioz1zmSCNBDmsb81hu35CXWcwQts2PPvP1lRiqY2m/E1KC2HSs
+  artifact: ./dist/*.exe
+  draft: false
+  prerelease: false
+  on:
+    branch: master
+    appveyor_repo_tag: true
