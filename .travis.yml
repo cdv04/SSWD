@@ -4,7 +4,7 @@
 # @Project: PyMENT-SSWD
 # @Filename: .travis.yml
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-20T18:59:24+02:00
+# @Last modified time: 2017-06-20T19:07:57+02:00
 
 language: python
 matrix:
@@ -13,7 +13,7 @@ matrix:
     python: 3.5
     env: TOXENV=py35
   - os: osx
-    language: generic
+    language: python
     env: TOXENV=py35
 cache: pip
 addons:
@@ -29,8 +29,12 @@ addons:
     - freeglut3-dev
     - libnotify-dev
     - wx-common
+before_install:
+  - ./.travis/before_install.sh
 install:
-  - "./.travis/install.sh"
+  - pip install -r requirements.txt
+before_script:
+  - ./.travis/post_install.sh
 script: echo "Tests passed."
 deploy:
   provider: releases
