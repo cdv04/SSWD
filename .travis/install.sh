@@ -4,7 +4,7 @@
 # @Project: PyMENT-SSWD
 # @Filename: install.sh
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-20T16:33:14+02:00
+# @Last modified time: 2017-06-20T18:16:57+02:00
 
 #!/bin/bash
 
@@ -18,5 +18,5 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   zip -r dist/pyment-sswd_mac.zip dist/mac/pyment-sswd_mac.app
 else
   pyinstaller pyment/__main__.py -w -n pyment-sswd_unix --distpath=./dist/unix
-  tar -czvf dist/pyment-sswd_unix.tar.gz dist/unix/
+  zip -r dist/pyment-sswd_unix.zip dist/unix/pyment-sswd_unix
 fi
