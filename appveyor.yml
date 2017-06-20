@@ -4,7 +4,7 @@
 # @Project: PyMENT-SSWD
 # @Filename: appveyor.yml
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-20T13:59:57+02:00
+# @Last modified time: 2017-06-20T15:51:40+02:00
 
 
 
@@ -44,7 +44,10 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "cd C:\\projects\\sswd"
   - "pip install --disable-pip-version-check --user --upgrade pip"
-  - "pip install -r requirements.txt; pip32 install -r requirements.txt"
+  - "pip install pipwin"
+  - "pipwin install numpy"
+  - "pipwin install scipy"
+  - "pip install -r requirements.txt"
 
 build_script:
   - "IF /I %PYTHON% == 'C:\\Python35' (pyinstaller pyment-sswd_win.spec -n pyment-sswd_win32) ELSE (pyinstaller pyment-sswd_win.spec -n pyment-sswd_win_amd64)"
