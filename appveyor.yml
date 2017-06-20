@@ -4,7 +4,7 @@
 # @Project: PyMENT-SSWD
 # @Filename: appveyor.yml
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-20T21:33:52+02:00
+# @Last modified time: 2017-06-20T21:49:37+02:00
 
 
 
@@ -53,7 +53,7 @@ install:
 
 build_script:
   - "if ($PYTHON_ARCH == '32') {pyinstaller pyment-sswd_win.spec -n pyment-sswd_win32} else {pyinstaller pyment-sswd_win.spec -n pyment-sswd_win_amd64}"
-
+  - ps: "ls .\\dist"
 deploy: off
   # release: pyment-sswd-$(appveyor_repo_tag_name)
   # description: 'Release description'
