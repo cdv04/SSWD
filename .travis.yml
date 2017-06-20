@@ -4,7 +4,7 @@
 # @Project: PyMENT-SSWD
 # @Filename: .travis.yml
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-20T19:07:57+02:00
+# @Last modified time: 2017-06-20T20:49:57+02:00
 
 language: python
 matrix:
@@ -13,7 +13,7 @@ matrix:
     python: 3.5
     env: TOXENV=py35
   - os: osx
-    language: python
+    language: generic
     env: TOXENV=py35
 cache: pip
 addons:
