@@ -4,7 +4,7 @@
 # @Project: PyMENT-SSWD
 # @Filename: .travis.yml
 # @Last modified by:   gysco
-# @Last modified time: 2017-06-20T20:49:57+02:00
+# @Last modified time: 2017-06-20T21:31:38+02:00
 
 language: python
 matrix:
@@ -16,7 +16,32 @@ matrix:
     language: generic
     env: TOXENV=py35
 cache: pip
+
+before_install:
+  - ./.travis/before_install.sh
+install:
+  - pip install -r requirements.txt
+before_script:
+  - ./.travis/post_install.sh
+script: echo "Tests passed."
+# deploy:
+  # provider: releases
+  # api_key:
+  #   secure: OiCT1LDzehrvva6oEI03LWuF+JLZr6s9uO93dRNb4rG4HxPngXklvnUpWjmDxuM4Q+qh0ZudRRP6RftL7M+Xb5YBs2QFDaYSA9Cqu5gFmZK1so9FStohFIjAIpHOinvbDJV2SFH7G+lU2KTZML0k4rz9dCclppIo/HCuxEKM48sn6vut1qo4G5FwdUdU7RRio8FzE30XHJkmJnvz6wT/mM5/RDIT4KfkGGgn3a7adtyzp4dNNwleRHk7wt+iycGALQwZ/qt26aqVV6/yn705sANzb5qmeQKFiyMxm0nNFmJoFcG7frXTR296L3y5qCNEhDDbh03qprvqc7LLHlXanSISel4595t6mzeA56o1WVg/Svwt3ZMmGwnVR0yDdypUaiR/LwR6cRgr/KXLqITcan18SJDcZ0S6NEaZorm9BHNl4WsZE1gKUmx0p0qfwelTPBrl9gCBewoFxpL/B+MfkhY74KJGRfDMX/SFMbXL7IL/WPjr1TZyBzbQLwvDJskPaU4M3+LXE15UgoB/wwNqthvBijKwlzFMnpo9fyCP9qu0qqTGYxVR4f0e2pJq2YS3xecGet5dm1w17ONtZ3g5FUP/XVr5QCkM14QJa0OkKXaZKczUmiCN6CgETxoLMURSgu4VP7M4b5xrVAKxL7QwqwyD27t4fErtUc4ZiTAuP1c=
+  # file:
+  #   - "./dist/pyment-sswd_mac.dmg"
+  #   - "./dist/pyment-sswd_mac.zip"
+  #   - "./dist/pyment-sswd_unix.tar.gz"
+  # skip_cleanup: true
+  # on:
+  #   tags: true
 addons:
+  artifacts:
+    path:
+      - "./dist/pyment-sswd_mac.dmg"
+      - "./dist/pyment-sswd_mac.zip"
+      - "./dist/pyment-sswd_unix.tar.gz"
+    target_paths: travis-artifacts/$TRAVIS_BUILD_ID
   apt:
     packages:
     - libwebkitgtk-dev
@@ -29,22 +54,3 @@ addons:
     - freeglut3-dev
     - libnotify-dev
     - wx-common
-before_install:
-  - ./.travis/before_install.sh
-install:
-  - pip install -r requirements.txt
-before_script:
-  - ./.travis/post_install.sh
-script: echo "Tests passed."
-deploy:
-  provider: releases
-  api_key:
-    secure: OiCT1LDzehrvva6oEI03LWuF+JLZr6s9uO93dRNb4rG4HxPngXklvnUpWjmDxuM4Q+qh0ZudRRP6RftL7M+Xb5YBs2QFDaYSA9Cqu5gFmZK1so9FStohFIjAIpHOinvbDJV2SFH7G+lU2KTZML0k4rz9dCclppIo/HCuxEKM48sn6vut1qo4G5FwdUdU7RRio8FzE30XHJkmJnvz6wT/mM5/RDIT4KfkGGgn3a7adtyzp4dNNwleRHk7wt+iycGALQwZ/qt26aqVV6/yn705sANzb5qmeQKFiyMxm0nNFmJoFcG7frXTR296L3y5qCNEhDDbh03qprvqc7LLHlXanSISel4595t6mzeA56o1WVg/Svwt3ZMmGwnVR0yDdypUaiR/LwR6cRgr/KXLqITcan18SJDcZ0S6NEaZorm9BHNl4WsZE1gKUmx0p0qfwelTPBrl9gCBewoFxpL/B+MfkhY74KJGRfDMX/SFMbXL7IL/WPjr1TZyBzbQLwvDJskPaU4M3+LXE15UgoB/wwNqthvBijKwlzFMnpo9fyCP9qu0qqTGYxVR4f0e2pJq2YS3xecGet5dm1w17ONtZ3g5FUP/XVr5QCkM14QJa0OkKXaZKczUmiCN6CgETxoLMURSgu4VP7M4b5xrVAKxL7QwqwyD27t4fErtUc4ZiTAuP1c=
-  file:
-    - "./dist/pyment-sswd_mac.dmg"
-    - "./dist/pyment-sswd_mac.zip"
-    - "./dist/pyment-sswd_unix.tar.gz"
-
-  skip_cleanup: true
-  on:
-    tags: true
