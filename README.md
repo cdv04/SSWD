@@ -8,7 +8,7 @@
 [![GitHub license](https://img.shields.io/badge/license-AGPL-blue.svg?style=flat-square)](https://raw.githubusercontent.com/Gysco/SSWD/master/LICENSE)
 
 [![Travis](https://img.shields.io/travis/Gysco/SSWD.svg?style=flat-square)](https://travis-ci.org/Gysco/SSWD)
-[![CircleCI](https://img.shields.io/circleci/project/github/Gysco/SSWD.svg?style=flat-square)](https://circleci.com/gh/Gysco/SSWD)
+[![AppVeyor](https://img.shields.io/appveyor/ci/Gysco/sswd.svg?style=flat-square)](https://ci.appveyor.com/project/Gysco/sswd/)
 
 ## Context
 
