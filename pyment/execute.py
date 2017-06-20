@@ -268,7 +268,7 @@ def lance(fname,
                    _min, _max, mode, titre_axe, val_pcat, liste_taxo, isp, tmp,
                    tmp, iproc)
     # decaler_graph(nom_feuille_res)
-    affichage_options("read_me", isp, val_pcat, liste_taxo, B, 0, 0, 6, 0,
+    affichage_options("details", isp, val_pcat, liste_taxo, B, 0, 0, 6, 0,
                       dist, nbvar, iproc, a)
     # cellule_gras()
     if conserv_inter is False:
