@@ -46,10 +46,15 @@ install:
   - "python -m pip install --upgrade pip"
   - conda install numpy
   - conda install scipy
+  - pip install pywin32
   - "pip install -r requirements.txt"
 
 build_script:
-  - ps: "if ($env:PYTHON_ARCH -eq '32') {pyinstaller pyment-sswd_win.spec -n pyment-sswd_win32} else {pyinstaller pyment-sswd_win.spec -n pyment-sswd_win_amd64}"
+  - ps: if ($env:PYTHON_ARCH -eq '32') {`
+        pyinstaller pyment-sswd_win.spec -n pyment-sswd_win32`
+        } else {`
+        pyinstaller pyment-sswd_win.spec -n pyment-sswd_win_amd64`
+        }
   - ps: "ls ."
   # - ps: coverage run pyment/__main__.py
   # - ps: codecov
