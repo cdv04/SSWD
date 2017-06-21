@@ -23,9 +23,7 @@ before_install:
   - ./.travis/before_install.sh
 install:
   - pip3 install -r requirements.txt
-before_script:
-  - ./.travis/post_install.sh
-script: python3 -c "import wx; print(wx.__version__)"
+script: ./.travis/test.sh
   # - coverage run pyment/__main__.py
   # - codecov
 deploy:
