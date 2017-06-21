@@ -9,6 +9,6 @@
 #!/bin/bash
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-  brew install wxmac wxpython
+  brew install wxmac wxpython python@3.5.1
 fi
-pip install -r requirements.txt
+pip3 install -r requirements.txt
