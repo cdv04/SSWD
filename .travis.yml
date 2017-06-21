@@ -10,6 +10,8 @@ language: python
 matrix:
   include:
   - os: linux
+    dist: trusty
+    sudo: required
     python: 3.5
     env: TOXENV=py35
   - os: osx
