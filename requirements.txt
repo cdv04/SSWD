@@ -6,3 +6,4 @@ pyinstaller
 xlrd
 openpyxl
 xlsxwriter
+codecov

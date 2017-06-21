@@ -23,7 +23,9 @@ install:
   - pip install -r requirements.txt
 before_script:
   - ./.travis/post_install.sh
-script: echo "Tests passed."
+script:
+  - coverage run pyment/__main__.py
+  - codecov
 deploy:
   provider: releases
   api_key:
