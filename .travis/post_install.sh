@@ -8,7 +8,7 @@
 
 #!/bin/bash
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-  /Library/Frameworks/Python.framework/Versions/3.6/bin/pyinstaller pyment-sswd_mac.spec -n pyment-sswd_mac --distpath=./dist/mac
+  pyinstaller pyment-sswd_mac.spec -n pyment-sswd_mac --distpath=./dist/mac
   hdiutil create dist/pyment-sswd_mac.dmg -srcfolder dist/mac/ -ov
   zip -r dist/pyment-sswd_mac.zip dist/mac/pyment-sswd_mac.app
 else
