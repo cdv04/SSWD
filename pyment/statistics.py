@@ -14,8 +14,6 @@ Many function to refactor to python function.
 # @Last modified time: 2017-06-16T11:39:51+02:00
 
 import math
-from multiprocessing import cpu_count
-from threading import RLock, Thread
 
 from numpy import mean, median, percentile, std
 from numpy.random import choice, seed
@@ -24,7 +22,10 @@ from scipy.stats import norm
 import initialisation
 from common import cellule_gras, compt_inf, ecrire_titre, trier_tirages_feuille
 
-lock = RLock()
+# from multiprocessing import cpu_count
+# from threading import RLock, Thread
+
+# lock = RLock()
 
 
 def threaded_bootstrap(data, nbvar, B, pond, line_start, nom_feuille_stat):
@@ -36,7 +37,7 @@ def threaded_bootstrap(data, nbvar, B, pond, line_start, nom_feuille_stat):
         if j == nbvar:
             j = 0
             i += 1
-        with lock:
+            # with lock:
             initialisation.Worksheets[nom_feuille_stat].Cells \
                 .set_value(i + line_start, j, x)
         j += 1

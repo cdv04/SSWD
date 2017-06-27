@@ -247,8 +247,8 @@ def calcul_nbvar(n_optim, data_co, pcat):
         """Pas d'optimisation : nbvar=nbdata"""
     else:
         nbvar = len(data_co)
-    x = nbvar
-    nbvar = min(x, 250)
+    # x = nbvar
+    # nbvar = min(x, 250)
     """
     250 est la limite du nombre de donnees que l'on peut tirer compte tenu de
     la limite du nombre de colonnes de excel (version 97) qui est 256
