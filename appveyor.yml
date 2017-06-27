@@ -52,8 +52,8 @@ install:
   - "pip install -r requirements.txt"
 
 build_script:
-  - ps: pyinstaller pyment/__main__.py -n $env:EXE_NAME -w -i ./rsrc/img/pyment.ico
-  - ps: "ls ."
+  - ps: .\.script\.appveyor\build.ps1
+  - ps: "ls .\\dist\\$env:EXE_NAME\\"
   # - ps: coverage run pyment/__main__.py
   # - ps: codecov
 

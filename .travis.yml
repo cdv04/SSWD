@@ -20,10 +20,10 @@ matrix:
 cache: pip
 
 before_install:
-  - ./.travis/before_install.sh
+  - ./.script/.travis/before_install.sh
 install:
   - pip3 install -r requirements.txt
-script: ./.travis/test.sh
+script: ./.script/.travis/test.sh
   # - coverage run pyment/__main__.py
   # - codecov
 deploy:
