@@ -3,10 +3,10 @@
 block_cipher = None
 
 import os
-a = Analysis(['pyment\\__main__.py'],
-             pathex=['D:\\Users\\Gysco\\Documents\\Git\\SSWD'],
+a = Analysis(['pyment/__main__.py'],
+             pathex=['D:/Users/Gysco/Documents/Git/SSWD'],
              binaries=[],
-             datas=[('rsrc\\img\\pyment_splashart@300x100.png', 'rsrc\\img\\pyment_splashart@300x100.png')],
+             datas=[('rsrc/img/pyment_splashart@300x100.png', 'rsrc/img/pyment_splashart@300x100.png')],
              hiddenimports=['xlrd', 'openpyxl', 'xlsxwriter'],
              hookspath=[],
              runtime_hooks=[],
@@ -21,8 +21,8 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name=os.environ['EXE_NAME'],
+          name='pyment-sswd_unix',
           debug=False,
           strip=False,
           upx=True,
-          console=False , icon='rsrc\\img\\pyment.ico' )
+          console=False)
