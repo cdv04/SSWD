@@ -2,11 +2,10 @@
 
 block_cipher = None
 
-
 a = Analysis(['pyment/__main__.py'],
              pathex=['/Users/gysco/EPITECH/IRSN/SSWD'],
              binaries=[],
-             datas=[],
+             datas=[('rsrc/img/pyment_splashart@300x100.png', 'rsrc/img/pyment_splashart@300x100.png')],
              hiddenimports=['xlrd', 'openpyxl', 'xlsxwriter'],
              hookspath=[],
              runtime_hooks=[],
