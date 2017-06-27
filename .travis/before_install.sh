@@ -9,5 +9,6 @@
 #!/bin/bash
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-  brew install wxmac wxpython python35
+  brew install wxmac wxpython python3
+  pip3 install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
 fi
