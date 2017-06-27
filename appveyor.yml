@@ -18,10 +18,12 @@ environment:
     - MINICONDA: "C:\\Miniconda35"
       PYTHON_VERSION: "3.5"
       PYTHON_ARCH: "32"
+      EXE_NAME: "pyment-sswd_win32"
 
     - MINICONDA: "C:\\Miniconda35-x64"
       PYTHON_VERSION: "3.5"
       PYTHON_ARCH: "64"
+      EXE_NAME: "pyment-sswd_win_amd64"
 
 install:
   # If there is a newer build queued for the same PR, cancel this one.
@@ -33,10 +35,10 @@ install:
         https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
         Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
           throw "There are newer queued builds for this pull request, failing early." }
-  - ECHO "Filesystem root:"
-  - ps: "ls \"C:/\""
-  - ECHO "Installed SDKs:"
-  - ps: "ls \"C:/Program Files/Microsoft SDKs/Windows\""
+  # - ECHO "Filesystem root:"
+  # - ps: "ls \"C:/\""
+  # - ECHO "Installed SDKs:"
+  # - ps: "ls \"C:/Program Files/Microsoft SDKs/Windows\""
   - ps: if (-not(Test-Path($env:MINICONDA))) { & appveyor\install.ps1 }
   - "SET PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
   - conda config --set always_yes yes --set changeps1 no
@@ -51,11 +53,7 @@ install:
   - "pip install -r requirements.txt"
 
 build_script:
-  # - ps: if ($env:PYTHON_ARCH -eq '32') {`
-  #       pyinstaller pyment-sswd_win.spec -n pyment-sswd_win32`
-  #       } else {`
-  #       pyinstaller pyment-sswd_win.spec -n pyment-sswd_win_amd64`
-  #       }
+  - ps: pyinstaller pyment/__main__.py -n $env:EXE_NAME -w -i ./rsrc/img/pyment.ico
   - ps: "ls ."
   # - ps: coverage run pyment/__main__.py
   # - ps: codecov
