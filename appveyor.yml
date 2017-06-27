@@ -53,7 +53,7 @@ install:
 
 build_script:
   - ps: .\.script\.appveyor\build.ps1
-  - ps: "ls .\\dist\\$env:EXE_NAME\\"
+  - ps: "ls .\\dist\\"
   # - ps: coverage run pyment/__main__.py
   # - ps: codecov
 
