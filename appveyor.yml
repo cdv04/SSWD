@@ -52,10 +52,16 @@ install:
   - "pip install -r requirements.txt"
 
 build_script:
-  - ps: pyinstaller pyment/__main__.py -n $env:EXE_NAME -w -i ./rsrc/img/pyment.ico
+  - ps: pyinstaller pyment/__main__.py -n $env:EXE_NAME -w -i ./rsrc/img/pyment.ico; exit 0
   - ps: "ls ."
   # - ps: coverage run pyment/__main__.py
   # - ps: codecov
+
+artifacts:
+  - path: "./dist/pyment-sswd_win32.exe"
+    name: "pyment-sswd_win32.exe"
+  - path: "./dist/pyment-sswd_win_amd64.exe"
+    name: "pyment-sswd_win_amd64.exe"
 
 deploy:
   release: pyment-sswd-$(appveyor_repo_tag_name)
@@ -69,12 +75,6 @@ deploy:
   on:
     branch: master
     appveyor_repo_tag: true
-
-# artifacts:
-#   - path: "./dist/pyment-sswd_win32.exe"
-#     name: "pyment-sswd_win32.exe"
-#   - path: "./dist/pyment-sswd_win_amd64.exe"
-#     name: "pyment-sswd_win_amd64.exe"
 
 cache:
   - "c:\\tmp\\pip-cache"
