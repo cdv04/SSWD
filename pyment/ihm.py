@@ -18,7 +18,7 @@ import wx.adv
 import wx.grid
 from pandas import read_csv, read_excel
 
-from common import parse_file
+from common import parse_file, rsrc_path
 from ihm_functions import charger_parametres
 
 # from message_box import message_box
@@ -51,9 +51,9 @@ class mainFrame(wx.Frame):
 
         self.logo_bitmap = wx.StaticBitmap(
             self, wx.ID_ANY,
-            wx.Bitmap("rsrc/img/pyment_splashart@300x100.png",
-                      wx.BITMAP_TYPE_ANY), wx.DefaultPosition,
-            wx.Size(-1, -1), 0)
+            wx.Bitmap(
+                rsrc_path("pyment_splashart@300x100.png"),
+                wx.BITMAP_TYPE_ANY), wx.DefaultPosition, wx.Size(-1, -1), 0)
         header_sizer.Add(
             self.logo_bitmap, 0,
             wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.EXPAND,
