@@ -2,11 +2,10 @@
 
 block_cipher = None
 
-import os
 a = Analysis(['pyment/__main__.py'],
              pathex=['D:/Users/Gysco/Documents/Git/SSWD'],
              binaries=[],
-             datas=[('rsrc/img/pyment_splashart@300x100.png', 'rsrc/img/pyment_splashart@300x100.png')],
+             datas=[('./rsrc/img/pyment_splashart@300x100.png', '.')],
              hiddenimports=['xlrd', 'openpyxl', 'xlsxwriter'],
              hookspath=[],
              runtime_hooks=[],

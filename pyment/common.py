@@ -18,7 +18,8 @@ A inclure dans la quasi totatilite des autres.
 import argparse
 import operator
 import sys
-from os.path import splitext
+from os.path import join as pathjoin
+from os.path import abspath, splitext
 
 import pandas
 
@@ -581,3 +582,10 @@ def get_columns(filename):
     for x in data.columns:
         names.append(str(x))
     return names
+
+
+def rsrc_path(relative_path):
+    """For HMI ressource essentially."""
+    if hasattr(sys, '_MEIPASS'):
+        return pathjoin(sys._MEIPASS, relative_path)
+    return pathjoin(abspath('./rsrc/img/'), relative_path)
