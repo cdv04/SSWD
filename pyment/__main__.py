@@ -80,7 +80,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # sys.tracebacklimit = None
+    sys.tracebacklimit = None
     if len(sys.argv) > 1:
         sys.exit(main())
     else:
