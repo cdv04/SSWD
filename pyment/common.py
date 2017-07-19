@@ -222,6 +222,7 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
     initialisation.Worksheets[nom_feuille].Cells.set_value(
         lig + 5, col + nbcol + 1, a)
     """Sigles=acronyms"""
+    lig_s += 1
     initialisation.Worksheets[nom_feuille].Cells.set_value(
         lig_s, col_s, 'SSWD=Species Sensitivity Weighted Distribution')
     if iproc == 2:
