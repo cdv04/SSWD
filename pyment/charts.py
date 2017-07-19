@@ -190,9 +190,6 @@ def add_species_series(chart, worksheet_name, col_tax, col_data, col_pcum):
     end = len(
         list(initialisation.Worksheets[worksheet_name].Cells.ix[2:, col_tax]
              .dropna()))
-    print(initialisation.Worksheets[worksheet_name].Cells
-            .ix[2, col_tax] == initialisation.Worksheets[worksheet_name].Cells
-            .get_value(2, col_tax))
     x = 2
     while x < end:
         new_end = x + 1
@@ -201,7 +198,6 @@ def add_species_series(chart, worksheet_name, col_tax, col_data, col_pcum):
                 initialisation.Worksheets[worksheet_name]
                 .Cells.ix[new_end, col_tax]) and new_end < end:
             new_end += 1
-            print(x, new_end)
         chart.add_series({
             'values': [worksheet_name, x, col_pcum, new_end, col_pcum],
             'categories': [worksheet_name, x, col_data, new_end, col_data],
@@ -221,7 +217,6 @@ def add_species_series(chart, worksheet_name, col_tax, col_data, col_pcum):
             }
         })
         x = new_end
-        print ("end:", x, new_end)
     return chart
 
 
