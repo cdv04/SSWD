@@ -405,6 +405,7 @@ class mainFrame(wx.Frame):
         species, taxon, concentration, test = parse_file(
             self.filename, columns_name,
             self.choice_sheet_name.GetStringSelection())
+        print()
         self.taxo_list = sorted(list(set(taxon.split('!')[1].split(';'))))[1:]
         if 'nan' in [x.lower() for x in self.taxo_list]:
             dlg = wx.MessageBox(
@@ -412,18 +413,19 @@ class mainFrame(wx.Frame):
                 "\nContinue? (it will be named 'NaN')", "Warning", wx.YES_NO
                 | wx.ICON_WARNING)
             if dlg == wx.YES:
-                n = len(self.taxo_list) - self.grid_taxo.GetNumberRows()
-                if n > 0:
-                    self.grid_taxo.InsertRows(numRows=n)
-                elif n < 0:
-                    self.grid_taxo.DeleteRows(numRows=abs(n))
-                for x in range(0, len(self.taxo_list)):
-                    self.grid_taxo.SetRowLabelValue(x, self.taxo_list[x])
+                pass
             else:
                 self.grid_taxo.Hide()
                 self.radiobox_taxo.SetSelection(0)
                 wx.MessageBox('Canceled', 'Warning', wx.OK | wx.ICON_WARNING)
                 return False
+        n = len(self.taxo_list) - self.grid_taxo.GetNumberRows()
+        if n > 0:
+            self.grid_taxo.InsertRows(numRows=n)
+        elif n < 0:
+            self.grid_taxo.DeleteRows(numRows=abs(n))
+        for x in range(0, len(self.taxo_list)):
+            self.grid_taxo.SetRowLabelValue(x, self.taxo_list[x])
         return True
 
     def enable_grid(self, event):
