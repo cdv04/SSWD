@@ -9,11 +9,11 @@
 # @Last modified by:   gysco
 # @Last modified time: 2017-06-19T13:42:13+02:00
 
-from os.path import basename, dirname, join, splitext
+from multiprocessing import Process
+from os.path import basename, dirname, exists, join, splitext
 from sys import exit as sysexit
 from webbrowser import open as webopen
 
-from multiprocessing import Process
 import wx
 import wx.adv
 import wx.grid
@@ -35,7 +35,7 @@ class mainFrame(wx.Frame):
             pos=wx.DefaultPosition,
             size=wx.Size(-1, -1),
             style=wx.CAPTION | wx.CLOSE_BOX | wx.MINIMIZE_BOX |
-            wx.TAB_TRAVERSAL)
+                  wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetBackgroundColour(
@@ -125,10 +125,10 @@ class mainFrame(wx.Frame):
         sizer_file.Add(self.txt_output, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL,
                        5)
         self.filename = ""
-        self.txt_output_name = wx.StaticText(self, wx.ID_ANY, wx.EmptyString,
-                                             wx.DefaultPosition,
-                                             wx.DefaultSize, 0)
-        self.txt_output_name.Wrap(-1)
+        self.txt_output_name = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString,
+                                           wx.DefaultPosition,
+                                           wx.Size(455, -1), 0)
+        # self.txt_output_name.Wrap(-1)
         sizer_file.Add(self.txt_output_name, 0,
                        wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
 
@@ -409,7 +409,8 @@ class mainFrame(wx.Frame):
         if 'nan' in [x.lower() for x in self.taxo_list]:
             dlg = wx.MessageBox(
                 "There is an incorrect name for a taxonomic/genus group."
-                "\nContinue? (it will be named 'NaN')", "Warning", wx.YES_NO)
+                "\nContinue? (it will be named 'NaN')", "Warning", wx.YES_NO
+                | wx.ICON_WARNING)
             if dlg == wx.YES:
                 n = len(self.taxo_list) - self.grid_taxo.GetNumberRows()
                 if n > 0:
@@ -431,10 +432,11 @@ class mainFrame(wx.Frame):
             if not self.update_taxo(event):
                 return
         elif ('nan' in [x.lower() for x in self.taxo_list] and
-              not self.grid_taxo.IsShown()):
+                  not self.grid_taxo.IsShown()):
             dlg = wx.MessageBox(
                 "There is an incorrect name for a taxonomic/genus group."
-                "\nContinue? (it will be named 'NaN')", "Warning", wx.YES_NO)
+                "\nContinue? (it will be named 'NaN')", "Warning", wx.YES_NO
+                | wx.ICON_WARNING)
             if dlg == wx.YES:
                 pass
             else:
@@ -528,6 +530,24 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
                 wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
             return
         output = join(dirname(self.filename), self.txt_output_name.GetLabel())
+        try:
+            open(output, 'w')
+        except IOError as e:
+            wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
+            return
+        if exists(output):
+            dlg = wx.MessageBox(
+                "The file \'" + basename(output) + "\' already exist in\'" +
+                dirname(output) + "\'."
+                "\nContinue?"
+                "\nPress \"Yes\" to override the file."
+                "\nPress \"No\" to abort.", "Warning",
+                wx.YES_NO | wx.ICON_WARNING)
+            if dlg == wx.YES:
+                pass
+            else:
+                wx.MessageBox('Canceled', 'Warning', wx.OK | wx.ICON_WARNING)
+                return
         species, taxon, concentration, test = parse_file(
             self.filename, columns_name,
             self.choice_sheet_name.GetStringSelection())
@@ -555,7 +575,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
         adjustq = self.radio_quant.GetValue()
         isp = self.radiobox_weight.GetSelection()
         seed = (self.radiobox_seed.GetSelection() == 0)
-        print(pcat, lbl_list)
         p1 = Process(target=charger_parametres,
                      args=(output, 1, species, taxon, concentration, test,
                            pcat, pcat is None, pcat is not None, emp, normal,
@@ -642,4 +661,3 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
         n_2 = int(n / 2 - 3)
         n_1 = n - n_2 - 3
         return '{0}...{1}'.format(s[:n_1], s[-n_2:])
-
