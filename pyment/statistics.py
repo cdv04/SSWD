@@ -15,17 +15,13 @@ Many function to refactor to python function.
 
 import math
 
+import initialisation
+from common import cellule_gras, compt_inf, ecrire_titre, trier_tirages_feuille
 from numpy import mean, median, percentile, std
 from numpy.random import choice, seed
 from scipy.stats import norm
 
-import initialisation
-from common import cellule_gras, compt_inf, ecrire_titre, trier_tirages_feuille
-
-# from multiprocessing import cpu_count
-# from threading import RLock, Thread
-
-# lock = RLock()
+from multiprocessing import cpu_count, Pool
 
 
 def threaded_bootstrap(data, nbvar, B, pond, line_start, nom_feuille_stat):
@@ -37,7 +33,6 @@ def threaded_bootstrap(data, nbvar, B, pond, line_start, nom_feuille_stat):
         if j == nbvar:
             j = 0
             i += 1
-            # with lock:
             initialisation.Worksheets[nom_feuille_stat].Cells \
                 .set_value(i + line_start, j, x)
         j += 1
@@ -75,16 +70,11 @@ def tirage(nom_feuille_stat, nbvar, B, nom_feuille_pond, col_data, col_pond,
             0, j, 'POINT ' + str(j + 1))
     """
     thread_number = cpu_count()
-    thread_list = [None] * thread_number
-    for i in range(0, thread_number):
-        thread_list[i] = Thread(target=threaded_bootstrap,
-                                args=(data, nbvar,
-                                      int(B / thread_number), pond,
-                                      int((B / thread_number) * i),
-                                      nom_feuille_stat,))
-        thread_list[i].start()
-    for i in range(0, thread_number):
-        thread_list[i].join()
+    with Pool(thread_number) as p:
+        for i in range(0, thread_number):
+            p.apply_async(func=threaded_bootstrap, args=(
+                data, nbvar, int(B / thread_number), pond,
+                int((B / thread_number) * i), nom_feuille_stat,))
     """
     i = 1
     j = 0
