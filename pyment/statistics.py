@@ -666,10 +666,10 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
     de HC
     """
     initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-        l_hc + 1, c_hc, 'HC (%)')
+        l_hc + 1, c_hc, 'HC')
     for i in range(0, len(pourcent)):
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
-            l_hc + 1, c_hc + i + 1, "={:.1g}".format(pourcent[i] * 100))
+            l_hc + 1, c_hc + i + 1, "={:.3g}".format(pourcent[i]))
     initialisation.Worksheets[nom_feuille_res].Cells.set_value(
         l_hc + 2, c_hc, 'Best-Estimate')
     initialisation.Worksheets[nom_feuille_res].Cells.set_value(

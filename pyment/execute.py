@@ -159,7 +159,7 @@ def lance(output,
     c1 = 0
     """c'est une constante definie par la sub tirage"""
     c2 = c1 + nbvar - 1
-    lig_hc = 27
+    lig_hc = 26
     """attention : il faut tenir compte de l'affichage des options"""
     col_hc = 0
     nbcol_vide = 1

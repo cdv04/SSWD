@@ -132,8 +132,12 @@ def draw_chart(writer, nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     """Rappel des options dans le titre du graphique"""
     ligne_option = 'Sp = ' + sp_opt(isp)
     if val_pcat is not None:
-        ligne_option = '{}; TW: {}= {}'.format(ligne_option,
-                                               '/'.join(liste_taxo), val_pcat)
+        _str = ""
+        for x in set(liste_taxo):
+            if x != "":
+                _str += x + "/"
+        ligne_option = '{}; TW: {}= {}'.format(ligne_option, _str[:-1],
+                                               val_pcat)
     else:
         ligne_option = '{}; TW: none'.format(ligne_option)
     chart.set_title({'name': titre_graf[loi - 1] + '\n' + ligne_option})
@@ -162,11 +166,11 @@ def draw_chart(writer, nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
     Ajoute une zone de texte avec les valeurs de r2, Pttest, GWM et GWSD
     """
     if loi > 1:
-        worksheet.insert_textbox('M1', 'R² = {:.4f}\nKSpvalue = {:.3f}'.format(
+        worksheet.insert_textbox('P1', 'R² = {:.4f}\nKSpvalue = {:.3f}'.format(
             r2, weight_value), {'width': 128,
                                 'height': 40})
         worksheet.insert_textbox(
-            'M3', ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(mup, sigmap))
+            'P3', ('wm.lg = {:.2f}\nwsd.lg = {:.2f}'.format(mup, sigmap))
             if loi == 2 else
             ('wmin.lg = {:.2f}\nwmax.lg = {:.2f}\nwmode.lg = {:.2f}'.format(
                 _min, _max, mode)), {'width': 128,
