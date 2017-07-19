@@ -13,15 +13,13 @@ from os.path import basename, dirname, join, splitext
 from sys import exit as sysexit
 from webbrowser import open as webopen
 
+from multiprocessing import Process
 import wx
 import wx.adv
 import wx.grid
-from pandas import read_csv, read_excel
-
 from common import parse_file, rsrc_path
 from ihm_functions import charger_parametres
-
-# from message_box import message_box
+from pandas import read_csv, read_excel
 
 
 class mainFrame(wx.Frame):
@@ -126,7 +124,7 @@ class mainFrame(wx.Frame):
         self.txt_output.Wrap(-1)
         sizer_file.Add(self.txt_output, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL,
                        5)
-
+        self.filename = ""
         self.txt_output_name = wx.StaticText(self, wx.ID_ANY, wx.EmptyString,
                                              wx.DefaultPosition,
                                              wx.DefaultSize, 0)
@@ -389,7 +387,7 @@ class mainFrame(wx.Frame):
         """Del."""
         pass
 
-    def update_taxo(self, event):
+    def update_taxo(self, event, onload=False):
         """Update taxo list."""
         try:
             columns_name = [
@@ -399,7 +397,10 @@ class mainFrame(wx.Frame):
                 self.choice_ed.GetString(self.choice_ed.GetSelection())
             ]
         except (AssertionError, wx._core.wxAssertionError) as e:
-            e = e
+            if onload:
+                e = e
+            else:
+                wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
             return
         species, taxon, concentration, test = parse_file(
             self.filename, columns_name,
@@ -449,7 +450,8 @@ class mainFrame(wx.Frame):
         self.Layout()
         self.sizer_frame.Fit(self)
 
-    def about(self, event):
+    @staticmethod
+    def about(event):
         """Open about page."""
         info = wx.adv.AboutDialogInfo()
         info.Name = "PyME[N]T-SSWD"
@@ -477,15 +479,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses/""")
         wx.adv.AboutBox(info)
 
-    def mail(self, event):
+    @staticmethod
+    def mail(event):
         """Open mailto url."""
         webopen("mailto:zackary.b@live.fr?subject='PyMENT-SSWD'", new=2)
 
-    def fork_git(self, event):
+    @staticmethod
+    def fork_git(event):
         """Open fork GitHub interface."""
         webopen("https://github.com/Gysco/SSWD#fork-destination-box", new=2)
 
-    def github(self, event):
+    @staticmethod
+    def github(event):
         """Open GitHub project page."""
         webopen("https://github.com/Gysco/SSWD", new=2)
 
@@ -508,23 +513,37 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
             self.radio_quant.SetValue(self.radio_prob.GetValue())
             self.radio_prob.SetValue(not self.radio_prob.GetValue())
 
-    def run(self, event):
+    def run(self, event, onload=False):
         """Run the program."""
-        columns_name = [
-            self.choice_specie.GetString(self.choice_specie.GetSelection()),
-            self.choice_taxo.GetString(self.choice_taxo.GetSelection()),
-            self.choice_ed.GetString(self.choice_ed.GetSelection())
-        ]
+        try:
+            columns_name = [
+                self.choice_specie.GetString(self.choice_specie.GetSelection()),
+                self.choice_taxo.GetString(self.choice_taxo.GetSelection()),
+                self.choice_ed.GetString(self.choice_ed.GetSelection())
+            ]
+        except (AssertionError, wx._core.wxAssertionError) as e:
+            if onload:
+                e = e
+            else:
+                wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
+            return
         output = join(dirname(self.filename), self.txt_output_name.GetLabel())
         species, taxon, concentration, test = parse_file(
             self.filename, columns_name,
             self.choice_sheet_name.GetStringSelection())
         pcat = list()
-        if (not len(pcat)) or (self.radiobox_taxo.GetSelection() == 0):
+        if self.radiobox_taxo.GetSelection() == 0:
             pcat = None
         else:
             for x in range(0, self.grid_taxo.GetNumberRows()):
-                pcat.append(float(self.grid_taxo.GetCellValue(x, 0)))
+                try:
+                    if self.grid_taxo.GetCellValue(x, 0) is None:
+                        pcat.append(.0)
+                    else:
+                        pcat.append(float(self.grid_taxo.GetCellValue(x, 0)))
+                except ValueError as e:
+                    wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
+                    return
         normal = self.checkbox_norm.IsChecked()
         emp = self.checkbox_emp.IsChecked()
         triang = self.checkbox_triang.IsChecked()
@@ -536,11 +555,39 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
         adjustq = self.radio_quant.GetValue()
         isp = self.radiobox_weight.GetSelection()
         seed = (self.radiobox_seed.GetSelection() == 0)
-        charger_parametres(self.filename, output, 1, species, taxon,
-                           concentration, test, pcat, pcat is None,
-                           pcat is not None, emp, normal, triang, bootstrap,
-                           hazen, nbvar, save, lbl_list, triang and adjustq,
-                           isp, columns_name, seed)
+        print(pcat, lbl_list)
+        p1 = Process(target=charger_parametres,
+                     args=(output, 1, species, taxon, concentration, test,
+                           pcat, pcat is None, pcat is not None, emp, normal,
+                           triang, bootstrap, hazen, nbvar, save, lbl_list,
+                           triang and adjustq, isp, columns_name, seed,))
+        dlg = wx.ProgressDialog("Calculation in progress",
+                                "Processing", parent=self,
+                                style=wx.PD_CAN_ABORT | wx.PD_APP_MODAL)
+        dot = 1
+        p1.start()
+        while p1.is_alive() and not dlg.WasCancelled():
+            if dot >= 4:
+                dot = 1
+            dlg.Pulse("Processing" + "." * dot)
+            dot += 1
+            wx.SafeYield()
+            wx.Sleep(1)
+        if dlg.WasCancelled() and p1.is_alive():
+            dlg.Pulse("Canceling...")
+            wx.SafeYield()
+            wx.Sleep(3)
+            p1.terminate()
+        else:
+            dlg.Pulse('Finished.')
+            wx.SafeYield()
+            wx.Sleep(2)
+        dlg.Destroy()
+        # charger_parametres(self.filename, output, 1, species, taxon,
+        #                    concentration, test, pcat, pcat is None,
+        #                    pcat is not None, emp, normal, triang, bootstrap,
+        #                    hazen, nbvar, save, lbl_list, triang and adjustq,
+        #                    isp, columns_name, seed)
 
     def update(self, event):
         """Update IHM on file load."""
@@ -550,24 +597,10 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
             self.choice_sheet_name.SetItems(list(data.keys()))
         else:
             self.choice_sheet_name.setItems(None)
-        self.update_cols(event)
-        self.update_taxo(event)
-        # if dlg.ShowModal() == wx.ID_OK:
-        #     self.txt_sheet_name.SetLabel(dlg.GetStringSelection())
-        #     data = data[dlg.GetStringSelection()]
-        # else:
-        #     self.filepicker.SetPath("")
-        #     self.txt_output_name.SetLabel("")
-        #     self.choice_taxo.SetItems([])
-        #     self.choice_specie.SetItems([])
-        #     self.choice_ed.SetItems([])
-        #     self.txt_sheet_name.SetLabel("")
-        #     wx.MessageBox('Canceled', 'Warning', wx.OK | wx.ICON_WARNING)
-        #     dlg.Destroy()
-        #     return ()
-        # dlg.Destroy()
+        self.update_cols(event, True)
+        self.update_taxo(event, True)
 
-    def update_cols(self, event):
+    def update_cols(self, event, onload=False):
         """Update columns on sheet or file selections."""
         if splitext(self.filename)[1] in ['.xls', '.xlsx']:
             data = read_excel(self.filename, sheetname=None)
@@ -588,10 +621,18 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
         self.choice_taxo.SetItems(data.columns)
         self.choice_specie.SetItems(data.columns)
         self.choice_ed.SetItems(data.columns)
-        self.choice_taxo.SetSelection(self.choice_taxo.FindString("PhylumSup"))
-        self.choice_specie.SetSelection(
-            self.choice_specie.FindString("Species"))
-        self.choice_ed.SetSelection(self.choice_ed.FindString("ED"))
+        try:
+            self.choice_taxo.SetSelection(
+                self.choice_taxo.FindString("PhylumSup"))
+            self.choice_specie.SetSelection(
+                self.choice_specie.FindString("Species"))
+            self.choice_ed.SetSelection(self.choice_ed.FindString("ED"))
+        except (AssertionError, wx._core.wxAssertionError) as e:
+            if onload:
+                e = e
+            else:
+                wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
+            return
 
     @staticmethod
     def shorten(s, n=40):
@@ -602,14 +643,3 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
         n_1 = n - n_2 - 3
         return '{0}...{1}'.format(s[:n_1], s[-n_2:])
 
-    def progress(self, species):
-        """Progress dialog."""
-        datanb = len(species.split('!')[1].split(';'))
-        i = ((1 if self.checkbox_norm.IsChecked() else 0) +
-             (1 if self.checkbox_emp.IsChecked() else 0) +
-             (1 if self.checkbox_triang.IsChecked() else 0))
-        maximum = int(
-            self.txtc_bootstrap.GetLineText(0)) * datanb * i + datanb * 100
-        from tqdm import tqdm
-        for x in tqdm(range(0, maximum)):
-            wx.Sleep(.1)

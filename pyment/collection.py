@@ -1,3 +1,4 @@
+# coding=utf-8
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-06-10T14:33:29+02:00
 # @Email:  zackary.b@live.fr

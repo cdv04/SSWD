@@ -11,9 +11,8 @@
 # @Last modified by:   gysco
 # @Last modified time: 2017-06-19T09:35:37+02:00
 
-import numpy as np
-
 import initialisation
+import numpy as np
 from common import (
     ischainevide, rech_l1c1, rechercher_categorie, sort_collection
 )
@@ -81,31 +80,19 @@ def trf_plage_cellule(nom_feuille, plage):
     return l1, c1, l2, c2, False
 
 
-def lire_pcat(val_pcat, pcat, dim_pcat):
+def lire_pcat(val_pcat, pcat):
     """
     Lit les valeurs de pcat entrees par l'utilisateur.
 
     Les ranges sous forme de vecteur.
     """
-    erreur = False
-    debut = 0
-    for i in range(0, dim_pcat):
-        ipos = val_pcat.find(';')
-        if ipos != 0 and i == dim_pcat:
-            message_box('SSWD',
-                        'The number of weight values do not corresponds' +
-                        ' to the number of taxonomic groups!', 0)
-            return
-        if ipos == 0:
-            ipos = len(val_pcat) + 1
-        if ipos - debut <= 0:
-            message_box(
-                'SSWD',
-                'Please enter a weight for ' + 'every taxonomic group!', 0)
-            return
-        pcat[i] = float(val_pcat[debut:ipos - debut])
-        debut = ipos + 1
-    return erreur
+    error = False
+    for x in val_pcat:
+        try:
+            pcat.append(.0 if x is None else float(x))
+        except ValueError:
+            error = True
+    return error
 
 
 def afficher_taxo(data_taxo):
@@ -146,7 +133,7 @@ you cannot enter weight!', 0)
     return liste_taxo
 
 
-def charger_parametres(fname, output, iproc, r_espece, r_taxo, r_concentration,
+def charger_parametres(output, iproc, r_espece, r_taxo, r_concentration,
                        r_test, txt_p, opt_bt_nul, opt_bt_val, ch_e, ch_n, ch_t,
                        txt_val_b, txt_val_a, ch_nb, ch_sauve, lbl_liste,
                        opt_bt_q, cbx_e, colnames, seed):
@@ -210,11 +197,11 @@ def charger_parametres(fname, output, iproc, r_espece, r_taxo, r_concentration,
         for i in range(1, nb_taxo):
             pcat.append(0)
     else:
-        if val_pcat == '':
+        if val_pcat is None:
             message_box('SSWD',
                         'Please enter weight values or select No weight!', 0)
             return
-        assert (lire_pcat(val_pcat, pcat, nb_taxo) is False)
+        assert (lire_pcat(val_pcat, pcat) is False)
     """parametre de Hazen a"""
     if txt_val_a is None:
         message_box('SSWD', 'You must chose a value for the Hazen parameter \
@@ -243,18 +230,13 @@ between 0 and 1, strictly less than 1', 0)
     """Sauvegarde des feuilles de resultats intermediaires"""
     conserv_inter = ch_sauve
     """Recupération de la liste taxo"""
-    if opt_bt_val is True:
-        liste_taxo = lbl_liste
-        pos = liste_taxo.find('\n')
-        ltaxo = liste_taxo[:pos + 1]
-    else:
-        ltaxo = None
+    ltaxo = lbl_liste if opt_bt_val is True else None
     """
     Option d'ajustement pour loi triangulaire,
     si True ajustement sur quantiles, sinon sur probabilités cumulées
     """
     triang_ajust = opt_bt_q
-    lance(fname, output, data_co, nom_colonne, isp, pcat, dist, B, a, n_optim,
+    lance(output, data_co, nom_colonne, isp, pcat, dist, B, a, n_optim,
           conserv_inter, nb_taxo, val_pcat, ltaxo, triang_ajust, seed)
 
 

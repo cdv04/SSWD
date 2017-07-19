@@ -1,3 +1,6 @@
+# coding=utf-8
+"""wxMessagebox implementation."""
+
 # @Author: Zackary BEAUGELIN <gysco>
 # @Date:   2017-06-16T13:20:47+02:00
 # @Email:  zackary.b@live.fr
