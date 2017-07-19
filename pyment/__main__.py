@@ -18,7 +18,6 @@ import argparse
 import sys
 
 import wx
-
 from common import parse_file
 from ihm import mainFrame
 from ihm_functions import charger_parametres

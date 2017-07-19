@@ -18,12 +18,10 @@ A inclure dans la quasi totatilite des autres.
 import argparse
 import operator
 import sys
-from os.path import join as pathjoin
-from os.path import abspath, splitext
-
-import pandas
+from os.path import abspath, join as pathjoin, splitext
 
 import initialisation
+import pandas
 from message_box import message_box
 from worksheet import Worksheet
 
@@ -202,9 +200,9 @@ def affichage_options(nom_feuille, isp, val_pcat, liste_taxo, B, lig, col,
         lig + 2, col, 'Taxonomy')
     if liste_taxo is not None:
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig + 2, col + 1, liste_taxo)
+            lig + 2, col + 1, str(liste_taxo))
         initialisation.Worksheets[nom_feuille].Cells.set_value(
-            lig + 2, col + 2, val_pcat)
+            lig + 2, col + 2, str(val_pcat))
     else:
         initialisation.Worksheets[nom_feuille].Cells.set_value(
             lig + 2, col + 1, 'No Weight')

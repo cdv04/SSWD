@@ -13,12 +13,9 @@ To python soon.
 # @Last modified by:   gysco
 # @Last modified time: 2017-06-19T16:15:30+02:00
 
-from statistics import (
-    calcul_ic_empirique, calcul_ic_normal, calcul_ic_triang_p,
-    calcul_ic_triang_q, calcul_R2, calcul_res, tirage
-)
-
-from pandas import ExcelWriter
+from statistics import (calcul_R2, calcul_ic_empirique, calcul_ic_normal,
+                        calcul_ic_triang_p, calcul_ic_triang_q, calcul_res,
+                        tirage)
 
 from charts import draw_chart
 from common import (
@@ -26,6 +23,7 @@ from common import (
     ecrire_data_co, ecrire_titre, efface_feuil_inter, verif, write_feuil_inter
 )
 from initialisation import initialise
+from pandas import ExcelWriter
 from weighting import calcul_nbvar, calcul_ponderation, sort_collection
 
 
@@ -41,8 +39,7 @@ def lance_apropos():
     frm_apropos.Show()
 
 
-def lance(fname,
-          output,
+def lance(output,
           data_co,
           nom_colonne,
           isp,
@@ -56,8 +53,7 @@ def lance(fname,
           val_pcat,
           liste_taxo,
           triang_ajust,
-          seed,
-          override=False):
+          seed):
     """
     Module de lancement de la procedure SSWD.
 

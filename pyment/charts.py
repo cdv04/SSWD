@@ -99,7 +99,8 @@ def draw_chart(writer, nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
         'name': [nom_feuille, lig_qbi, col_deb - 1],
         'line': {
             'color': 'black',
-            'dash_type': 'dash'
+            'dash_type': 'dash',
+            'width': 1.25
         },
         'marker': {
             'type': 'none'
@@ -112,7 +113,8 @@ def draw_chart(writer, nom_feuille, lig_p, lig_qbe, lig_qbi, lig_qbs, col_deb,
         'name': [nom_feuille, lig_qbs, col_deb - 1],
         'line': {
             'color': 'black',
-            'dash_type': 'dash'
+            'dash_type': 'dash',
+            'width': 1.25
         },
         'marker': {
             'type': 'none'
@@ -188,24 +190,38 @@ def add_species_series(chart, worksheet_name, col_tax, col_data, col_pcum):
     end = len(
         list(initialisation.Worksheets[worksheet_name].Cells.ix[2:, col_tax]
              .dropna()))
-    chart.add_series({
-        'values': [worksheet_name, 2, col_pcum, 2 + end, col_pcum],
-        'categories': [worksheet_name, 2, col_data, 2 + end, col_data],
-        'name':
-        'Data observed',
-        'marker': {
-            'type': 'square',
-            'border': {
-                'color': 'black'
+    print(initialisation.Worksheets[worksheet_name].Cells
+            .ix[2, col_tax] == initialisation.Worksheets[worksheet_name].Cells
+            .get_value(2, col_tax))
+    x = 2
+    while x < end:
+        new_end = x + 1
+        while (initialisation.Worksheets[worksheet_name].Cells
+                .ix[new_end - 1, col_tax] ==
+                initialisation.Worksheets[worksheet_name]
+                .Cells.ix[new_end, col_tax]) and new_end < end:
+            new_end += 1
+            print(x, new_end)
+        chart.add_series({
+            'values': [worksheet_name, x, col_pcum, new_end, col_pcum],
+            'categories': [worksheet_name, x, col_data, new_end, col_data],
+            'name': initialisation.Worksheets[worksheet_name].Cells.ix[x - 1, col_tax],
+            'marker': {
+                'type': 'automatic'
+                # 'type': 'square',
+                # 'border': {
+                #     'color': 'black'
+                # },
+                # 'fill': {
+                #     'color': 'black'
+                # }
             },
-            'fill': {
-                'color': 'black'
+            'line': {
+                'none': True
             }
-        },
-        'line': {
-            'none': True
-        }
-    })
+        })
+        x = new_end
+        print ("end:", x, new_end)
     return chart
 
 
