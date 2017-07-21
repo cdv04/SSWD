@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c078a5a0-6b7d-4d32-939e-418930f9bbc3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyment/statistics.py" afterPath="$PROJECT_DIR$/pyment/statistics.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyment/ihm.py" afterPath="$PROJECT_DIR$/pyment/ihm.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,8 +27,8 @@
       <file leaf-file-name="statistics.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pyment/statistics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-59">
-              <caret line="741" column="49" lean-forward="false" selection-start-line="741" selection-start-column="49" selection-end-line="741" selection-end-column="49" />
+            <state relative-caret-position="259">
+              <caret line="668" column="27" lean-forward="false" selection-start-line="668" selection-start-column="27" selection-end-line="668" selection-end-column="27" />
               <folding>
                 <element signature="e#330#341#0" expanded="true" />
               </folding>
@@ -57,65 +56,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="appveyor.yml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/appveyor.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="67" column="76" lean-forward="false" selection-start-line="67" selection-start-column="12" selection-end-line="67" selection-end-column="76" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ihm.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyment/ihm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="414" column="20" lean-forward="false" selection-start-line="414" selection-start-column="20" selection-end-line="414" selection-end-column="20" />
+            <state relative-caret-position="175">
+              <caret line="459" column="30" lean-forward="true" selection-start-line="459" selection-start-column="30" selection-end-line="459" selection-end-column="30" />
               <folding>
                 <element signature="e#262#297#0" expanded="true" />
-                <marker date="1500472424000" expanded="true" signature="625:27640" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="16272:17983" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="18018:18957" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="18081:18148" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="18260:18741" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="18310:18422" ph="&quot;...&quot;" />
-                <marker date="1500472424000" expanded="true" signature="18548:18741" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="18998:20250" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="19604:20219" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1500472424000" expanded="true" signature="20290:20394" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="20438:20557" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="20599:20695" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="20735:20782" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="20819:20967" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="21003:21386" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="21100:21237" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="21251:21386" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="21427:25422" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="21471:21744" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="21500:21743" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="21809:21965" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="22116:22205" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="22232:22738" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="22377:22511" ph="&quot;...&quot;" />
-                <marker date="1500472424000" expanded="true" signature="22637:22738" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="23005:23444" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="23068:23444" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="23089:23299" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="23339:23444" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="24056:24329" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="24613:24782" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="24831:24947" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="24961:25047" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="25078:25422" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="25452:25865" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="25601:25725" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="25914:27411" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="26032:26184" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="26235:26393" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="26913:27190" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="27255:27411" ph="..." />
-                <marker date="1500472424000" expanded="true" signature="27456:27640" ph="..." />
               </folding>
             </state>
           </provider>
@@ -239,9 +186,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setvalu</find>
-      <find>setval</find>
-      <find>setva</find>
       <find>setv</find>
       <find>set</find>
       <find>ce</find>
@@ -269,6 +213,9 @@
       <find>GW</find>
       <find>GWM</find>
       <find>vNHBbIHk3IgAYPioz1zmSCNBDmsb81hu35CXWcwQts2PPvP1lRiqY2m/E1KC2HSs</find>
+      <find>self.filename</find>
+      <find>output</find>
+      <find>HC</find>
     </findStrings>
     <replaceStrings>
       <replace>sort_collection</replace>
@@ -324,10 +271,10 @@
         <option value="$PROJECT_DIR$/pyment/common.py" />
         <option value="$PROJECT_DIR$/pyment/message_box.py" />
         <option value="$PROJECT_DIR$/pyment/execute.py" />
-        <option value="$PROJECT_DIR$/pyment/statistics.py" />
         <option value="$PROJECT_DIR$/pyment/ihm_functions.py" />
         <option value="$PROJECT_DIR$/pyment/charts.py" />
         <option value="$PROJECT_DIR$/pyment/ihm.py" />
+        <option value="$PROJECT_DIR$/pyment/statistics.py" />
       </list>
     </option>
   </component>
@@ -756,7 +703,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="6" />
+      <option name="time" value="7" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1038,66 +985,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyment/charts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="135" column="33" lean-forward="false" selection-start-line="135" selection-start-column="33" selection-end-line="135" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyment/ihm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="414" column="20" lean-forward="false" selection-start-line="414" selection-start-column="20" selection-end-line="414" selection-end-column="20" />
-          <folding>
-            <element signature="e#262#297#0" expanded="true" />
-            <marker date="1500472424000" expanded="true" signature="625:27640" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="16272:17983" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="18018:18957" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="18081:18148" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="18260:18741" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="18310:18422" ph="&quot;...&quot;" />
-            <marker date="1500472424000" expanded="true" signature="18548:18741" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="18998:20250" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="19604:20219" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1500472424000" expanded="true" signature="20290:20394" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="20438:20557" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="20599:20695" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="20735:20782" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="20819:20967" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="21003:21386" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="21100:21237" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="21251:21386" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="21427:25422" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="21471:21744" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="21500:21743" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="21809:21965" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="22116:22205" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="22232:22738" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="22377:22511" ph="&quot;...&quot;" />
-            <marker date="1500472424000" expanded="true" signature="22637:22738" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="23005:23444" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="23068:23444" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="23089:23299" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="23339:23444" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="24056:24329" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="24613:24782" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="24831:24947" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="24961:25047" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="25078:25422" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="25452:25865" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="25601:25725" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="25914:27411" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="26032:26184" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="26235:26393" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="26913:27190" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="27255:27411" ph="..." />
-            <marker date="1500472424000" expanded="true" signature="27456:27640" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyment/initialisation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -1114,10 +1001,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pyment/ihm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="459" column="30" lean-forward="true" selection-start-line="459" selection-start-column="30" selection-end-line="459" selection-end-column="30" />
+          <folding>
+            <element signature="e#262#297#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyment/charts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="135" column="33" lean-forward="false" selection-start-line="135" selection-start-column="33" selection-end-line="135" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pyment/statistics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-59">
-          <caret line="741" column="49" lean-forward="false" selection-start-line="741" selection-start-column="49" selection-end-line="741" selection-end-column="49" />
+        <state relative-caret-position="259">
+          <caret line="668" column="27" lean-forward="false" selection-start-line="668" selection-start-column="27" selection-end-line="668" selection-end-column="27" />
           <folding>
             <element signature="e#330#341#0" expanded="true" />
           </folding>

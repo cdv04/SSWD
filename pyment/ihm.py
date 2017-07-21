@@ -457,7 +457,7 @@ class mainFrame(wx.Frame):
         """Open about page."""
         info = wx.adv.AboutDialogInfo()
         info.Name = "PyME[N]T-SSWD"
-        info.Version = "0.3-alpha"
+        info.Version = "1.0.5"
         info.Copyright = "Copyright (C) 2017 Zackary BEAUGELIN and IRSN"
         info.Description = (
             'Species Sensitivity Weighted Distribution (SSWD) Software\n' +
@@ -529,12 +529,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
             else:
                 wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
             return
-        output = join(dirname(self.filename), self.txt_output_name.GetLabel())
-        try:
-            open(output, 'w')
-        except IOError as e:
-            wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
-            return
+        output = join(dirname(self.filename), self.txt_output_name.GetValue())
         if exists(output):
             dlg = wx.MessageBox(
                 "The file \'" + basename(output) + "\' already exist in\'" +
@@ -548,6 +543,11 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
             else:
                 wx.MessageBox('Canceled', 'Warning', wx.OK | wx.ICON_WARNING)
                 return
+        try:
+            open(output, 'w')
+        except IOError as e:
+            wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
+            return
         species, taxon, concentration, test = parse_file(
             self.filename, columns_name,
             self.choice_sheet_name.GetStringSelection())
@@ -631,7 +631,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
                 data = read_csv(self.filename, sep=";", header=0)
         else:
             raise IOError("Invalid file")
-        self.txt_output_name.SetLabel(
+        self.txt_output_name.SetValue(
             basename(
                 splitext(self.filename)[0] +
                 (("_" + self.choice_sheet_name.GetStringSelection())
