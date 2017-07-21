@@ -747,6 +747,7 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 2, c_hc + len(pourcent) + 3, 10**sigmap)
         for x in [nbvar + 1, nbvar + 2]:
+            data = list()
             for y in range(l1, l2):
                 data.append(initialisation.Worksheets[nom_feuille]
                             .Cells.get_value(y, x))
@@ -781,6 +782,7 @@ def calcul_res(l1, l2, ind_hc, pond_lig_deb, pond_col_deb, pond_col_data,
         initialisation.Worksheets[nom_feuille_res].Cells.set_value(
             l_hc + 2, c_hc + len(pourcent) + 4, 10**mode)
         for x in [c_min, c_min + 1, c_min + 2]:
+            data = list()
             for y in range(l1, l2):
                 data.append(initialisation.Worksheets[nom_feuille]
                             .Cells.get_value(y, x))
