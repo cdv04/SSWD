@@ -24,7 +24,7 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="statistics.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="statistics.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyment/statistics.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="259">
@@ -56,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ihm.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ihm.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pyment/ihm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="459" column="30" lean-forward="true" selection-start-line="459" selection-start-column="30" selection-end-line="459" selection-end-column="30" />
+            <state relative-caret-position="326">
+              <caret line="459" column="29" lean-forward="false" selection-start-line="459" selection-start-column="29" selection-end-line="459" selection-end-column="29" />
               <folding>
                 <element signature="e#262#297#0" expanded="true" />
               </folding>
@@ -273,8 +273,8 @@
         <option value="$PROJECT_DIR$/pyment/execute.py" />
         <option value="$PROJECT_DIR$/pyment/ihm_functions.py" />
         <option value="$PROJECT_DIR$/pyment/charts.py" />
-        <option value="$PROJECT_DIR$/pyment/ihm.py" />
         <option value="$PROJECT_DIR$/pyment/statistics.py" />
+        <option value="$PROJECT_DIR$/pyment/ihm.py" />
       </list>
     </option>
   </component>
@@ -1001,16 +1001,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyment/ihm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="459" column="30" lean-forward="true" selection-start-line="459" selection-start-column="30" selection-end-line="459" selection-end-column="30" />
-          <folding>
-            <element signature="e#262#297#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyment/charts.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="178">
@@ -1025,6 +1015,16 @@
           <caret line="668" column="27" lean-forward="false" selection-start-line="668" selection-start-column="27" selection-end-line="668" selection-end-column="27" />
           <folding>
             <element signature="e#330#341#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyment/ihm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="326">
+          <caret line="459" column="29" lean-forward="false" selection-start-line="459" selection-start-column="29" selection-end-line="459" selection-end-column="29" />
+          <folding>
+            <element signature="e#262#297#0" expanded="true" />
           </folding>
         </state>
       </provider>

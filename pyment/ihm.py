@@ -457,7 +457,7 @@ class mainFrame(wx.Frame):
         """Open about page."""
         info = wx.adv.AboutDialogInfo()
         info.Name = "PyME[N]T-SSWD"
-        info.Version = "1.0.5"
+        info.Version = "1.0.6"
         info.Copyright = "Copyright (C) 2017 Zackary BEAUGELIN and IRSN"
         info.Description = (
             'Species Sensitivity Weighted Distribution (SSWD) Software\n' +
@@ -544,10 +544,12 @@ along with this program.  If not, see http://www.gnu.org/licenses/""")
                 wx.MessageBox('Canceled', 'Warning', wx.OK | wx.ICON_WARNING)
                 return
         try:
-            open(output, 'w')
+            f = open(output, 'w')
         except IOError as e:
             wx.MessageBox(str(e), 'Warning', wx.OK | wx.ICON_WARNING)
             return
+        finally:
+            f.close()
         species, taxon, concentration, test = parse_file(
             self.filename, columns_name,
             self.choice_sheet_name.GetStringSelection())
